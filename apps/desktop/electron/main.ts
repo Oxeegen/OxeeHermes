@@ -5,7 +5,26 @@ import { configurePythonGatewayTicketClient, createLocalGatewayDials, createStal
 import { closeGatewayTicketBridges, createGatewayTicketResolver } from './local-gateway-python'
 const localGatewayDials = createLocalGatewayDials()
 configurePythonGatewayTicketClient(createGatewayTicketResolver(
-  async () => ensureRuntime(await resolveHermesBackend([]), () => undefined), resolveHermesCwd))
+  async () => bundledTicketBackend() ?? ensureRuntime(await resolveHermesBackend([]), () => undefined), resolveHermesCwd))
+
+// Oxeegen fix (upstream bug, also on NousResearch main): the bundled backend's `command` is the
+// payload CLI launcher (bin/hermes*.exe), not an interpreter, yet the ticket helper runs it as
+// `python -P -u -c <script>` — the launcher answers with its usage and every gateway ticket fails,
+// leaving a bundled Windows install on "Connecting". Run the helper with the payload python and
+// its import path, exactly as the App Installer checker does.
+function bundledTicketBackend() {
+  const payload = bundledPayload(process.resourcesPath)
+
+  return payload
+    ? {
+        kind: 'python',
+        command: payload.storePython,
+        env: { ...buildDesktopBackendEnv(), HERMES_RUNTIME_DIR: payload.toolsDir, PYTHONPATH: payloadPythonPath(payload) },
+        shell: false
+      }
+    : null
+}
+
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import http from 'node:http'
