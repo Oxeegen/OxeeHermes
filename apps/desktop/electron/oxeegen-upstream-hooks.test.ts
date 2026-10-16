@@ -26,7 +26,7 @@ interface Hook {
 
 const HOOKS: Hook[] = [
   // Product name
-  { file: 'apps/desktop/src/i18n/catalog.ts', needs: ['rebrandTranslations('], why: 'bundled catalogs show "Oxee Desktop"' },
+  { file: 'apps/desktop/src/i18n/catalog.ts', needs: ['rebrandTranslations('], why: 'bundled catalogs show "Oxee Hermes"' },
   { file: 'apps/desktop/src/i18n/registry.ts', needs: ['rebrandTranslations(value)'], why: 'plugin/backend language packs are rebranded' },
   { file: 'apps/desktop/vitest.config.ts', needs: ['./src/oxeegen/vitest-setup.ts'], why: 'tests see the rebranded catalogs' },
   // Brand
@@ -53,21 +53,21 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/lib/keybinds/actions.ts', needs: ["{ id: 'view.newBrowserTab'"], why: 'new browser tab shortcut' },
   { file: 'apps/desktop/src/app/hooks/use-keybinds.ts', needs: ["'view.newBrowserTab': newBrowserTab"], why: 'new browser tab shortcut handler' },
   { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ["TITLEBAR_FIXED_TOOLS['new-browser']", 'newBrowserTab()'], why: 'new browser tab titlebar button' },
-  { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ['<OxeeTitlebarBrand sidebarOpen={leftEdge.open} />'], why: 'Oxee Desktop wordmark in the titlebar' },
-  { file: 'apps/desktop/src/components/chat/intro.tsx', needs: ['<OxeeIntroWordmark />'], why: 'Oxee Desktop wordmark over an empty chat' },
+  { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ['<OxeeTitlebarBrand sidebarOpen={leftEdge.open} />'], why: 'Oxee Hermes wordmark in the titlebar' },
+  { file: 'apps/desktop/src/components/chat/intro.tsx', needs: ['<OxeeIntroWordmark />'], why: 'Oxee Hermes wordmark over an empty chat' },
   { file: 'apps/desktop/src/store/titlebar-app-actions.ts', needs: ["'new-browser': {}", "['new-browser', 'settings', 'layout', 'hud']"], why: 'titlebar width reserves the button' },
   { file: 'apps/desktop/src/i18n/en.ts', needs: ["'view.newBrowserTab': 'New browser tab'"], why: 'shortcut label' },
   // Isolation from an installed official Hermes
-  { file: 'apps/desktop/electron/main.ts', needs: ['oxeegenManagedDir(', "'oxee-desktop'", 'app.setAppUserModelId(PRODUCT_IDENTITY.appId)'], why: 'managed scope, own deep-link scheme, own AUMID' },
+  { file: 'apps/desktop/electron/main.ts', needs: ['oxeegenManagedDir(', "'oxee-hermes'", 'app.setAppUserModelId(PRODUCT_IDENTITY.appId)'], why: 'managed scope, own deep-link scheme, own AUMID' },
   { file: 'apps/desktop/electron/main.ts', needs: ['bundledTicketBackend() ?? ensureRuntime(', 'command: payload.storePython,'], why: 'bundled Windows gateway tickets run on the payload python (upstream bug fix)' },
   { file: 'apps/desktop/electron/notification-linux.ts', needs: ["new Variant('s', PRODUCT_IDENTITY.appId)"], why: 'Linux notifications use our desktop entry' },
   { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ['oxeegenBundleEnvironment('], why: 'stamp carries the isolation env (CLI launcher reads it)' },
   { file: 'apps/desktop/scripts/bundle-electron-main.mjs', needs: ['oxeegenBundleEnvironment('], why: 'launch banner applies the isolation env' },
-  { file: 'apps/desktop/scripts/before-build.mjs', needs: ['oxee-desktop://copilot-key/'], why: 'MSIX Copilot key uses our scheme' },
-  { file: 'apps/desktop/scripts/set-exe-identity.mjs', needs: ["ProductName: 'Oxee Desktop'", 'Portions Copyright (c) 2025 Nous Research (MIT)'], why: 'Windows exe identity, MIT notice kept' },
-  { file: 'apps/desktop/src/lib/update-notes.ts', needs: ["'oxeegen/oxee-desktop'"], why: 'release notes from the Oxeegen repo' },
+  { file: 'apps/desktop/scripts/before-build.mjs', needs: ['oxee-hermes://copilot-key/'], why: 'MSIX Copilot key uses our scheme' },
+  { file: 'apps/desktop/scripts/set-exe-identity.mjs', needs: ["ProductName: 'Oxee Hermes'", 'Portions Copyright (c) 2025 Nous Research (MIT)'], why: 'Windows exe identity, MIT notice kept' },
+  { file: 'apps/desktop/src/lib/update-notes.ts', needs: ["'oxeegen/oxee-hermes'"], why: 'release notes from the Oxeegen repo' },
   { file: 'scripts/build/launcher_wrapper.py', needs: ['apply_bundle_environment(repo_entry, environ)'], why: 'CLI lands in the isolated data home' },
-  { file: 'hermes_cli/_launchers.py', needs: ['link_dir / f"oxee-desktop{name.removeprefix(\'hermes\')}"'], why: 'macOS CLI links never shadow `hermes`' },
+  { file: 'hermes_cli/_launchers.py', needs: ['link_dir / f"oxee-hermes{name.removeprefix(\'hermes\')}"'], why: 'macOS CLI links never shadow `hermes`' },
   { file: 'hermes_cli/gateway.py', needs: ['def tagged_service_suffix(', 'return tagged_service_suffix("")'], why: 'own gateway service names' },
   { file: 'hermes_cli/gateway_runtime_service.py', needs: ['tagged_service_suffix('], why: 'finds our own gateway services' },
   // Lean bundle (no local engines, no uv cache, opted-out extras)

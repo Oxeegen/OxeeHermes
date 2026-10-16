@@ -61,7 +61,7 @@ function bridge() {
   const desktop = window.hermesDesktop
 
   if (!desktop) {
-    throw new Error('Oxee Desktop bridge is unavailable')
+    throw new Error('Oxee Hermes bridge is unavailable')
   }
 
   return desktop

@@ -69,7 +69,7 @@ export async function setYoloEnabled(enabled: boolean): Promise<boolean> {
   const gateway = $gateway.get()
 
   if (!gateway) {
-    throw new Error('Oxee Desktop gateway unavailable')
+    throw new Error('Oxee Hermes gateway unavailable')
   }
 
   return setSessionYolo((method, params) => gateway.request(method, params), sessionId, enabled)

@@ -82,7 +82,7 @@ test('nativeRemovalInstructions names the steward per kind and OS', () => {
     // oxeegen-keep: echoes the bundle name the test passes in
     'Quit the app and drag Hermes Agent Canary.app from /Applications to the Trash.'
   )
-  assert.match(nativeRemovalInstructions('bundled', 'darwin'), /drag the Oxee Desktop app from Applications to the Trash/)
+  assert.match(nativeRemovalInstructions('bundled', 'darwin'), /drag the Oxee Hermes app from Applications to the Trash/)
   assert.match(
     nativeRemovalInstructions('bundled', 'linux', '/home/x/Apps/Hermes.AppImage'),
     /\/home\/x\/Apps\/Hermes\.AppImage/

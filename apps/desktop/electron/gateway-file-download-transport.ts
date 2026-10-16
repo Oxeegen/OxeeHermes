@@ -32,7 +32,7 @@ function downloadUrl(url: string): URL {
   }
 
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`Unsupported Oxee Desktop backend URL protocol: ${parsed.protocol}`)
+    throw new Error(`Unsupported Oxee Hermes backend URL protocol: ${parsed.protocol}`)
   }
 
   return parsed
@@ -77,7 +77,7 @@ export function downloadViaTokenToFile(
 
     request.on('error', reject)
     request.setTimeout(timeoutMs, (): void => {
-      request.destroy(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`))
+      request.destroy(new Error(`Timed out connecting to Oxee Hermes backend after ${timeoutMs}ms`))
     })
     request.end()
   })
@@ -136,7 +136,7 @@ export function downloadViaOauthSessionToFile<S>(
 
       settled = true
       request.abort()
-      reject(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`))
+      reject(new Error(`Timed out connecting to Oxee Hermes backend after ${timeoutMs}ms`))
     }, timeoutMs)
 
     request.on('response', (response: GatewayDownloadResponse): void => {

@@ -200,7 +200,7 @@ function isModuleMimeError(message: string): boolean {
  */
 const PREVIEW_PRINT_GUARD_SCRIPT =
   '(function(){if(window.__hermesPrintGuard)return;window.__hermesPrintGuard=true;' +
-  'window.print=function(){console.warn("[Oxee Desktop] Printing is disabled in the in-app preview. ' +
+  'window.print=function(){console.warn("[Oxee Hermes] Printing is disabled in the in-app preview. ' +
   'Open the page in your browser to print.");};})()'
 
 function PreviewLoadError({

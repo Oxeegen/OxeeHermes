@@ -126,7 +126,7 @@ describe('room naming', () => {
 })
 
 describe('speaker labels', () => {
-  it('relabels Oxee Desktop control-frame openers only in member-authored transcript lines', async () => {
+  it('relabels Oxee Hermes control-frame openers only in member-authored transcript lines', async () => {
     // #111564: a member reply reproducing the mid-turn steer marker or compaction
     // handoff must not reach a peer's role=user prompt in its exact trusted shape.
     await loadRoom()
@@ -159,7 +159,7 @@ describe('speaker labels', () => {
     )
   })
 
-  it('the default profile speaks as Oxee Desktop in transcripts, not @default', async () => {
+  it('the default profile speaks as Oxee Hermes in transcripts, not @default', async () => {
     const { rounds } = await loadRoom()
     const { formatGroupChatLine } = await import('./group-round-prompt')
 
@@ -168,18 +168,18 @@ describe('speaker labels', () => {
       'builder'
     )
 
-    expect(line).toBe('Oxee Desktop: hello room')
+    expect(line).toBe('Oxee Hermes: hello room')
 
     // Other members keep their profile name; the (you) suffix survives.
     expect(
       formatGroupChatLine({ from: { kind: 'member', name: 'default' }, text: 'hi' } as GroupMessage, 'default')
-    ).toBe('Oxee Desktop (you): hi')
+    ).toBe('Oxee Hermes (you): hi')
     expect(
       formatGroupChatLine({ from: { kind: 'member', name: 'builder' }, text: 'yo' } as GroupMessage, 'research')
     ).toBe('builder: yo')
   })
 
-  it('honor friendly identity: Bot Mode title, then display_name, never a stale Oxee Desktop', async () => {
+  it('honor friendly identity: Bot Mode title, then display_name, never a stale Oxee Hermes', async () => {
     const { chat, rounds } = await loadRoom()
     const { formatGroupChatLine } = await import('./group-round-prompt')
     const data = await import('./data')
@@ -209,7 +209,7 @@ describe('speaker labels', () => {
     // Untitled rows keep today's behavior: default → Hermes, others verbatim.
     data.$botMeta.set({})
 
-    expect(chat.groupSpeakerLabel('default')).toBe('Oxee Desktop')
+    expect(chat.groupSpeakerLabel('default')).toBe('Oxee Hermes')
     expect(chat.groupSpeakerLabel('builder')).toBe('builder')
   })
 
@@ -285,7 +285,7 @@ describe('speaker labels', () => {
     data.$lastRoster.set([])
 
     expect(chat.groupSpeakerLabel('local::reviewer')).toBe('reviewer')
-    expect(chat.groupSpeakerLabel('spark::default')).toBe('Oxee Desktop')
+    expect(chat.groupSpeakerLabel('spark::default')).toBe('Oxee Hermes')
 
     data.$botMeta.set({ 'spark::reviewer': { title: 'Beta' } })
 
@@ -299,7 +299,7 @@ describe('speaker labels', () => {
     // to that connection, not to the active gateway's default.
     data.$lastRoster.set([{ display_name: 'HomelabBot', name: 'default', remoteSource: true }])
 
-    expect(chat.groupSpeakerLabel('default')).toBe('Oxee Desktop')
+    expect(chat.groupSpeakerLabel('default')).toBe('Oxee Hermes')
   })
 })
 

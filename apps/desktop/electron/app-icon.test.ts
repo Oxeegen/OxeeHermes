@@ -58,7 +58,7 @@ test('decodingFileProbe rejects a directory', () => {
 // icon.ico to resources/), so resolving the ladder must never probe inside the archive, even though
 // the packed copies exist too.
 test('resolving a packaged icon never probes a path inside app.asar', () => {
-  const resources = path.join('/opt', 'Oxee Desktop', 'resources')
+  const resources = path.join('/opt', 'Oxee Hermes', 'resources')
   const appRoot = path.join(resources, 'app.asar')
   const unpackedPathFor = (p: string) => p.replace(/app\.asar(?=$|[\\/])/, 'app.asar.unpacked')
   const unpackedIcon = path.join(unpackedPathFor(appRoot), 'dist', 'apple-touch-icon.png')

@@ -69,7 +69,7 @@ export function displayName(bot: Partial<RosterRow>, meta?: BotMeta | null): str
   // that reads like nobody bothered. Present it as Hermes (the agent it is)
   // unless the user gives it a real title.
   if ((bot.name || '').trim().toLowerCase() === 'default' && !bot.title) {
-    return 'Oxee Desktop'
+    return 'Oxee Hermes'
   }
 
   const raw = (bot.title || bot.name || '').replace(/[-_]+/g, ' ').trim()

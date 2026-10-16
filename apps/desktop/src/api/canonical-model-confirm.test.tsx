@@ -107,7 +107,7 @@ test('a confirmed model switch whose reply was lost retries as the exact token-b
   // The user confirmed; the owner may have committed it, but the reply never arrived.
   const confirmed = protocol.prepare('config.set', { ...pick, confirm_expensive_model: true })
   expect(confirmed.payload).toEqual({ model: 'pricey', provider: 'custom', confirm: 'tok-1' })
-  protocol.failure(confirmed, new Error('Oxee Desktop gateway connection closed'))
+  protocol.failure(confirmed, new Error('Oxee Hermes gateway connection closed'))
 
   // Every retry of that target is the same confirmed intent: same request id, same token.
   for (const retry of [{ ...pick, confirm_expensive_model: true }, pick]) {

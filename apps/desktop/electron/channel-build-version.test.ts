@@ -28,7 +28,7 @@ function request(sequence: number = 65536, token: string = 'ab12cd34ef56ab78'): 
     windowsVersion: `0.${Math.floor(sequence / 65536)}.${sequence % 65536}.0`,
     identity: {
       token,
-      displayName: 'Oxee Desktop no-registry-needed',
+      displayName: 'Oxee Hermes no-registry-needed',
       appId: `com.nousresearch.hermes-channel-${token}`,
       appNamePascal: `HermesChannel${token}`,
       artifactNamePascal: `HermesChannel${token}`,

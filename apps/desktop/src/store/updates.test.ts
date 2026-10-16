@@ -585,7 +585,7 @@ describe('requestActiveUpdate', () => {
       ok: false,
       name: 'hermes-update',
       error: 'dashboard_update_managed_externally',
-      message: 'Oxee Desktop updates are managed outside this dashboard in containerized environments.',
+      message: 'Oxee Hermes updates are managed outside this dashboard in containerized environments.',
       update_command: ''
     })
 
@@ -1091,7 +1091,7 @@ describe('applyUpdates terminal state', () => {
       guiUpdated: false,
       manualRestart: true,
       sandboxBlocked: true,
-      message: 'Backend updated. Quit and reopen Oxee Desktop to finish.'
+      message: 'Backend updated. Quit and reopen Oxee Hermes to finish.'
     })
 
     const result = await applyUpdates()

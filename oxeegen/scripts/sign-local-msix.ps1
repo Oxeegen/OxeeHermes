@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-  Make a locally built Oxee Desktop MSIX installable on this machine.
+  Make a locally built Oxee Hermes MSIX installable on this machine.
 
 .DESCRIPTION
   Windows refuses unsigned packages that declare executable activations (the
-  oxee-desktop*.exe command aliases), so a local build must be signed. This:
+  oxee-hermes*.exe command aliases), so a local build must be signed. This:
     1. unpacks the MSIX, sets the publisher to the local test identity, repacks it
        (makeappx; no rebuild);
     2. creates — or reuses — a self-signed code-signing certificate for that
@@ -16,7 +16,7 @@
   at build time, see oxeegen/README.md).
 
 .EXAMPLE
-  powershell -ExecutionPolicy Bypass -File oxeegen\scripts\sign-local-msix.ps1 -Msix apps\desktop\release\OxeeDesktopBundled-0.0.0-win-x64.msix
+  powershell -ExecutionPolicy Bypass -File oxeegen\scripts\sign-local-msix.ps1 -Msix apps\desktop\release\OxeeHermesBundled-0.0.0-win-x64.msix
 #>
 param(
   [Parameter(Mandatory = $true)][string]$Msix,
@@ -70,7 +70,7 @@ $cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -eq $Publ
 if (-not $cert) {
   Write-Host "Creating a self-signed code-signing certificate for $Publisher (CurrentUser\My)"
   $cert = New-SelfSignedCertificate -Type Custom -Subject $Publisher -KeyUsage DigitalSignature `
-    -FriendlyName 'Oxee Desktop local build' -CertStoreLocation Cert:\CurrentUser\My `
+    -FriendlyName 'Oxee Hermes local build' -CertStoreLocation Cert:\CurrentUser\My `
     -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}') -NotAfter (Get-Date).AddYears(2)
 }
 

@@ -1,4 +1,4 @@
-# Déployer Oxee Desktop sur des VDI Windows
+# Déployer Oxee Hermes sur des VDI Windows
 
 Analyse du 16/10/2026 sur le commit `dc241b33`. « Déduction » signale ce qui n'a pas été prouvé par
 le code ou par un test.
@@ -27,10 +27,10 @@ le code ou par un test.
 | Cible de build | `win.target: ['msix']` uniquement (`electron-builder.config.cjs:237`, `scripts/bundles/desktop.py:99`) | Ajouter `nsis` |
 | Liste blanche des formats | `prepare-packaging-tools.mjs:62-65` (`dir`, `msix`, `zip`), `run-electron-builder.mjs:43-45, 170-174` | À ouvrir, et ajouter les outils NSIS aux outils préparés (`prepared-packaging.mjs`) |
 | Signature | `batch-sign-binaries.mjs:404-431` ne signe que `.msix` et l'exe produit | Le `setup.exe` et l'uninstaller sortiraient **non signés sans erreur** : à corriger |
-| Commandes `oxee-desktop` | Alias d'exécution MSIX (`before-build.mjs:143-182`) | Plus de commande : l'installeur doit ajouter `…\resources\agent-payload\bin` au PATH (machine, donc admin) |
+| Commandes `oxee-hermes` | Alias d'exécution MSIX (`before-build.mjs:143-182`) | Plus de commande : l'installeur doit ajouter `…\resources\agent-payload\bin` au PATH (machine, donc admin) |
 | Mises à jour | `app-installer` figé pour le bundled Windows (`write-build-stamp.mjs:251-256`) | Le contrôle répond « à jour ». Mais si `updates.desktop_feed_base_url` est renseigné, « Appliquer » installerait un MSIX à côté. Il faut le stamp `external` |
 | Touche Copilot | Extension MSIX (`before-build.mjs:84-120`) | Perdue (sans importance en VDI) |
-| Lien `oxee-desktop://` | Enregistré au lancement dans HKCU (`deep-link-protocol.ts`) | Fonctionne aussi hors MSIX |
+| Lien `oxee-hermes://` | Enregistré au lancement dans HKCU (`deep-link-protocol.ts`) | Fonctionne aussi hors MSIX |
 | Notifications | AUMID `com.oxeegen.*` (`main.ts:1858`) | Les raccourcis NSIS reprennent le même AUMID, donc ça fonctionne |
 | Payload Python | Copie utilisateur de python, node et npm dans `%LOCALAPPDATA%\hermes-oxeegen\tools` (`pm/user_facing.py`) | Même comportement (inutile hors MSIX mais sans risque) |
 
@@ -61,7 +61,7 @@ n'est encore câblé.
 | Emplacement | Contenu | Persistance |
 |---|---|---|
 | `%LOCALAPPDATA%\hermes-oxeegen` | Config, `.env` (région et clés Oxeegen), sessions, logs, copies d'outils, cache | Locale : persistée seulement avec un conteneur de profil (FSLogix) |
-| `%APPDATA%\Oxee Desktop-oxeegen` | État de l'app Electron, caches Chromium | Itinérante |
+| `%APPDATA%\Oxee Hermes-oxeegen` | État de l'app Electron, caches Chromium | Itinérante |
 | `%USERPROFILE%\.local\state\hermes\gateway-locks` | Verrous de passerelle | Profil |
 
 **Premier lancement** (déduction) :

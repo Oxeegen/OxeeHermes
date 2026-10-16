@@ -72,7 +72,7 @@ export class StoreStrategy implements UpdaterStrategy {
         await stop()
         this.deps.emitProgress({
           stage: 'restart',
-          message: 'Microsoft Store is installing the update. Oxee Desktop will reopen.',
+          message: 'Microsoft Store is installing the update. Oxee Hermes will reopen.',
           percent: null
         })
         const installed = await this.deps.run('install')

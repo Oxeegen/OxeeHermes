@@ -58,7 +58,7 @@ export async function resolveSourceInstallationBackend(
 
   return {
     kind: 'command',
-    label: `Oxee Desktop at ${root}`,
+    label: `Oxee Hermes at ${root}`,
     command,
     args: [...args],
     env,
@@ -93,7 +93,7 @@ export function createSourcePythonBackend(
 
   return {
     kind: 'python',
-    label: `Oxee Desktop source at ${root}`,
+    label: `Oxee Hermes source at ${root}`,
     command,
     args: ['-m', 'hermes_cli.main', ...args],
     // The backend runs in the user's workspace cwd, and the selected

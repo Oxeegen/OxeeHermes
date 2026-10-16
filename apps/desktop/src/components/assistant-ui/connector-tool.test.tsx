@@ -127,7 +127,7 @@ function Where() {
 }
 
 describe('ConnectorOffer named-account notice', () => {
-  it('says which name Oxee Desktop chose once the account connected, and Rename opens that account (by id) on the Connectors tab', () => {
+  it('says which name Oxee Hermes chose once the account connected, and Rename opens that account (by id) on the Connectors tab', () => {
     const request = {
       ...REQUEST,
       settled: true,
@@ -146,7 +146,7 @@ describe('ConnectorOffer named-account notice', () => {
       </I18nProvider>
     )
 
-    expect(screen.getAllByText('Oxee Desktop named this Gmail account work.')).toHaveLength(1)
+    expect(screen.getAllByText('Oxee Hermes named this Gmail account work.')).toHaveLength(1)
 
     fireEvent.click(screen.getByRole('button', { name: 'Rename' }))
 

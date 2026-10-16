@@ -36,7 +36,7 @@ vi.mock('@/hermes', async importOriginal => ({
 }))
 
 // Same word rule as ./rebrand.ts: the capitalised name in prose, not inside an identifier.
-const BARE_PRODUCT_NAME = /(?<![_/\\.\w])(?<!Oxeegen )Hermes\b(?![-_/\\]|\.\w)/
+const BARE_PRODUCT_NAME = /(?<![_/\\.\w])(?<!Oxee )Hermes\b(?![-_/\\]|\.\w)/
 
 function strings(value: unknown, path = ''): Array<[string, string]> {
   if (typeof value === 'string') {
@@ -68,7 +68,7 @@ describe('product name', () => {
     registerAppLocale('en', { translations: { 'common.save': 'Save to Hermes' } }, 'plugin:oxeegen-test')
 
     try {
-      expect(resolveTranslations('en').common.save).toBe('Save to Oxee Desktop')
+      expect(resolveTranslations('en').common.save).toBe('Save to Oxee Hermes')
     } finally {
       unregisterAppLocaleSource('plugin:oxeegen-test')
     }
@@ -92,7 +92,7 @@ describe('brand', () => {
   it('shows the wordmark over an open sidebar and the icon alone once collapsed', () => {
     const open = render(<OxeeTitlebarBrand sidebarOpen />)
 
-    expect(open.container.querySelector('img')?.getAttribute('src')).toMatch(/oxee-desktop-wordmark(-dark)?\.svg$/)
+    expect(open.container.querySelector('img')?.getAttribute('src')).toMatch(/oxee-hermes-wordmark(-dark)?\.svg$/)
     open.unmount()
 
     const collapsed = render(<OxeeTitlebarBrand sidebarOpen={false} />)
@@ -103,7 +103,7 @@ describe('brand', () => {
   it('greets an empty chat with the wordmark', () => {
     const { container } = render(<Intro />)
 
-    expect(container.querySelector('[data-oxee-brand="intro"]')?.getAttribute('src')).toMatch(/oxee-desktop-wordmark(-dark)?\.svg$/)
+    expect(container.querySelector('[data-oxee-brand="intro"]')?.getAttribute('src')).toMatch(/oxee-hermes-wordmark(-dark)?\.svg$/)
   })
 })
 

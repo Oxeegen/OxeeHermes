@@ -425,7 +425,7 @@ export function destroyStalledBody(res: StallWatchableBody, idleMs: number): voi
 
   const arm = (): void => {
     stop()
-    timer = setTimeout(() => res.destroy(new Error(`Oxee Desktop backend download stalled: no data for ${idleMs}ms`)), idleMs)
+    timer = setTimeout(() => res.destroy(new Error(`Oxee Hermes backend download stalled: no data for ${idleMs}ms`)), idleMs)
   }
 
   const watch = (): void => {

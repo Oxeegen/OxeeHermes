@@ -211,7 +211,7 @@ describe('ConnectionsRegistrySection', () => {
 
     await screen.findByText('Homelab')
     fireEvent.click(screen.getByText('Add connection'))
-    fireEvent.click(screen.getByRole('button', { name: 'Oxee Desktop Cloud' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Oxee Hermes Cloud' }))
     fireEvent.change(screen.getByPlaceholderText('Homelab'), { target: { value: 'Team cloud' } })
     fireEvent.change(screen.getByPlaceholderText('http://homelab.lan:9119'), {
       target: { value: 'https://team.hermes.cloud' }
@@ -246,7 +246,7 @@ describe('ConnectionsRegistrySection', () => {
     expect(save.mock.calls[0][0].token).toBeUndefined()
   })
 
-  it('saves a custom remote Oxee Desktop path for SSH connections', async () => {
+  it('saves a custom remote Oxee Hermes path for SSH connections', async () => {
     render(<ConnectionsRegistrySection />)
 
     await waitFor(() => expect(screen.getByText('Homelab')).toBeTruthy())
@@ -268,7 +268,7 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('clears a saved remote Oxee Desktop path back to auto-detect', async () => {
+  it('clears a saved remote Oxee Hermes path back to auto-detect', async () => {
     const sshRegistry: DesktopConnectionsRegistry = {
       ...registry,
       connections: [

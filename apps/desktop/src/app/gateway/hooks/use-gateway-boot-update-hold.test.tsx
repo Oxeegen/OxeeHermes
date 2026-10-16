@@ -153,7 +153,7 @@ it('a hold published after boot (a pool/profile backend) still reaches the block
   const progress = {
     error: null,
     fakeMode: false,
-    message: 'Oxee Desktop is ready',
+    message: 'Oxee Hermes is ready',
     phase: 'backend.ready',
     progress: 100,
     retryable: false,

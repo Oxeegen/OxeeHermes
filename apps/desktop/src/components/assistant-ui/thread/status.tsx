@@ -330,7 +330,7 @@ const TurnActivityRow: FC<TurnActivityRowProps> = ({ active, elapsed, hint, loca
       className={cn(!active && 'sr-only')}
       data-slot="aui_turn-activity"
       data-state={active ? 'active' : 'idle'}
-      label={active ? hint || 'Oxee Desktop is working' : ''}
+      label={active ? hint || 'Oxee Hermes is working' : ''}
     >
       {active && (
         <>

@@ -4,7 +4,7 @@ import { OxeegenConnectionForm } from './connection-form'
 import { useOxeegenStrings } from './strings'
 
 /**
- * The whole first-run provider setup of Oxee Desktop: region + API key.
+ * The whole first-run provider setup of Oxee Hermes: region + API key.
  * Replaces the upstream picker (Nous free tier, OAuth providers, API-key
  * catalog, local endpoints) inside the onboarding overlay.
  */

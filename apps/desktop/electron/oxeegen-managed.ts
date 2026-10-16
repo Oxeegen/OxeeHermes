@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 
 /**
- * Oxee Desktop ships its policy as a managed scope (hermes_cli/managed_scope.py):
+ * Oxee Hermes ships its policy as a managed scope (hermes_cli/managed_scope.py):
  * `oxeegen/managed/config.yaml` pins the provider, model, voice routing and the
  * provider allowlist, and the backend cannot change those keys. Point every
  * process this app spawns at it through HERMES_MANAGED_DIR.

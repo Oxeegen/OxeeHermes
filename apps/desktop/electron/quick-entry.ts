@@ -89,7 +89,7 @@ export function createQuickEntrySubmitRelay(options: {
           reconcilable.add(correlationId)
           resolve({
             code: 'timeout',
-            message: 'Oxee Desktop has not confirmed the prompt yet — it may still be delivered.',
+            message: 'Oxee Hermes has not confirmed the prompt yet — it may still be delivered.',
             ok: false,
             retryable: false
           })

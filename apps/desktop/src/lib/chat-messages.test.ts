@@ -581,7 +581,7 @@ describe('toChatMessages', () => {
 
   // Hermes closes a failed turn with an assistant-role row (agent/turn_failure_copy.py);
   // painted as the model's reply it read as the assistant refusing the request.
-  it('renders the failed-turn boundary as a Oxee Desktop notice, not a model reply', () => {
+  it('renders the failed-turn boundary as a Oxee Hermes notice, not a model reply', () => {
     const messages = toChatMessages([
       { role: 'user', content: 'do the thing', timestamp: 1 },
       { role: 'assistant', content: 'Your request was not processed.', display_kind: 'failed_turn', timestamp: 2 }

@@ -211,16 +211,16 @@ describe('buildToolView web-search query', () => {
   it('keeps the query separate from structured search results', () => {
     const view = buildToolView(
       part({
-        args: { query: 'Oxee Desktop tool calls' },
-        result: { web: [{ snippet: 'Desktop docs', title: 'Oxee Desktop docs', url: 'https://example.com/docs' }] },
+        args: { query: 'Oxee Hermes tool calls' },
+        result: { web: [{ snippet: 'Desktop docs', title: 'Oxee Hermes docs', url: 'https://example.com/docs' }] },
         toolName: 'web_search'
       }),
       ''
     )
 
-    expect(view.searchQuery).toBe('Oxee Desktop tool calls')
+    expect(view.searchQuery).toBe('Oxee Hermes tool calls')
     expect(view.searchHits).toEqual([
-      { snippet: 'Desktop docs', title: 'Oxee Desktop docs', url: 'https://example.com/docs' }
+      { snippet: 'Desktop docs', title: 'Oxee Hermes docs', url: 'https://example.com/docs' }
     ])
   })
 })

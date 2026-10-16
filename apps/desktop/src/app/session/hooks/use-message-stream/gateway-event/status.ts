@@ -279,7 +279,7 @@ export function handleStatusEvent(ctx: GatewayEventContext): boolean {
   }
 
   if (event.type === 'error') {
-    const errorMessage = payload?.message || 'Oxee Desktop reported an error'
+    const errorMessage = payload?.message || 'Oxee Hermes reported an error'
 
     // The gateway's own verdict when it sent one (agent init with no usable provider), else the
     // sentence: a blank install must reach onboarding, not a toast it cannot act on.

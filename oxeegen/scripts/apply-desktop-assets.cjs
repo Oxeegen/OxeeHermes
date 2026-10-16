@@ -31,8 +31,8 @@ const SVG_COPIES = [
   ['icon.svg', 'public/oxeegen-icon.svg'],
   ['icon-dark.svg', 'public/oxeegen-icon-dark.svg'],
   // Titlebar and empty-chat wordmark (src/oxeegen/brand.tsx)
-  ['wordmark/oxee-desktop-wordmark-light.svg', 'public/oxee-desktop-wordmark.svg'],
-  ['wordmark/oxee-desktop-wordmark-dark.svg', 'public/oxee-desktop-wordmark-dark.svg']
+  ['wordmark/oxee-hermes-wordmark-light.svg', 'public/oxee-hermes-wordmark.svg'],
+  ['wordmark/oxee-hermes-wordmark-dark.svg', 'public/oxee-hermes-wordmark-dark.svg']
 ]
 
 const svg = name => fs.readFileSync(path.join(SRC, name), 'utf8')

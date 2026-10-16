@@ -136,7 +136,7 @@ export function sendWhenGatewayOpen<T>(
     })
   })
 
-  return withTimeout(opened, timeoutMs, 'Oxee Desktop backend did not connect', () => stop()).then(send)
+  return withTimeout(opened, timeoutMs, 'Oxee Hermes backend did not connect', () => stop()).then(send)
 }
 
 // The route lookup inside requestGatewayForProfile has no deadline of its own, so the

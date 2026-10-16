@@ -21,7 +21,7 @@ async function bareProductNames(page: Page): Promise<string[]> {
   return page.evaluate(() => {
     const text = document.body.innerText
 
-    return [...text.matchAll(/(?<!Oxeegen )\bHermes\b.{0,40}/g)].map(m => m[0])
+    return [...text.matchAll(/(?<!Oxee )\bHermes\b.{0,40}/g)].map(m => m[0])
   })
 }
 
@@ -42,7 +42,7 @@ test.describe('Oxeegen branding', () => {
       await fixture.page.screenshot({ path: path.join(SHOTS, 'main-system-dark.png') })
 
       expect(await bareProductNames(fixture.page)).toEqual([])
-      expect(await fixture.page.title()).toContain('Oxee Desktop')
+      expect(await fixture.page.title()).toContain('Oxee Hermes')
     } finally {
       await fixture.cleanup()
     }

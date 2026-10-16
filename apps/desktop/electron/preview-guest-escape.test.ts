@@ -38,12 +38,12 @@ describe('previewGuestInputAction', () => {
 
 describe('hasClosePreviewFlag', () => {
   it('detects the flag in both forms', () => {
-    expect(hasClosePreviewFlag(['Oxee Desktop', '--close-preview'])).toBe(true)
-    expect(hasClosePreviewFlag(['Oxee Desktop', '--close-preview=1'])).toBe(true)
+    expect(hasClosePreviewFlag(['Oxee Hermes', '--close-preview'])).toBe(true)
+    expect(hasClosePreviewFlag(['Oxee Hermes', '--close-preview=1'])).toBe(true)
   })
 
   it('ignores other argv and empty argv', () => {
-    expect(hasClosePreviewFlag(['Oxee Desktop'])).toBe(false)
+    expect(hasClosePreviewFlag(['Oxee Hermes'])).toBe(false)
     expect(hasClosePreviewFlag(['--close'])).toBe(false)
     expect(hasClosePreviewFlag([])).toBe(false)
   })

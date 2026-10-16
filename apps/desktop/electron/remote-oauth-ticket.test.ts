@@ -128,10 +128,10 @@ describe('resolveRemoteOauthTicket', () => {
     expect(refused.message).not.toContain('timed out')
     // Ambiguous / unknown transport keeps the legacy one-liner.
     expect(ambiguous.message).toBe(
-      'Could not reach the remote Oxee Desktop gateway while refreshing its WebSocket ticket. Try reconnecting.'
+      'Could not reach the remote Oxee Hermes gateway while refreshing its WebSocket ticket. Try reconnecting.'
     )
     expect(http500.message).toBe(
-      'Could not reach the remote Oxee Desktop gateway while refreshing its WebSocket ticket. Try reconnecting.'
+      'Could not reach the remote Oxee Hermes gateway while refreshing its WebSocket ticket. Try reconnecting.'
     )
 
     // None of the transport classes may ever read as an auth failure.

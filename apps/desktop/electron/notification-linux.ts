@@ -252,7 +252,7 @@ export function createLinuxNotifications() {
               member: 'Notify',
               signature: 'susssasa{sv}i',
               body: [
-                'Oxee Desktop',
+                'Oxee Hermes',
                 0,
                 options.icon || '',
                 options.title,

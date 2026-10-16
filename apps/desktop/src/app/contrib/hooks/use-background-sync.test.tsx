@@ -210,7 +210,7 @@ describe('useBackgroundSync keeps a quiet working turn live', () => {
     render('default', 'local', async () => undefined, request)
     await act(async () => undefined)
     request.mockImplementation(async () => {
-      throw new Error('Oxee Desktop gateway unavailable')
+      throw new Error('Oxee Hermes gateway unavailable')
     })
 
     await act(async () => {

@@ -82,7 +82,7 @@ describe('resolveSshBinary', () => {
     expect(norm(resolveSshBinary({ platform: 'win32', env: ENV, fs }))).toBe(PROGRAM_FILES_GIT_SSH)
   })
 
-  it('prefers the Oxee Desktop PortableGit ssh over a system Git install, matching resolveGitBinary order', () => {
+  it('prefers the Oxee Hermes PortableGit ssh over a system Git install, matching resolveGitBinary order', () => {
     const { fs } = fakeFs([PORTABLE_GIT_SSH, PROGRAM_FILES_GIT_SSH])
 
     expect(norm(resolveSshBinary({ platform: 'win32', env: ENV, fs }))).toBe(PORTABLE_GIT_SSH)

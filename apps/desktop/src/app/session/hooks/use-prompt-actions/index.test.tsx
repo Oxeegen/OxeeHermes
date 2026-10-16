@@ -202,7 +202,7 @@ describe('durable submit acknowledgement', () => {
       submits.push(params!)
 
       if ('submission_id' in params!) {
-        throw Object.assign(new Error('invalid params for prompt.submit: submission_id: Extra inputs are not permitted — the client and the Oxee Desktop backend are out of sync (different versions)'), { code: 4000 })
+        throw Object.assign(new Error('invalid params for prompt.submit: submission_id: Extra inputs are not permitted — the client and the Oxee Hermes backend are out of sync (different versions)'), { code: 4000 })
       }
 
       return { status: 'streaming' } as never

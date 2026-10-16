@@ -26,7 +26,7 @@ function withStoredProfile(profile: string, run: (target: string) => void) {
 test('parses both --profile spellings and ignores a missing flag', () => {
   assert.equal(parseLaunchProfile(['Hermes.exe', '--profile', 'desktop']), 'desktop')
   assert.equal(parseLaunchProfile(['Hermes.exe', '--profile=desktop']), 'desktop')
-  assert.equal(parseLaunchProfile(['open', '-a', 'Oxee Desktop', '--args', '--profile', 'work']), 'work')
+  assert.equal(parseLaunchProfile(['open', '-a', 'Oxee Hermes', '--args', '--profile', 'work']), 'work')
   assert.equal(parseLaunchProfile(['Hermes.exe', '--local']), null)
   assert.equal(parseLaunchProfile(['Hermes.exe']), null)
 })

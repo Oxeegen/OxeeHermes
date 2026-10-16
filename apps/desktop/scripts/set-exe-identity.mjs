@@ -86,8 +86,8 @@ async function stampExeIdentity(
   const options = {
     icon,
     'version-string': {
-      ProductName: 'Oxee Desktop',
-      FileDescription: 'Oxee Desktop',
+      ProductName: 'Oxee Hermes',
+      FileDescription: 'Oxee Hermes',
       CompanyName: 'Oxeegen',
       // MIT: the upstream notice must travel with the software.
       LegalCopyright: 'Copyright (c) 2026 Oxeegen. Portions Copyright (c) 2025 Nous Research (MIT)'
@@ -108,7 +108,7 @@ async function stampExeIdentity(
     }
   }
 
-  console.log('[set-exe-identity] done — Oxee Desktop icon + identity stamped')
+  console.log('[set-exe-identity] done — Oxee Hermes icon + identity stamped')
 }
 
 export { RCEDIT_COMMIT_RETRY_DELAYS_MS, stampExeIdentity }

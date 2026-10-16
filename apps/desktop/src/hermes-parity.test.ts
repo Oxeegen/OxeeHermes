@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getToolsetModels, searchSkillsHub, testMcpServer } from './hermes'
 
-describe('Oxee Desktop REST parity helpers (hub / mcp / maintenance)', () => {
+describe('Oxee Hermes REST parity helpers (hub / mcp / maintenance)', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

@@ -115,7 +115,7 @@ export function challengeWindowOptions(session: Session): BrowserWindowConstruct
     width: 520,
     height: 720,
     show: false,
-    title: 'Oxee Desktop — quick check',
+    title: 'Oxee Hermes — quick check',
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,

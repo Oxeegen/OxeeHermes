@@ -54,7 +54,7 @@ const settle = ms => page.waitForTimeout(ms)
 const step = label => console.log(`[screens] ${label}`)
 
 const visibleBareNames = () =>
-  page.evaluate(() => [...document.body.innerText.matchAll(/(?<!Oxeegen )\bHermes\b.{0,40}/g)].map(m => m[0]))
+  page.evaluate(() => [...document.body.innerText.matchAll(/(?<!Oxee )\bHermes\b.{0,40}/g)].map(m => m[0]))
 
 try {
   await page.setViewportSize({ width: 1280, height: 800 })

@@ -631,7 +631,7 @@ export interface ObserveUpdaterHandoffDeps {
  */
 export function describeUpdaterHandoffFailure(outcome: Pick<UpdaterHandoffOutcome, 'message'>): string {
   const lead =
-    "The updater couldn't start, so nothing was changed and Oxee Desktop keeps running as before. " +
+    "The updater couldn't start, so nothing was changed and Oxee Hermes keeps running as before. " +
     'Try again; if it keeps failing, open the logs and send them to support.'
 
   return outcome.message ? `${lead}\n\nDetails: ${outcome.message}` : lead

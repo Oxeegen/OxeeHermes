@@ -4,16 +4,16 @@ import { rebrandText, rebrandTranslations } from './rebrand'
 
 describe('rebrandText', () => {
   it.each([
-    ['Ask Hermes…', 'Ask Oxee Desktop…'],
-    ['Update Hermes Desktop to continue.', 'Update Oxee Desktop to continue.'],
-    ['Welcome to Hermes Agent', 'Welcome to Oxee Desktop'],
-    ['HERMES AGENT', 'OXEE DESKTOP'],
-    ["Hermes's memory", "Oxee Desktop's memory"],
-    ['Hermes (default)', 'Oxee Desktop (default)'],
-    ['Restart Hermes.', 'Restart Oxee Desktop.'],
-    ['"Hermes"', '"Oxee Desktop"'],
-    ['auf dem Remote-Hermes statt', 'auf dem Remote-Oxee Desktop statt'],
-    ['This Hermes desktop app was installed by Nix.', 'This Oxee Desktop app was installed by Nix.']
+    ['Ask Hermes…', 'Ask Oxee Hermes…'],
+    ['Update Hermes Desktop to continue.', 'Update Oxee Hermes to continue.'],
+    ['Welcome to Hermes Agent', 'Welcome to Oxee Hermes'],
+    ['HERMES AGENT', 'OXEE HERMES'],
+    ["Hermes's memory", "Oxee Hermes's memory"],
+    ['Hermes (default)', 'Oxee Hermes (default)'],
+    ['Restart Hermes.', 'Restart Oxee Hermes.'],
+    ['"Hermes"', '"Oxee Hermes"'],
+    ['auf dem Remote-Hermes statt', 'auf dem Remote-Oxee Hermes statt'],
+    ['This Hermes desktop app was installed by Nix.', 'This Oxee Hermes app was installed by Nix.']
   ])('rewrites %j', (input, expected) => {
     expect(rebrandText(input)).toBe(expected)
   })
@@ -24,7 +24,7 @@ describe('rebrandText', () => {
     'HERMES_HOME',
     'hermes://open',
     'HermesBots roster',
-    'Oxee Desktop is ready',
+    'Oxee Hermes is ready',
     'X-Hermes-Session-Token',
     'Hermes-owned venv',
     '/Applications/Hermes.app',
@@ -52,9 +52,9 @@ describe('rebrandTranslations', () => {
       count: 3
     })
 
-    expect(out.title).toBe('Oxee Desktop')
-    expect(out.nested.greet('Ana')).toBe('Oxee Desktop says hi to Ana')
-    expect(out.list).toEqual(['Oxee Desktop', 'other'])
+    expect(out.title).toBe('Oxee Hermes')
+    expect(out.nested.greet('Ana')).toBe('Oxee Hermes says hi to Ana')
+    expect(out.list).toEqual(['Oxee Hermes', 'other'])
     expect(out.count).toBe(3)
   })
 })

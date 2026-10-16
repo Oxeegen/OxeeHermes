@@ -86,7 +86,7 @@ describe('alias identity survives the hosted handoff (#89131)', () => {
     expect(displayName(hostedRow, botRosterMeta(hostedRow, metaV1))).toBe('Moxie ✨')
   })
 
-  it('renders the sole Cloud-only default as the alias, not "Oxee Desktop"', () => {
+  it('renders the sole Cloud-only default as the alias, not "Oxee Hermes"', () => {
     // Global route is Cloud: the active gateway IS the Cloud connection and
     // profiles.list returns one unannotated rich `default` row.
     hostMock.state.connectionId.get.mockReturnValue('cloud-abc')
@@ -110,7 +110,7 @@ describe('alias identity survives the hosted handoff (#89131)', () => {
     expect(aliasIdentityFor(otherDefault)).toBeNull()
     expect(displayName(otherDefault, null)).toBe('Personal')
     // Local default while the ACTIVE gateway is local: untouched "Hermes".
-    expect(displayName({ name: 'default' }, null)).toBe('Oxee Desktop')
+    expect(displayName({ name: 'default' }, null)).toBe('Oxee Hermes')
   })
 
   it('fails closed when two aliases claim one backend row', () => {

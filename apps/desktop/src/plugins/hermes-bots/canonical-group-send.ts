@@ -48,7 +48,7 @@ async function compareAndSet(
   // downgrade a native write failure to Chromium's deferred localStorage.
   if (native) {
     // An older preload has no atomic op: refuse rather than fall back to a racy read-then-write.
-    if (!native.compareAndSet) {throw new Error('Group Send needs an updated Desktop; restart Oxee Desktop')}
+    if (!native.compareAndSet) {throw new Error('Group Send needs an updated Desktop; restart Oxee Hermes')}
 
     return native.compareAndSet(key, expected, entry)
   }

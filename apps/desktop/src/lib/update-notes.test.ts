@@ -5,11 +5,11 @@ import { extractReleaseHighlights, latestMergedPrTitles, updateNotesSource } fro
 describe('update notes', () => {
   it('summarizes a release as its highlight headlines, and falls back to the first bullet list', () => {
     const major = [
-      '# Oxee Desktop v0.22.0',
+      '# Oxee Hermes v0.22.0',
       '> The Threshold Release.',
       '## ✨ Highlights',
       '- **A first launch that sets itself up** — Open the desktop app ([#1](https://x/pull/1) — @a)',
-      '- **Connectors: Oxee Desktop works inside your apps** — The agent can now act.',
+      '- **Connectors: Oxee Hermes works inside your apps** — The agent can now act.',
       '- Plain [linked](https://x) bullet with `code` ([#2](https://x/pull/2))',
       '## ⚠️ Upgrade notes',
       '- **Python 3.14 is the runtime** for managed installs.'
@@ -25,7 +25,7 @@ describe('update notes', () => {
 
     expect(extractReleaseHighlights(major)).toEqual([
       'A first launch that sets itself up',
-      'Connectors: Oxee Desktop works inside your apps',
+      'Connectors: Oxee Hermes works inside your apps',
       'Plain linked bullet with code'
     ])
     expect(extractReleaseHighlights(patch)).toEqual(['Updates now follow tagged releases', 'Reasoning survives resume'])

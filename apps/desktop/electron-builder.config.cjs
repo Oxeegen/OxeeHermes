@@ -57,7 +57,7 @@ const channelRequest = channelBuildRequest()
 
 /** @typedef {import("app-builder-lib").Configuration} Configuration */
 
-const [owner, repo] = (process.env.GITHUB_REPOSITORY || 'oxeegen/oxee-desktop').split('/')
+const [owner, repo] = (process.env.GITHUB_REPOSITORY || 'oxeegen/oxee-hermes').split('/')
 if (!owner || !repo) {
   throw new Error(`invalid GITHUB_REPOSITORY ${process.env.GITHUB_REPOSITORY}`)
 }
@@ -78,7 +78,7 @@ module.exports = {
   protocols: [
     {
       name: `${displayName} Protocol`,
-      schemes: ['oxee-desktop']
+      schemes: ['oxee-hermes']
     }
   ],
   // A store build is archived, never served to a feed — prefix its artifact
@@ -204,7 +204,7 @@ module.exports = {
     // paste onto the stock removable-drive icon). It lives in packaging/ with
     // the background so the `files` whitelist keeps it out of the app bundle.
     icon: 'packaging/dmg-volume.icns',
-    title: 'Oxee Desktop Installer',
+    title: 'Oxee Hermes Installer',
     // A prebuilt .tiff on purpose, not a PNG plus a @2x sibling: dmg-builder's
     // PNG path runs `tiffutil -cathidpicheck`, which on macOS 26 rewrites both
     // frames to 72 dpi and silently drops the 2x representation. A .tiff is
@@ -281,8 +281,8 @@ module.exports = {
     category: 'Development',
     maintainer: 'Oxeegen',
     synopsis: light
-      ? 'Remote-only desktop client for Oxee Desktop.'
-      : 'Native desktop for Oxee Desktop.',
+      ? 'Remote-only desktop client for Oxee Hermes.'
+      : 'Native desktop for Oxee Hermes.',
     target: ['AppImage']
   }
 }

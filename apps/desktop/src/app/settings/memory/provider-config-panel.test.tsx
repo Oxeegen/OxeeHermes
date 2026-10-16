@@ -176,7 +176,7 @@ describe('ProviderConfigPanel', () => {
   })
 
   it('shows an inline error with retry when the load fails, then recovers', async () => {
-    getMemoryProviderConfig.mockRejectedValueOnce(new Error('Timed out connecting to Oxee Desktop backend'))
+    getMemoryProviderConfig.mockRejectedValueOnce(new Error('Timed out connecting to Oxee Hermes backend'))
 
     await renderPanel()
 

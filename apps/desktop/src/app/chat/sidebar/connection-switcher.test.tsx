@@ -37,7 +37,7 @@ vi.mock('@/i18n', () => ({
         connections: {
           noSearchResults: 'No gateways match your search.',
           searchPlaceholder: 'Search gateways…',
-          kindCloud: 'Oxee Desktop Cloud',
+          kindCloud: 'Oxee Hermes Cloud',
           kindLocal: 'Local',
           kindRemote: 'Remote gateway',
           kindSsh: 'SSH',

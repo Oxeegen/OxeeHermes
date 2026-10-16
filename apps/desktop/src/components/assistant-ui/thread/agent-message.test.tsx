@@ -9,9 +9,9 @@ import { AGENT_MESSAGE_RE } from './user-message'
 // all match; human prose that merely mentions the phrase does not.
 describe('agent message detection', () => {
   it('matches the Bot Mode delivery prefix with sender and body', () => {
-    const m = AGENT_MESSAGE_RE.exec('Message from 🤖 Oxee Desktop: hello there')
+    const m = AGENT_MESSAGE_RE.exec('Message from 🤖 Oxee Hermes: hello there')
 
-    expect(m?.[1]?.trim()).toBe('Oxee Desktop')
+    expect(m?.[1]?.trim()).toBe('Oxee Hermes')
     expect(m?.[4]).toBe('hello there')
   })
 
@@ -54,7 +54,7 @@ describe('agent message detection', () => {
   })
 
   it('does not match prose that merely contains the phrase', () => {
-    expect(AGENT_MESSAGE_RE.test('I got a Message from 🤖 Oxee Desktop: earlier')).toBe(false)
+    expect(AGENT_MESSAGE_RE.test('I got a Message from 🤖 Oxee Hermes: earlier')).toBe(false)
     expect(AGENT_MESSAGE_RE.test('can you explain what Message from means?')).toBe(false)
   })
 })

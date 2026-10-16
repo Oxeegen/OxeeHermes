@@ -24,7 +24,7 @@ test('parseSingletonLockPid reads the owning PID only for this hostname', () => 
 })
 
 test('parseProcStateField survives a comm containing spaces and parentheses', () => {
-  const stat = '4711 (Oxee Desktop (zygote)) Z 1 1 0 0 -1 4194560'
+  const stat = '4711 (Oxee Hermes (zygote)) Z 1 1 0 0 -1 4194560'
   assert.equal(parseProcStateField(stat), 'Z')
   assert.equal(parseProcStateField('4711 (node) S 1 1 0 0 -1'), 'S')
   assert.equal(parseProcStateField('no parentheses at all'), null)

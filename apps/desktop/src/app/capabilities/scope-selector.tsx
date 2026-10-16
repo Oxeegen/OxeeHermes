@@ -144,7 +144,7 @@ export function useCapabilityScope({
 
     return (profilesData?.profiles ?? []).map(p => ({
       key: p.name,
-      label: p.is_default ? 'Oxee Desktop (default)' : p.name,
+      label: p.is_default ? 'Oxee Hermes (default)' : p.name,
       value: p.name
     }))
   }, [multiConnection, profilesData, rosterData])

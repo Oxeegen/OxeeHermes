@@ -287,7 +287,7 @@ test('resolveInstallScript fails closed instead of executing an installed stale 
 test('installer log lines reach the emitter without escape sequences; \\r redraws keep the last frame', () => {
   assert.equal(cleanInstallerLogLine('\u001b[0;32m✓\u001b[0m Detected: macos (macos)'), '✓ Detected: macos (macos)')
   assert.equal(cleanInstallerLogLine('\u001b[2K\u001b[1GCloning repository…\u001b[K'), 'Cloning repository…')
-  assert.equal(cleanInstallerLogLine('\u001b]0;hermes\u0007Installing Oxee Desktop'), 'Installing Oxee Desktop')
+  assert.equal(cleanInstallerLogLine('\u001b]0;hermes\u0007Installing Oxee Hermes'), 'Installing Oxee Hermes')
   assert.equal(cleanInstallerLogLine('\r 12%\r 67%\r100%\u001b[K'), '100%')
   assert.equal(cleanInstallerLogLine('Resolving dependencies…\r'), 'Resolving dependencies…')
   // Only-escape frames drop entirely, so the caller emits nothing for them.

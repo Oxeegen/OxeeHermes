@@ -20,7 +20,7 @@ function summary(allowed: boolean): DesktopUninstallSummary {
     code_removal_allowed: allowed,
     native_removal_instructions: allowed
       ? null
-      : 'Quit the app and drag Oxee Desktop.app from /Applications to the Trash.',
+      : 'Quit the app and drag Oxee Hermes.app from /Applications to the Trash.',
     hermes_home: '/test/home',
     agent_installed: true,
     gui_installed: true,
@@ -65,7 +65,7 @@ it.each(['missing-policy', 'probe-failed', 'loading'] as const)(
       render(<UninstallSection />)
     })
     expect(getSummary).toHaveBeenCalledOnce()
-    expect(screen.queryByText('Uninstall Oxee Desktop')).toBeNull()
+    expect(screen.queryByText('Uninstall Oxee Hermes')).toBeNull()
     expect(screen.queryByRole('button', { name: /Uninstall/ })).toBeNull()
     expect(screen.queryByText('Danger zone')).toBeNull()
     expect(run).not.toHaveBeenCalled()

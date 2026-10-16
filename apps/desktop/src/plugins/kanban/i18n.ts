@@ -444,9 +444,9 @@ export const en: KanbanMessages = {
     blockedTitle: 'Task blocked — needs your input',
     blockLoopTitle: 'Task routed to triage — needs a decision',
     gaveUpTitle: 'Task stopped',
-    gaveUpBody: 'Oxee Desktop couldn’t finish this task. Open Kanban to see why and reassign it.',
-    crashedTitle: 'Task hit a problem — Oxee Desktop will retry it automatically',
-    timedOutTitle: 'Task took too long — Oxee Desktop will retry it automatically',
+    gaveUpBody: 'Oxee Hermes couldn’t finish this task. Open Kanban to see why and reassign it.',
+    crashedTitle: 'Task hit a problem — Oxee Hermes will retry it automatically',
+    timedOutTitle: 'Task took too long — Oxee Hermes will retry it automatically',
     openKanban: 'Open Kanban',
     artifacts: (n: number) => `${n} artifacts`
   }
@@ -671,9 +671,9 @@ const ja: KanbanMessages = {
     blockedTitle: 'タスクがブロック中 — 入力が必要です',
     blockLoopTitle: 'タスクをトリアージへ移動 — 判断が必要です',
     gaveUpTitle: 'タスクが停止しました',
-    gaveUpBody: 'Oxee Desktop はこのタスクを完了できませんでした。かんばんを開いて原因を確認し、再割り当てしてください。',
-    crashedTitle: 'タスクで問題が発生 — Oxee Desktop が自動で再試行します',
-    timedOutTitle: 'タスクに時間がかかりすぎました — Oxee Desktop が自動で再試行します',
+    gaveUpBody: 'Oxee Hermes はこのタスクを完了できませんでした。かんばんを開いて原因を確認し、再割り当てしてください。',
+    crashedTitle: 'タスクで問題が発生 — Oxee Hermes が自動で再試行します',
+    timedOutTitle: 'タスクに時間がかかりすぎました — Oxee Hermes が自動で再試行します',
     openKanban: 'かんばんを開く',
     artifacts: (n: number) => `成果物 ${n} 件`
   }
@@ -895,9 +895,9 @@ const zh: KanbanMessages = {
     blockedTitle: '任务受阻 — 需要你的输入',
     blockLoopTitle: '任务已转入分类 — 需要人工决定',
     gaveUpTitle: '任务已停止',
-    gaveUpBody: 'Oxee Desktop 无法完成这个任务。打开看板查看原因并重新分配。',
-    crashedTitle: '任务遇到问题 — Oxee Desktop 将自动重试',
-    timedOutTitle: '任务耗时过长 — Oxee Desktop 将自动重试',
+    gaveUpBody: 'Oxee Hermes 无法完成这个任务。打开看板查看原因并重新分配。',
+    crashedTitle: '任务遇到问题 — Oxee Hermes 将自动重试',
+    timedOutTitle: '任务耗时过长 — Oxee Hermes 将自动重试',
     openKanban: '打开看板',
     artifacts: (n: number) => `${n} 个产物`
   }
@@ -1119,9 +1119,9 @@ const zhHant: KanbanMessages = {
     blockedTitle: '任務受阻 — 需要你的輸入',
     blockLoopTitle: '任務已轉入分類 — 需要人工決定',
     gaveUpTitle: '任務已停止',
-    gaveUpBody: 'Oxee Desktop 無法完成這個任務。開啟看板查看原因並重新指派。',
-    crashedTitle: '任務遇到問題 — Oxee Desktop 將自動重試',
-    timedOutTitle: '任務耗時過長 — Oxee Desktop 將自動重試',
+    gaveUpBody: 'Oxee Hermes 無法完成這個任務。開啟看板查看原因並重新指派。',
+    crashedTitle: '任務遇到問題 — Oxee Hermes 將自動重試',
+    timedOutTitle: '任務耗時過長 — Oxee Hermes 將自動重試',
     openKanban: '開啟看板',
     artifacts: (n: number) => `${n} 個產物`
   }

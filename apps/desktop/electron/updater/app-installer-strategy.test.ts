@@ -70,7 +70,7 @@ describe('AppInstallerStrategy.apply', () => {
     const result = await new AppInstallerStrategy(deps).apply()
     expect(result.ok).toBe(true)
     expect(calls).toContain('quit')
-    expect(progress.some(message => message.includes('Reopen Oxee Desktop'))).toBe(true)
+    expect(progress.some(message => message.includes('Reopen Oxee Hermes'))).toBe(true)
   })
 
   it('uses the package registered source when no feed override is configured', async () => {

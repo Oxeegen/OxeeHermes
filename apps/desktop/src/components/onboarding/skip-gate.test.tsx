@@ -10,7 +10,7 @@ import { DesktopOnboardingOverlay } from '.'
 // The boot due check has run and no first-run onboarding is open.
 markOnboardingDecided()
 
-const HEADER = "Let's get you setup with Oxee Desktop"
+const HEADER = "Let's get you setup with Oxee Hermes"
 
 // Never answers: the readiness effect stays in flight, so each case is observed
 // on exactly the state it set up instead of racing a round to completion.

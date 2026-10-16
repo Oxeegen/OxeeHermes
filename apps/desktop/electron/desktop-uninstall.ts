@@ -196,7 +196,7 @@ function allowedUninstallModes(kind: InstallKind): string[] {
 function nativeRemovalInstructions(kind, platform, appPath = null) {
   if (kind === 'nix') {
     return (
-      'This Oxee Desktop app was installed by Nix. Uninstall it the same way you installed it: ' +
+      'This Oxee Hermes app was installed by Nix. Uninstall it the same way you installed it: ' +
       'remove hermes-agent from your flake or profile, then rebuild.'
     )
   }
@@ -204,7 +204,7 @@ function nativeRemovalInstructions(kind, platform, appPath = null) {
   if (kind === 'external') {
     // Deleting a package manager's files by hand leaves the package registered with missing files.
     return (
-      'Another package manager installed this Oxee Desktop app. ' +
+      'Another package manager installed this Oxee Hermes app. ' +
       'Uninstall it with that package manager, the same way you installed it.'
     )
   }
@@ -215,7 +215,7 @@ function nativeRemovalInstructions(kind, platform, appPath = null) {
 
   if (platform === 'darwin') {
     // Name the running bundle: channel builds ship under different .app names.
-    const bundle = appPath ? path.posix.basename(String(appPath)) : 'the Oxee Desktop app'
+    const bundle = appPath ? path.posix.basename(String(appPath)) : 'the Oxee Hermes app'
     const folder = appPath ? path.posix.dirname(String(appPath)) : 'Applications'
 
     return `Quit the app and drag ${bundle} from ${folder} to the Trash.`
@@ -229,7 +229,7 @@ function nativeRemovalInstructions(kind, platform, appPath = null) {
     return `Delete the app directory at ${appPath}.`
   }
 
-  return 'Delete the Oxee Desktop AppImage (or app directory) from wherever you saved it.'
+  return 'Delete the Oxee Hermes AppImage (or app directory) from wherever you saved it.'
 }
 
 /**

@@ -45,8 +45,8 @@ describe('requestPluginCatalogInstallFromDeepLink', () => {
   })
 
   it.each([
-    ['unknown', 'not in the Oxee Desktop plugin catalog'],
-    ['unavailable', 'Could not load the Oxee Desktop plugin catalog'],
+    ['unknown', 'not in the Oxee Hermes plugin catalog'],
+    ['unavailable', 'Could not load the Oxee Hermes plugin catalog'],
     ['invalid_name', 'missing or invalid']
   ] as const)('%s → error toast, no dialog, no git fallback', async (error, fragment) => {
     await requestPluginCatalogInstallFromDeepLink('not-a-real-plugin', lookupFor({ ok: false, error }))
@@ -82,7 +82,7 @@ describe('requestPluginCatalogInstallFromDeepLink', () => {
 
     expect(fetchSpy).toHaveBeenCalledWith(PLUGIN_CATALOG_URL, expect.anything())
     expect($pluginInstallRequest.get()).toBeNull()
-    expect($notifications.get()[0]?.message).toContain('\u201Cweather-evil\u201D is not in the Oxee Desktop plugin catalog')
+    expect($notifications.get()[0]?.message).toContain('\u201Cweather-evil\u201D is not in the Oxee Hermes plugin catalog')
 
     await requestPluginCatalogInstallFromDeepLink('weather', lookup)
 

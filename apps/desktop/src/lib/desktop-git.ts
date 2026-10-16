@@ -23,7 +23,7 @@ function desktopApi<T>(path: string, body?: Record<string, unknown>): Promise<T>
   const desktop = window.hermesDesktop
 
   if (!desktop) {
-    throw new Error('Oxee Desktop bridge is unavailable')
+    throw new Error('Oxee Hermes bridge is unavailable')
   }
 
   return hermesApi<T>(

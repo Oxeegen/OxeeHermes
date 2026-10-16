@@ -180,7 +180,7 @@ test('manual flag survives the round trip and defaults false', () => {
     ok: true,
     exit_code: 0,
     manual: true,
-    message: 'Update complete. Reopen Oxee Desktop to finish (it could not restart itself).',
+    message: 'Update complete. Reopen Oxee Hermes to finish (it could not restart itself).',
     branch: 'main',
     finished_at: Math.floor(Date.now() / 1000)
   })
@@ -212,7 +212,7 @@ test('an old manual result survives the freshness window but an old ordinary one
     ok: true,
     exit_code: 0,
     manual: true,
-    message: 'Update complete. Reopen Oxee Desktop to finish (it could not restart itself).',
+    message: 'Update complete. Reopen Oxee Hermes to finish (it could not restart itself).',
     branch: 'main',
     finished_at: stale
   })

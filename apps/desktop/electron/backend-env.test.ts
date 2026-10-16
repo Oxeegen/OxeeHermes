@@ -135,7 +135,7 @@ test('normalizeHermesHomeRoot expands a literal leading ~ against the home direc
   assert.equal(normalizeHermesHomeRoot('~', { pathModule: path.posix, homedir: '/Users/test' }), '/Users/test')
 })
 
-test('normalizeHermesHomeRoot maps profile homes back to the global Oxee Desktop root', () => {
+test('normalizeHermesHomeRoot maps profile homes back to the global Oxee Hermes root', () => {
   assert.equal(
     normalizeHermesHomeRoot('/Users/test/.hermes/profiles/oracle', { pathModule: path.posix }),
     '/Users/test/.hermes'

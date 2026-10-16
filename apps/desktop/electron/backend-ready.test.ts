@@ -356,7 +356,7 @@ test(
     child.stdout.emit('data', 'hermes: finishing an interrupted source update...\n')
     await assert.rejects(
       wait,
-      /Timed out waiting for Oxee Desktop backend port announcement .* while an update completion was in progress/
+      /Timed out waiting for Oxee Hermes backend port announcement .* while an update completion was in progress/
     )
   },
   6 * 60_000

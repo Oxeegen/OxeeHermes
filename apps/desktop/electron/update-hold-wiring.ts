@@ -199,7 +199,7 @@ export function registerUpdateHoldIpc(ipc: IpcMain, host: UpdateHoldIpcHost) {
     }
 
     const hold = host.currentHold()
-    host.log(`[updates] user quit Oxee Desktop from the update-hold screen${hold ? ` (hold ${hold.holdId})` : ''}`)
+    host.log(`[updates] user quit Oxee Hermes from the update-hold screen${hold ? ` (hold ${hold.holdId})` : ''}`)
     host.quit()
 
     return { ok: true }

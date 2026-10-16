@@ -26,7 +26,7 @@ vi.mock('@/hermes', () => ({
 
 const promptCopy = {
   title: 'Stay signed in to your sites',
-  body: 'Let Oxee Desktop browse with a snapshot of your default browser profile.',
+  body: 'Let Oxee Hermes browse with a snapshot of your default browser profile.',
   bulletSnapshot: 'Cookies and logins are copied into a managed snapshot.',
   bulletLiveProfile: 'Your live browser profile is never opened directly.',
   bulletLocal: 'Nothing leaves this computer.',

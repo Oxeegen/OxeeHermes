@@ -131,7 +131,7 @@ describe('Desktop MCP client callback lifecycle', () => {
     if (outcome === 'cancel') {
       await expect(action).rejects.toBeInstanceOf(McpOAuthCancelled)
     } else {
-      await expect(action).rejects.toThrow('Update the Oxee Desktop backend')
+      await expect(action).rejects.toThrow('Update the Oxee Hermes backend')
     }
 
     expect(openExternal).not.toHaveBeenCalled()

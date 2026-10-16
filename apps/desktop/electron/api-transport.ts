@@ -243,7 +243,7 @@ function htmlResponseError(url: string, statusCode: unknown, location?: unknown)
   }
 
   return new Error(
-    `Expected JSON from ${url} but got HTML (status ${statusCode}). The endpoint is likely missing on the Oxee Desktop backend.`
+    `Expected JSON from ${url} but got HTML (status ${statusCode}). The endpoint is likely missing on the Oxee Hermes backend.`
   )
 }
 

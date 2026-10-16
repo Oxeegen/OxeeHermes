@@ -170,7 +170,7 @@ const RUNTIME_COMMAND_TIMEOUT_MS = 30_000
 /** Ask an installation launcher for its interpreter; it owns ABI and store selection. */
 function launcherRuntimePython(backend: ResolvedTicketBackend & { root: string }): Promise<string> {
   return new Promise((resolve, reject) => {
-    const fail = (detail: string) => reject(new Error(`Gateway ticket bootstrap could not resolve the installed Oxee Desktop Python runtime: ${detail}`))
+    const fail = (detail: string) => reject(new Error(`Gateway ticket bootstrap could not resolve the installed Oxee Hermes Python runtime: ${detail}`))
 
     const child = spawn(backend.command, ['--print-runtime-command'], hiddenWindowsChildOptions({
       cwd: backend.root, env: { ...process.env, ...backend.env }, shell: Boolean(backend.shell), stdio: ['ignore', 'pipe', 'ignore']
@@ -231,7 +231,7 @@ export async function ticketRuntimeFor(backend: ResolvedTicketBackend): Promise<
     return { command: python, env: { ...backend.env, PYTHONPATH: backend.root } }
   }
 
-  throw new Error('Gateway ticket bootstrap requires the installed Oxee Desktop Python runtime')
+  throw new Error('Gateway ticket bootstrap requires the installed Oxee Hermes Python runtime')
 }
 
 export function createGatewayTicketResolver(resolveBackend: () => Promise<ResolvedTicketBackend>, cwd: () => string) {

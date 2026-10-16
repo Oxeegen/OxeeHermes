@@ -54,7 +54,7 @@ test('desktop stamp uses the admitted checkout rather than the dispatch SHA', ()
     assert.equal(stamp.updateMechanism, 'external')
     // Oxeegen: every stamp carries the isolation defaults (scripts/bundle-env.mjs).
     assert.deepEqual(stamp.bundleEnv, OXEEGEN_BUNDLE_ENV)
-    assert.deepEqual(stamp.runtime, { ...runtime, commands: { hermes: `bin/oxee-desktop-${feature.slice(0, 7)}` } })
+    assert.deepEqual(stamp.runtime, { ...runtime, commands: { hermes: `bin/oxee-hermes-${feature.slice(0, 7)}` } })
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(build, 'agent-payload/app/install-stamp.json'), 'utf8')), stamp)
     // A commit bundle records its baked defaults/clears as data so the smoke
     // driver can replay them without running the app.
@@ -72,8 +72,8 @@ test('desktop stamp uses the admitted checkout rather than the dispatch SHA', ()
     }
     assert.equal(run({ HERMES_BUILD_COMMIT: '', HERMES_PAYLOAD_TAG: 'v1.2.3', GITHUB_SHA: feature }).status, 0)
     assert.equal(JSON.parse(fs.readFileSync(out, 'utf8')).tag, 'v1.2.3')
-    // Oxeegen: published launchers are oxee-desktop* (product-identity.cjs cliName).
-    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).runtime, { ...runtime, commands: { hermes: 'bin/oxee-desktop' } })
+    // Oxeegen: published launchers are oxee-hermes* (product-identity.cjs cliName).
+    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).runtime, { ...runtime, commands: { hermes: 'bin/oxee-hermes' } })
   } finally {
     fs.rmSync(temp, { recursive: true, force: true })
   }

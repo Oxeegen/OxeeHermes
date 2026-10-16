@@ -1,7 +1,7 @@
 /**
  * Oxeegen fork contract — packaging, identity, isolation and assets. A failure
  * here after an upstream merge means the merge restored an upstream value that
- * would make Oxee Desktop share state with (or look like) the official Hermes.
+ * would make Oxee Hermes share state with (or look like) the official Hermes.
  * See oxeegen/README.md.
  */
 import assert from 'node:assert/strict'
@@ -44,9 +44,9 @@ afterEach(() => {
 
 describe('product identity', () => {
   test.each([
-    [undefined, 'Oxee Desktop Client', 'oxee-desktop'],
-    ['bundled', 'Oxee Desktop', 'oxee-desktop'],
-    ['light', 'Oxee Desktop Light', 'oxee-desktop-light']
+    [undefined, 'Oxee Hermes Client', 'oxee-hermes'],
+    ['bundled', 'Oxee Hermes', 'oxee-hermes'],
+    ['light', 'Oxee Hermes Light', 'oxee-hermes-light']
   ])('variant %s is named, identified and published as Oxeegen', (variant, display, cli) => {
     if (variant) {
       process.env.HERMES_DESKTOP_VARIANT = variant
@@ -66,7 +66,7 @@ describe('product identity', () => {
     const identity = freshCjs<Record<string, string>>('product-identity.cjs')
 
     assert.equal(config.extraMetadata.productName, identity.displayName)
-    assert.deepEqual(config.protocols[0].schemes, ['oxee-desktop'])
+    assert.deepEqual(config.protocols[0].schemes, ['oxee-hermes'])
     assert.equal(config.linux.maintainer, 'Oxeegen')
     assert.ok(
       config.publish.some((target: Record<string, string>) => target.owner === 'oxeegen' || target.provider === 'generic'),
@@ -87,7 +87,7 @@ describe('product identity', () => {
   test('the dev package name is not the official one either', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(DESKTOP, 'package.json'), 'utf8'))
 
-    assert.equal(pkg.productName, 'Oxee Desktop')
+    assert.equal(pkg.productName, 'Oxee Hermes')
   })
 })
 

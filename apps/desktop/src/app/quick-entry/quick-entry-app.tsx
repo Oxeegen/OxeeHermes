@@ -83,7 +83,7 @@ export function QuickEntryApp() {
 
     const offLateResult = api?.onLateResult(payload => {
       dispatch({
-        message: payload?.result?.message ?? 'Oxee Desktop could not deliver the prompt.',
+        message: payload?.result?.message ?? 'Oxee Hermes could not deliver the prompt.',
         ok: payload?.result?.ok === true,
         type: 'late-result'
       })
@@ -162,7 +162,7 @@ export function QuickEntryApp() {
                 dispatch({ type: 'dismiss' })
               }
             }}
-            placeholder={state.connected ? 'Ask Oxee Desktop…' : 'Not connected — open Oxee Desktop to reconnect'}
+            placeholder={state.connected ? 'Ask Oxee Hermes…' : 'Not connected — open Oxee Hermes to reconnect'}
             ref={inputRef}
             spellCheck={false}
             style={{

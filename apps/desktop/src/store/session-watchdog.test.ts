@@ -230,7 +230,7 @@ describe('live turn event silence', () => {
     publishSessionState('rt-down', partial('partial', { storedSessionId: 's-down' }))
 
     const request = backend(async () => {
-      throw new Error('Oxee Desktop gateway unavailable')
+      throw new Error('Oxee Hermes gateway unavailable')
     })
 
     noteSessionEvent('rt-down')

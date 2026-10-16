@@ -49,7 +49,7 @@ it('shows manual recovery guidance without claiming the help command installs an
 })
 
 it('titles a command-less backend refusal honestly and offers nothing to copy', async (): Promise<void> => {
-  const message: string = 'Oxee Desktop updates are managed outside this dashboard in containerized environments.'
+  const message: string = 'Oxee Hermes updates are managed outside this dashboard in containerized environments.'
   $updateOverlayTarget.set('backend')
   $updateOverlayOpen.set(true)
   $backendUpdateApply.set({
@@ -105,7 +105,7 @@ it('keeps the client title for a command-less client manual stage', async (): Pr
   $updateApply.set({
     applying: false,
     stage: 'manual',
-    message: 'Oxee Desktop will pick up the new version next time you launch it.',
+    message: 'Oxee Hermes will pick up the new version next time you launch it.',
     percent: null,
     error: null,
     command: null,

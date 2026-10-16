@@ -3,7 +3,7 @@ import { useTheme } from '@/themes'
 
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
 
-// Brand badge: the Oxee Desktop app icon, theme-aware — the gradient tile in
+// Brand badge: the Oxee Hermes app icon, theme-aware — the gradient tile in
 // light mode, the dark tile in dark mode. The SVG carries the rounded shape and
 // transparent corners, so no tile/rounding classes here. Sources live in
 // oxeegen/assets (copied by oxeegen/scripts/apply-desktop-assets.cjs); size via
