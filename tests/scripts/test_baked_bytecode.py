@@ -107,6 +107,6 @@ def test_launcher_keeps_user_cache_redirect_without_marker(tmp_path):
     try:
         ns["configure"](str(here), environ=environ)
         assert environ["PYTHONPYCACHEPREFIX"] == str(
-            tmp_path / "userhome" / ".cache" / "hermes-pycache")
+            tmp_path / "userhome" / ".cache" / "hermes-oxeegen-pycache")
     finally:
         sys.pycache_prefix = original

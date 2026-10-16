@@ -10,7 +10,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { resolve, join, relative, posix } from "path"
 import productIdentity from "../product-identity.cjs"
 import { channelBuildRequest } from "../../../scripts/msix-shared.mjs"
-import { validateBundleEnvironment } from "./bundle-env.mjs"
+import { oxeegenBundleEnvironment } from "./bundle-env.mjs"
 import { execFileSync } from "child_process"
 
 import { isMain } from "./utils.mjs"
@@ -223,7 +223,7 @@ export function buildStampPayload(stamp, env = process.env, platform = process.p
   // driver can predict the app's resolved Hermes home without reimplementing
   // the banner. Only commit bundles carry one, but the field is harmless when
   // absent elsewhere.
-  const bundleEnv = env.HERMES_BUNDLE_ENV_JSON ? validateBundleEnvironment(JSON.parse(env.HERMES_BUNDLE_ENV_JSON)) : undefined
+  const bundleEnv = oxeegenBundleEnvironment(env.HERMES_BUNDLE_ENV_JSON)
   const base = {
     schemaVersion: STAMP_SCHEMA_VERSION,
     commit: stamp.commit,

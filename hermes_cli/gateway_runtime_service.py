@@ -43,19 +43,19 @@ def service_suffix(home: Path) -> str:
     custom root can never resolve to the production ``hermes-gateway`` unit.
     """
     from hermes_constants import _get_platform_default_hermes_home
-    from hermes_cli.gateway import _profile_name_from_home
+    from hermes_cli.gateway import _profile_name_from_home, tagged_service_suffix
     default = _get_platform_default_hermes_home().resolve()
     home = home.resolve()
     if home == default:
-        return ""
+        return tagged_service_suffix("")
     root = default
     if not home.is_relative_to(default):
         root = home.parent.parent if home.parent.name == "profiles" else home
     if home != root:
         name = _profile_name_from_home(home, root)
         if name:
-            return name
-    return hashlib.sha256(str(home).encode()).hexdigest()[:8]
+            return tagged_service_suffix(name)
+    return tagged_service_suffix(hashlib.sha256(str(home).encode()).hexdigest()[:8])
 
 
 @dataclass(frozen=True)

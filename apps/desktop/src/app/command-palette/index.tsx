@@ -64,6 +64,8 @@ import { normalize } from '@/lib/text'
 import { rollbackSentence } from '@/lib/update-copy'
 import { cn } from '@/lib/utils'
 import { resolveVersionStatus } from '@/lib/version-status'
+import { NEW_BROWSER_TAB_ACTION, newBrowserTab } from '@/oxeegen/browser'
+import { isVisibleSettingsView } from '@/oxeegen/settings-policy'
 import { $repoWorktrees } from '@/store/coding-status'
 import {
   $commandPaletteOpen,
@@ -1008,6 +1010,14 @@ function CommandPaletteBody({ onExited }: { onExited: () => void }) {
             keywords: ['browser', 'web', 'url', 'address', 'open', 'toggle', 'close', 'navigate', 'internet', 'site'],
             label: cc.toggleBrowser,
             run: () => toggleBrowserTab()
+          },
+          {
+            action: NEW_BROWSER_TAB_ACTION,
+            icon: codiconIcon('add'),
+            id: 'cc-new-browser-tab',
+            keywords: ['browser', 'web', 'url', 'address', 'new', 'tab', 'blank', 'navigate', 'internet', 'site'],
+            label: t.keybinds.actions[NEW_BROWSER_TAB_ACTION] ?? 'New browser tab',
+            run: () => newBrowserTab()
           }
         ]
       },
@@ -1050,14 +1060,14 @@ function CommandPaletteBody({ onExited }: { onExited: () => void }) {
       {
         heading: cc.settings,
         items: [
-          ...SECTIONS.map(section => ({
+          ...SECTIONS.filter(section => isVisibleSettingsView(`config:${section.id}`)).map(section => ({
             icon: section.icon,
             id: `set-config-${section.id}`,
             keywords: ['settings', section.label, settingsSectionLabel(section)],
             label: settingsSectionLabel(section),
             run: go(settingsTab(`config:${section.id}`))
           })),
-          ...NON_CONFIG_SETTINGS.map(entry => ({
+          ...NON_CONFIG_SETTINGS.filter(entry => isVisibleSettingsView(entry.tab)).map(entry => ({
             icon: entry.icon,
             id: `set-${entry.tab}`,
             keywords: ['settings', ...(entry.keywords ?? [])],
@@ -1363,14 +1373,14 @@ function CommandPaletteBody({ onExited }: { onExited: () => void }) {
       {
         heading: cc.settings,
         items: [
-          ...SECTIONS.map(section => ({
+          ...SECTIONS.filter(section => isVisibleSettingsView(`config:${section.id}`)).map(section => ({
             icon: section.icon,
             id: `sp-config-${section.id}`,
             keywords: ['settings', section.label, settingsSectionLabel(section)],
             label: settingsSectionLabel(section),
             run: go(settingsTab(`config:${section.id}`))
           })),
-          ...NON_CONFIG_SETTINGS.map(entry => ({
+          ...NON_CONFIG_SETTINGS.filter(entry => isVisibleSettingsView(entry.tab)).map(entry => ({
             icon: entry.icon,
             id: `sp-${entry.tab}`,
             keywords: ['settings', ...(entry.keywords ?? [])],

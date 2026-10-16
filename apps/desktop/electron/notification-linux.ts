@@ -2,6 +2,8 @@ import { EventEmitter } from 'node:events'
 
 import { createClient, type Message, Variant } from 'dbus-native'
 
+import { PRODUCT_IDENTITY } from './product-identity'
+
 const SERVICE = 'org.freedesktop.Notifications'
 const PATH = '/org/freedesktop/Notifications'
 const DBUS = 'org.freedesktop.DBus'
@@ -258,7 +260,8 @@ export function createLinuxNotifications() {
                 actions,
                 {
                   urgency: new Variant('y', 1),
-                  'desktop-entry': new Variant('s', 'hermes'),
+                  // Oxeegen: the .desktop file electron-builder installs is named after the appId.
+                  'desktop-entry': new Variant('s', PRODUCT_IDENTITY.appId),
                   'suppress-sound': new Variant('b', options.silent)
                 },
                 -1

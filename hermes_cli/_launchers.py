@@ -979,7 +979,7 @@ def _is_bundled_payload(root: Path) -> bool:
 
 
 def _symlink_sealed_launchers(payload_bin) -> dict:
-    """Link ~/.local/bin/{hermes,hermes-agent,hermes-acp} at a sealed
+    """Link ~/.local/bin/oxeegen-{hermes,hermes-agent,hermes-acp} at a sealed
     bundle's own prebuilt shims (macOS only).
 
     Symlinks, not copies: the shims are signed as part of the app bundle,
@@ -1001,7 +1001,8 @@ def _symlink_sealed_launchers(payload_bin) -> dict:
             source = payload_bin / name
             if not source.is_file():
                 continue
-            target = link_dir / name
+            # Oxeegen: published as oxeegen-hermes*, never over an official `hermes`.
+            target = link_dir / f"oxeegen-{name}"
             if target.is_symlink():
                 current = os.readlink(target)
                 if current == str(source):

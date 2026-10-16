@@ -13,6 +13,7 @@ import { Check, ChevronDown, ChevronLeft, KeyRound, Loader2 } from '@/lib/icons'
 import { isSubmitEnter } from '@/lib/ime'
 import { isProviderSetupErrorMessage } from '@/lib/provider-setup-errors'
 import { cn } from '@/lib/utils'
+import { OxeegenOnboarding } from '@/oxeegen/oxeegen-onboarding'
 import { $desktopBoot, type DesktopBootState } from '@/store/boot'
 import { $freeTierStatus, FREE_TIER_MODEL, freeTierSetupFailure } from '@/store/free-tier'
 import { openFreeTierSignIn } from '@/store/free-tier-sign-in'
@@ -39,8 +40,7 @@ import {
 import { $onboardingSurfaces, onboardingSurfaceActive } from '@/store/onboarding-presence'
 import type { OAuthProvider } from '@/types/hermes'
 
-import { DocsLink, FlowPanel, Status } from './flow'
-import { FreeTierSetupNotice } from './free-tier-setup-notice'
+import { DocsLink, Status } from './flow'
 import { DecodedLabel } from './glyph'
 import {
   FeaturedProviderRow,
@@ -440,7 +440,8 @@ export function DesktopOnboardingOverlay({
             : 'translate-y-0 scale-100 opacity-100 blur-0'
         )}
       >
-        {showPicker || !ready ? <Header /> : null}
+        {/* Oxeegen: the form carries its own heading. */}
+        {!ready ? <Header /> : null}
         {onboarding.manual ? (
           <Button
             aria-label={t.common.close}
@@ -453,19 +454,9 @@ export function DesktopOnboardingOverlay({
           </Button>
         ) : null}
         <div className="grid gap-3 p-5">
-          {reason ? <ReasonNotice reason={reason} /> : null}
-          {ready && showPicker && !freeTierIntro && !onboarding.manual ? <FreeTierSetupNotice ctx={ctx} /> : null}
-          {ready ? (
-            freeTierIntro ? (
-              <FreeTierReadyPanel leaving={leaving} onDismiss={dismissFreeTierIntro} />
-            ) : showPicker ? (
-              <Picker ctx={ctx} />
-            ) : (
-              <FlowPanel ctx={ctx} flow={flow} leaving={leaving} onBegin={finalizeOnboarding} />
-            )
-          ) : (
-            <Preparing boot={boot} />
-          )}
+          {/* Oxeegen: region + API key replaces the provider picker, OAuth flows and free tier;
+              the form says what is missing, so the backend's technical reason stays out. */}
+          {ready ? <OxeegenOnboarding ctx={ctx} /> : <Preparing boot={boot} />}
         </div>
       </div>
     </div>

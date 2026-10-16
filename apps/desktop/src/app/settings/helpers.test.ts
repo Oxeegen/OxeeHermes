@@ -171,7 +171,8 @@ describe('settings helpers', () => {
     it('appends a hand-typed value not in the known list so it stays selected', () => {
       const opts = enumOptionsFor('tts.provider', 'my-custom-command-tts', config)
       expect(opts).toContain('my-custom-command-tts')
-      expect(opts).toContain('xai')
+      // Oxeegen: the TTS list is just `openai` (constants.ts).
+      expect(opts).toContain('openai')
     })
 
     it('surfaces user-defined command-type TTS providers (canonical providers nesting + legacy)', () => {
@@ -199,10 +200,11 @@ describe('settings helpers', () => {
       expect(opts).toContain('indextts2') // canonical providers.<name>
       expect(opts).toContain('typeless') // command block with no type: still surfaced
       expect(opts).toContain('mylegacy') // legacy top-level tts.<name>
-      expect(opts).toContain('elevenlabs') // built-ins preserved
+      expect(opts).toContain('openai') // built-ins preserved (Oxeegen: the list is just `openai`)
       expect(opts).not.toContain('noop') // type:command with no command is excluded
       // 'edge' appears once (the built-in), not duplicated by the config block
-      expect(opts!.filter(o => o === 'edge')).toHaveLength(1)
+      // Oxeegen: `edge` is not offered, and its non-command config block is not resurrected as one.
+      expect(opts).not.toContain('edge')
       // the 'providers' container itself is never offered as a provider name
       expect(opts).not.toContain('providers')
     })
@@ -263,8 +265,8 @@ describe('settings helpers', () => {
 
       const opts = enumOptionsFor('stt.provider', 'local', shadowing)
       expect(opts).not.toContain('local_command')
-      // deepinfra is a listed built-in: it appears once, as the native provider.
-      expect(opts!.filter(o => o === 'deepinfra')).toHaveLength(1)
+      // Oxeegen: deepinfra is a built-in name no longer offered — never resurrected as a command provider.
+      expect(opts).not.toContain('deepinfra')
       expect(opts).toContain('myasr')
     })
   })

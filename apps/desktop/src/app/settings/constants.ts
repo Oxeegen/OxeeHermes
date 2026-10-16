@@ -251,10 +251,11 @@ export const ENUM_OPTIONS: Record<string, string[]> = {
   'stt.local.model': ['tiny', 'base', 'small', 'medium', 'large-v3', 'turbo'],
   // Speech-to-text backends — kept in sync with BUILTIN_STT_PROVIDERS in
   // tools/transcription_common.py (local_command is auto-detected, not picked).
-  'stt.provider': ['local', 'groq', 'openai', 'mistral', 'xai', 'elevenlabs', 'deepinfra'],
+  // Oxeegen: voice runs on Oxeegen's OpenAI-compatible audio API (pinned by the managed scope).
+  'stt.provider': ['openai'],
   // How the desktop voice conversation is wired — tools/voice_live.py owns the
   // gpt-live branch (one full-duplex voice model delegating to Hermes).
-  'voice.voice_chat_mode': ['chained', 'gpt-live'],
+  'voice.voice_chat_mode': ['chained'],
   'voice.gpt_live.voice': [
     'marin',
     'cedar',
@@ -347,18 +348,7 @@ export const ENUM_OPTIONS: Record<string, string[]> = {
   // Text-to-speech backends — kept in sync with the built-in source of truth
   // (agent/tts_registry.py::_BUILTIN_NAMES / tools/tts_tool.py::
   // BUILTIN_TTS_PROVIDERS). 'xai' is Grok TTS.
-  'tts.provider': [
-    'edge',
-    'elevenlabs',
-    'openai',
-    'xai',
-    'minimax',
-    'mistral',
-    'gemini',
-    'neutts',
-    'kittentts',
-    'piper'
-  ],
+  'tts.provider': ['openai'],
   // STT model lists mirror STT_MODEL_CATALOG in tools/transcription_common.py.
   'stt.openai.model': ['whisper-1', 'gpt-4o-mini-transcribe', 'gpt-4o-transcribe', 'gpt-transcribe'],
   'stt.openai.streaming_model': [

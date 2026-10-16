@@ -411,6 +411,7 @@ import {
   withoutInteractiveOauthLogin
 } from './oauth-rest-request'
 import { wireOauthSessionResponse } from './oauth-session-response'
+import { oxeegenManagedDir } from './oxeegen-managed'
 import { listWindowsProcesses, reapPackageRootedProcesses } from './package-process-reap'
 import { createParentStartMarkerResolver } from './parent-process-identity'
 import { bundledPayload, installIdForRoot, type PayloadInfo, payloadPythonPath } from './payload-backend'
@@ -1217,6 +1218,16 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding')
 
 const SOURCE_REPO_ROOT = path.resolve(APP_ROOT, '../..')
 
+// Oxeegen: the managed scope (provider, model, voice routing, provider allowlist)
+// governs every backend and CLI this app spawns. See electron/oxeegen-managed.ts.
+{
+  const managedDir = oxeegenManagedDir([bundledPayload(process.resourcesPath)?.repoDir, SOURCE_REPO_ROOT])
+
+  if (managedDir) {
+    process.env.HERMES_MANAGED_DIR = managedDir
+  }
+}
+
 // Runtime identity comes only from the baked artifact stamp. Dev runs have none.
 if (INSTALL_STAMP) {
   console.log(
@@ -1825,7 +1836,7 @@ Menu.setApplicationMenu(null)
 // need this, so gate it on Windows. (Fixes: desktop approval/turn notifications
 // never firing on Windows.)
 if (IS_WINDOWS) {
-  app.setAppUserModelId(IDENTITY_APP_NAME ? PRODUCT_IDENTITY.appId : 'com.nousresearch.hermes')
+  app.setAppUserModelId(PRODUCT_IDENTITY.appId)
 }
 
 // Seed the native About panel with the best-known Hermes version. This is
@@ -17971,9 +17982,10 @@ ipcMain.handle('hermes:vscode-theme:search', async (_event, query) => searchMark
 // running app. Three delivery paths: macOS 'open-url',
 // Win/Linux running-app 'second-instance' (argv), Win/Linux cold-start argv.
 // ---------------------------------------------------------------------------
-const HERMES_PROTOCOL = DEV_SERVER ? 'hermes-dev' : 'hermes'
+// Oxeegen: its own scheme, so it never takes over (or receives) an official Hermes's hermes:// links.
+const HERMES_PROTOCOL = DEV_SERVER ? 'oxeegen-hermes-dev' : 'oxeegen-hermes'
 /** Schemes accepted when parsing inbound URLs (dev accepts both). */
-const DEEPLINK_SCHEMES = DEV_SERVER ? ['hermes-dev', 'hermes'] : ['hermes']
+const DEEPLINK_SCHEMES = DEV_SERVER ? ['oxeegen-hermes-dev', 'oxeegen-hermes'] : ['oxeegen-hermes']
 let _pendingDeepLink = null
 let _rendererReadyForDeepLink = false
 // Set by sendOpenUpdatesRequested() when the renderer cannot hear it yet.
@@ -18147,7 +18159,7 @@ if (!isPrimaryInstance) {
     // SSH-started sessions). Checked before deep links so a carried `hermes://`
     // URL still routes normally when no flag is present.
     if (hasClosePreviewFlag(argv)) {
-      handleDeepLink('hermes://close-preview')
+      handleDeepLink(`${HERMES_PROTOCOL}://close-preview`)
     }
 
     const url = _extractDeepLink(argv)

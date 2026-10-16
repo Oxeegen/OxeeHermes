@@ -2260,6 +2260,15 @@ def _home_owns_bare_service_name(home: Path) -> bool:
     return home in _native_service_homes() or home == _bare_unit_pinned_home()
 
 
+def tagged_service_suffix(suffix: str) -> str:
+    """Prefix a service suffix with the build's data-dir tag. A build with its own
+    ``HERMES_DATA_DIR_SUFFIX`` (Oxeegen's ``-oxeegen``) is a different product on the same host: its
+    native home must not claim the bare service names an official install owns, nor its profiles
+    collide with the official profiles' units. No suffix (stock builds): unchanged."""
+    tag = os.environ.get("HERMES_DATA_DIR_SUFFIX", "").strip(" -_")
+    return "-".join(part for part in (tag, suffix) if part)
+
+
 def _profile_suffix() -> str:
     """Service-name suffix for HERMES_HOME: "" for a home that owns the bare name, the profile name for
     ``<root>/profiles/<name>``, else a short hash of the path.
@@ -2283,9 +2292,9 @@ def _profile_suffix() -> str:
     from hermes_constants import get_default_hermes_root
     home = get_hermes_home().resolve()
     if _home_owns_bare_service_name(home):
-        return ""
+        return tagged_service_suffix("")
     name = _profile_name_from_home(home, get_default_hermes_root().resolve())
-    return name or hashlib.sha256(str(home).encode()).hexdigest()[:8]
+    return tagged_service_suffix(name or hashlib.sha256(str(home).encode()).hexdigest()[:8])
 
 
 def _current_profile_name() -> str:

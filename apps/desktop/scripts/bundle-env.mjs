@@ -48,3 +48,20 @@ export function environmentDefaultsBanner(raw) {
   // the bundle's imports), so the two must stay in lockstep — see the test.
   return `\nfor (const [key, value] of ${JSON.stringify(Object.entries(values))}) { if (value === null) process.env[key] = ''; else process.env[key] ??= value; }\n`
 }
+
+// Oxeegen: every build gets its own data home (~/.hermes-oxeegen, %LOCALAPPDATA%\hermes-oxeegen)
+// and userData, never the official Hermes's. The clears beat an inherited HERMES_HOME — the
+// official Windows installer writes one into the user environment. A request's own keys
+// (HERMES_BUNDLE_ENV_JSON) still override these per key.
+export const OXEEGEN_BUNDLE_ENV = Object.freeze({
+  HERMES_DATA_DIR_SUFFIX: '-oxeegen',
+  HERMES_HOME: null,
+  HERMES_SHARED_AUTH_DIR: null,
+  HERMES_DESKTOP_USER_DATA_DIR: null
+})
+
+/** The bundle environment a build bakes: Oxeegen isolation defaults under the request's keys.
+ * @param {string|undefined} json @returns {Record<string, string|null>} */
+export function oxeegenBundleEnvironment(json) {
+  return validateBundleEnvironment({ ...OXEEGEN_BUNDLE_ENV, ...(json ? JSON.parse(json) : {}) })
+}

@@ -135,7 +135,7 @@ def test_configure_defaults_pycache_prefix_to_localappdata(tmp_path, monkeypatch
     original = sys.pycache_prefix
     try:
         ns["configure"](str(tmp_path), environ=environ)
-        expected = os.path.join(str(tmp_path / "lad"), "hermes", "pycache")
+        expected = os.path.join(str(tmp_path / "lad"), "hermes-oxeegen", "pycache")
         assert environ["PYTHONPYCACHEPREFIX"] == expected
         # The env var alone cannot retro-activate; sys.pycache_prefix is
         # the live switch (the rust shim set it on the CHILD's environment).
@@ -146,14 +146,14 @@ def test_configure_defaults_pycache_prefix_to_localappdata(tmp_path, monkeypatch
 
 @pytest.mark.platforms("posix")
 def test_configure_defaults_pycache_prefix_to_home_cache(tmp_path, monkeypatch):
-    """POSIX counterpart of the LOCALAPPDATA default: ~/.cache/hermes-pycache
+    """POSIX counterpart of the LOCALAPPDATA default: ~/.cache/hermes-oxeegen-pycache
     (same configure() contract, per the wrapper's own platform split)."""
     ns = _load()
     environ = {"HOME": str(tmp_path / "home")}
     original = sys.pycache_prefix
     try:
         ns["configure"](str(tmp_path), environ=environ)
-        expected = os.path.join(str(tmp_path / "home"), ".cache", "hermes-pycache")
+        expected = os.path.join(str(tmp_path / "home"), ".cache", "hermes-oxeegen-pycache")
         assert environ["PYTHONPYCACHEPREFIX"] == expected
         assert str(sys.pycache_prefix) == expected
     finally:

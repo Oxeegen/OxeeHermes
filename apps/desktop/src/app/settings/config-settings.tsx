@@ -313,7 +313,8 @@ function ConfigSettingsInner({
 
   const showDesktopSettings = activeSectionId === 'advanced' && (subpage === undefined || subpage === 'desktop')
   const showAttachments = activeSectionId === 'chat' && (subpage === undefined || subpage === 'attachments')
-  const showSharedMetrics = activeSectionId === 'safety' && subpage === 'privacy'
+  // Oxeegen: no Nous metrics sharing, so no panel for it under Safety › Privacy.
+  const showSharedMetrics = false
 
   // Deep-link target from the command palette (?field=<key>): scroll the row
   // into view and flash it, then drop the param so it doesn't re-fire.

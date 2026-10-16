@@ -118,9 +118,9 @@ test('nonstable runtime pins userData before the app name can change', async ():
 })
 
 test.each([
-  [undefined, 'Oxeegen Hermes', 'hermes', 'latest', 'canary'],
-  ['bundled', 'Oxeegen Hermes Agent', 'hermes', 'latest', 'canary'],
-  ['light', 'Oxeegen Hermes Light', 'hermes-light', 'light', 'light-canary']
+  [undefined, 'Oxeegen Hermes', 'oxeegen-hermes', 'latest', 'canary'],
+  ['bundled', 'Oxeegen Hermes Agent', 'oxeegen-hermes', 'latest', 'canary'],
+  ['light', 'Oxeegen Hermes Light', 'oxeegen-hermes-light', 'light', 'light-canary']
 ] as const)(
   '%s separates stable, canary and independent commits',
   async (
@@ -209,7 +209,8 @@ test('packaging isolates boot metadata and executable names without renaming rel
 
   const stableIdentity: ProductIdentity = await identityForVariant('bundled')
   const stable: PackagingConfiguration = load()
-  assert.equal(stable.extraMetadata.productName || pkg.productName, pkg.productName)
+  // Oxeegen: productName is always the build's display name (isolated userData + single-instance lock).
+  assert.equal(stable.extraMetadata.productName, stableIdentity.displayName)
 
   process.env.HERMES_PAYLOAD_TAG = 'v0.28.0'
   process.env.HERMES_BUILD_COMMIT = ''
@@ -254,7 +255,8 @@ test('packaging isolates boot metadata and executable names without renaming rel
     const artifact: ReturnType<typeof appIdentity> = appIdentity(fileURLToPath(new URL('../', import.meta.url)))
     assert.equal(artifact.name, identity.artifactNamePascal)
     assert.equal(artifact.identity.msixAppIdWithOrg, config.msix.identityName)
-    assert.deepEqual(config.protocols[0].schemes, ['hermes'])
+    // Oxeegen: its own deep-link scheme, never an official Hermes's hermes://.
+    assert.deepEqual(config.protocols[0].schemes, ['oxeegen-hermes'])
 
     if (build !== 'canary') {
       assert.equal(config.publish, null)

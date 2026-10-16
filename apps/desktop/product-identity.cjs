@@ -55,7 +55,8 @@ const displayName = buildCommit
 
 const kebabSuffix = buildCommit ? `-${buildCommit}` : canary ? '-canary' : ''
 const pascalSuffix = buildCommit ? `Commit${buildCommit}` : canary ? 'Canary' : ''
-const cliName = `${light ? 'hermes-light' : 'hermes'}${kebabSuffix}`
+// Oxeegen: published CLI names (~/.local/bin links, MSIX aliases) never shadow an official `hermes`.
+const cliName = `${light ? 'oxeegen-hermes-light' : 'oxeegen-hermes'}${kebabSuffix}`
 if (store && (canary || buildCommit)) {
   throw new Error('Store packaging is only eligible for stable releases')
 }

@@ -29,6 +29,7 @@ import { actionAllowedInInput, comboFromEvent, IS_MAC, isEditableTarget, isFocus
 import { composerFocusKeysAllowed, isComposerFocusSoftCombo, typeToFocusChar } from '@/lib/keybinds/composer-focus-keys'
 import { registerBuiltinActionRunner } from '@/lib/keybinds/plugin-actions'
 import { stepReasoningEffort, writeSessionReasoningEffort } from '@/lib/reasoning-step'
+import { newBrowserTab } from '@/oxeegen/browser'
 import { openWorktreeDialog } from '@/store/coding-status'
 import { $commandPaletteOpen, openCommandPalettePage, toggleCommandPalette } from '@/store/command-palette'
 import { recordAction, recordDislike } from '@/store/desktop-metrics'
@@ -351,6 +352,7 @@ export function useKeybinds(deps: KeybindRuntimeDeps): void {
     'view.toggleTabStrip': () => void toggleTargetZoneTabStrip(),
     'view.showFiles': showFiles,
     'view.showBrowser': toggleBrowserTab,
+    'view.newBrowserTab': newBrowserTab,
     'view.toggleHud': () => toggleHud(hudTargetSessionId()),
     'view.showTerminal': () => toggleTerminalPane(),
     // Create first so the pane's open-effect ensure sees a non-empty set and

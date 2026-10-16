@@ -1,0 +1,5 @@
+name: oxeegen-provider
+kind: model-provider
+version: 1.0.0
+description: Oxeegen (EU and US regions)
+author: Oxeegen

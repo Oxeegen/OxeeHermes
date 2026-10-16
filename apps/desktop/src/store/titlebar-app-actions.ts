@@ -33,6 +33,7 @@ export const TITLEBAR_FIXED_TOOLS = {
   'flip-panes': { tier: 'advanced' },
   hud: { tier: 'advanced' },
   layout: {},
+  'new-browser': {},
   'right-sidebar': { tier: 'advanced' },
   settings: {},
   sidebar: {}
@@ -41,7 +42,7 @@ export const TITLEBAR_FIXED_TOOLS = {
 export type TitlebarFixedToolId = keyof typeof TITLEBAR_FIXED_TOOLS
 
 /** The app actions that follow `side`; the sidebar toggle is always left, flip and the right-sidebar toggle always right. */
-const APP_ACTION_IDS: readonly TitlebarFixedToolId[] = ['settings', 'layout', 'hud']
+const APP_ACTION_IDS: readonly TitlebarFixedToolId[] = ['new-browser', 'settings', 'layout', 'hud']
 const RIGHT_FIXED_IDS: readonly TitlebarFixedToolId[] = ['flip-panes', 'right-sidebar']
 
 /** Button counts for the two titlebar clusters, for the mode that is rendering them. */

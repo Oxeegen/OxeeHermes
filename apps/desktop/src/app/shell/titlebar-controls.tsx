@@ -15,6 +15,7 @@ import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { formatModifierToken } from '@/lib/keybinds/combo'
 import { cn } from '@/lib/utils'
+import { NEW_BROWSER_TAB_ACTION, newBrowserTab } from '@/oxeegen/browser'
 import { recordAction } from '@/store/desktop-metrics'
 import { toggleHud } from '@/store/hud'
 import { $interfaceMode, shownInMode, type Tiered } from '@/store/interface-mode'
@@ -211,6 +212,18 @@ export function TitlebarControls({ leftTools = [], tools = [], onOpenSettings }:
   // Static system tools — always pinned to the screen's right edge so the
   // left titlebar stays free for tabs (#107351).
   const systemTools: TitlebarTool[] = [
+    {
+      // Oxeegen: open a blank browser tab, address bar ready.
+      ...TITLEBAR_FIXED_TOOLS['new-browser'],
+      actionId: NEW_BROWSER_TAB_ACTION,
+      icon: <TitlebarIcon name="globe" />,
+      id: 'new-browser',
+      label: t.keybinds.actions[NEW_BROWSER_TAB_ACTION] ?? 'New browser tab',
+      onSelect: () => {
+        triggerHaptic('open')
+        newBrowserTab()
+      }
+    },
     {
       ...TITLEBAR_FIXED_TOOLS.settings,
       actionId: 'nav.settings',

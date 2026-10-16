@@ -1141,7 +1141,8 @@ export function ChatBar({
       disabled={disabled}
       foldVoice={foldVoice}
       hasComposerPayload={hasComposerPayload}
-      hideModelPill={guidedChat}
+      // Oxeegen: one imposed model — no model switcher (and no "Add provider" door behind it).
+      hideModelPill
       minimal={minimal || chatOnboardingSolo}
       onDictate={dictate}
       onQueue={queueDraft}

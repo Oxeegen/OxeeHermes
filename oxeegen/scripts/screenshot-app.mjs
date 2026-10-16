@@ -1,10 +1,15 @@
 // Launches the built desktop (apps/desktop/dist) against the isolated dev home
-// (.dev-home, see oxeegen/README.md) and saves branding screenshots to
-// oxeegen/screenshots/. Run from an activated shell:
+// (.dev-home, see oxeegen/README.md) and saves screenshots to
+// oxeegen/screenshots/: Oxeegen onboarding, main window (light/dark), a new
+// browser tab, Settings. Run from an activated shell:
 //
 //   export HERMES_HOME=$PWD/.dev-home HERMES_RUNTIME_DIR=$PWD/.dev-home/tools
 //   source ./activate && node oxeegen/scripts/screenshot-app.mjs
+//
+// Each run starts from a fresh desktop profile and a .env without Oxeegen
+// keys, so the onboarding shows; it then saves a placeholder key.
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -17,11 +22,14 @@ const SHOTS = path.join(ROOT, 'oxeegen/screenshots')
 
 fs.mkdirSync(SHOTS, { recursive: true })
 
-// A provider that resolves (so the app reaches the chat surface) but is never called.
-const config = path.join(HOME, 'config.yaml')
+const envFile = path.join(HOME, '.env')
 
-if (!fs.existsSync(config)) {
-  fs.writeFileSync(config, 'model:\n  provider: custom\n  base_url: http://127.0.0.1:9/v1\n  default: oxeegen-preview\n')
+if (fs.existsSync(envFile)) {
+  const kept = fs
+    .readFileSync(envFile, 'utf8')
+    .split('\n')
+    .filter(line => !/^OXEEGEN_/.test(line))
+  fs.writeFileSync(envFile, kept.join('\n'))
 }
 
 const env = { ...process.env }
@@ -33,7 +41,7 @@ const app = await electron.launch({
   env: {
     ...env,
     HERMES_HOME: HOME,
-    HERMES_DESKTOP_USER_DATA_DIR: path.join(HOME, 'desktop-user-data'),
+    HERMES_DESKTOP_USER_DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'oxeegen-ud-')),
     HERMES_DESKTOP_HERMES: path.join(ROOT, '.hermes/bin/hermes'),
     HERMES_DESKTOP_SKIP_PROTOCOL_REGISTRATION: '1',
     HERMES_DESKTOP_SKIP_QUIT_CONFIRM: '1'
@@ -42,33 +50,53 @@ const app = await electron.launch({
 
 const page = await app.firstWindow()
 const shot = name => page.screenshot({ path: path.join(SHOTS, `${name}.png`) })
+const settle = ms => page.waitForTimeout(ms)
+
+const visibleBareNames = () =>
+  page.evaluate(() => [...document.body.innerText.matchAll(/(?<!Oxeegen )\bHermes\b.{0,40}/g)].map(m => m[0]))
 
 try {
   await page.setViewportSize({ width: 1280, height: 800 })
-  await page.waitForSelector('[data-slot="composer-root"]', { timeout: 180_000 })
-  // The connecting veil sits over the shell until the backend answers.
-  await page.waitForFunction(() => !document.querySelector('[class*="z-(--z-connecting)"]'), undefined, {
+
+  // Onboarding: region + key. A gateway still running from a previous run keeps
+  // the key in memory and the app skips straight to the chat.
+  const onboarding = page.getByText(/Connect to Oxeegen|Connexion à Oxeegen/)
+  await onboarding.or(page.locator('[data-slot="composer-root"]')).first().waitFor({ timeout: 240_000 })
+
+  if (await onboarding.isVisible()) {
+    await settle(1500)
+    await shot('onboarding')
+    await page.getByText(/^(United States|États-Unis)$/).first().click()
+    await page.getByPlaceholder(/sk-/).fill('sk-oxeegen-preview')
+    await page.getByRole('button', { name: /^(Connect|Se connecter)$/ }).click()
+  }
+
+  await page.waitForSelector('[data-slot="composer-root"]', { timeout: 240_000 })
+  await page.waitForFunction(() => !document.querySelector('[class*="z-(--z-onboarding)"], [class*="z-(--z-connecting)"]'), undefined, {
     timeout: 240_000
   })
-  await page.waitForTimeout(3000)
+  await settle(3000)
   await shot('main-light')
 
   await page.emulateMedia({ colorScheme: 'dark' })
-  await page.waitForTimeout(1000)
+  await settle(1000)
   await shot('main-dark')
   await page.emulateMedia({ colorScheme: 'light' })
 
+  // A restored layout can reopen the browser and its first-use prompt.
+  await page.getByRole('button', { name: /^(Not now|Pas maintenant)$/ }).click({ timeout: 3000 }).catch(() => undefined)
+  await page.getByRole('button', { name: /New browser tab|Nouvel onglet de navigateur/ }).click()
+  await settle(2000)
+  await shot('browser-new-tab')
+  // First browser open asks about importing the browser profile.
+  await page.getByRole('button', { name: /^(Not now|Pas maintenant)$/ }).click({ timeout: 5000 }).catch(() => undefined)
+  await settle(800)
+
   await page.getByRole('button', { name: 'Open settings' }).click()
-  await page.waitForTimeout(1500)
+  await settle(2000)
   await shot('settings')
 
-  await page.getByText('About', { exact: true }).last().click()
-  await page.waitForTimeout(1500)
-  await shot('settings-about')
-
-  const bare = await page.evaluate(() =>
-    [...document.body.innerText.matchAll(/(?<!Oxeegen )\bHermes\b.{0,40}/g)].map(m => m[0])
-  )
+  const bare = await visibleBareNames()
   console.log(bare.length ? `bare "Hermes" still visible:\n  ${bare.join('\n  ')}` : 'no bare "Hermes" visible')
 } catch (error) {
   await shot('failure')

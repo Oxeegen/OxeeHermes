@@ -78,7 +78,7 @@ module.exports = {
   protocols: [
     {
       name: `${displayName} Protocol`,
-      schemes: ['hermes']
+      schemes: ['oxeegen-hermes']
     }
   ],
   // A store build is archived, never served to a feed — prefix its artifact
@@ -102,10 +102,11 @@ module.exports = {
       ],
   extraMetadata: {
     name: appNamePascal,
-    // Electron bootstrap reads package.productName before main.ts. Keep the
-    // shipped stable default, but isolate nonstable userData from first access.
-    // A stable-branded channel has no token and keeps stable's userData.
-    ...((channelRequest && token) || appNamePascal !== artifactNamePascal ? { productName: displayName } : {}),
+    // Electron bootstrap reads package.productName before main.ts, so it names
+    // userData, the single-instance lock and the keychain entry. Oxeegen: always
+    // the build's own display name, never the official "Hermes" (shared lock =
+    // our app exits into a running official one).
+    productName: displayName,
     desktopName: appId
   },
   directories: {

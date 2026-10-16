@@ -29,6 +29,9 @@ import {
 import { isEditableTarget } from '@/lib/keybinds/combo'
 import { typeToFocusChar } from '@/lib/keybinds/composer-focus-keys'
 import { cn } from '@/lib/utils'
+import { OxeegenSettings } from '@/oxeegen/oxeegen-settings'
+import { isVisibleSettingsView, OXEEGEN_SETTINGS_VIEW } from '@/oxeegen/settings-policy'
+import { oxeegenStrings } from '@/oxeegen/strings'
 import { $commandPaletteOpen, openCommandPalettePage } from '@/store/command-palette'
 import { confirm } from '@/store/confirm'
 import { $activeConnectionId } from '@/store/connections'
@@ -69,7 +72,10 @@ import { resolveSettingsSubpage, settingsSubpageIcon, settingsSubpages } from '.
 import type { SettingsPageProps, SettingsView as SettingsViewId } from './types'
 import { vaultOwnerKey, VaultSettings } from './vault-settings'
 
-const SETTINGS_VIEWS: readonly SettingsViewId[] = [
+// Oxeegen: hidden views leave the enum, so their deep links fall back to the Oxeegen page.
+const SETTINGS_VIEWS: readonly SettingsViewId[] = (
+  [
+  'oxeegen',
   ...SECTIONS.map(s => `config:${s.id}` as SettingsViewId),
   'providers',
   'gateway',
@@ -84,7 +90,8 @@ const SETTINGS_VIEWS: readonly SettingsViewId[] = [
   'sessions',
   'plugins',
   'about'
-]
+  ] as SettingsViewId[]
+).filter(isVisibleSettingsView)
 
 // Pages that take nothing but the resolved sub-page.
 const SUBPAGE_VIEWS: Partial<Record<SettingsViewId, ComponentType<{ subpage?: string }>>> = {
@@ -95,13 +102,14 @@ const SUBPAGE_VIEWS: Partial<Record<SettingsViewId, ComponentType<{ subpage?: st
   connections: GatewaySettings,
   gateway: GatewaySettings,
   keybinds: KeybindSettings,
-  notifications: NotificationsSettings
+  notifications: NotificationsSettings,
+  oxeegen: OxeegenSettings
 }
 
 export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: SettingsPageProps) {
   const scopeProfile = useStore($settingsScopeProfile)
   const activeConnectionId = useStore($activeConnectionId)
-  const { t } = useI18n()
+  const { locale, t } = useI18n()
   const navigate = useNavigate()
   const { hash, pathname, search } = useLocation()
 
@@ -117,7 +125,7 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
     }
   }, [navigate, search])
 
-  const [activeView] = useRouteEnumParam('tab', SETTINGS_VIEWS, 'config:model' as SettingsViewId)
+  const [activeView] = useRouteEnumParam('tab', SETTINGS_VIEWS, OXEEGEN_SETTINGS_VIEW as SettingsViewId)
 
   useEffect(() => recordFeatureUse(settingsArea(activeView)), [activeView])
   const params = new URLSearchParams(search)
@@ -245,6 +253,13 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
     () =>
       (
         [
+          {
+            active: activeView === 'oxeegen',
+            icon: KeyRound,
+            id: 'oxeegen',
+            label: oxeegenStrings(locale).navLabel,
+            onSelect: () => setActiveView('oxeegen')
+          },
           ...SECTIONS.flatMap(s => {
             const view = `config:${s.id}` as SettingsViewId
 
@@ -415,7 +430,9 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
             onSelect: () => setActiveView('about')
           }
         ] as OverlayNavGroup[]
-      ).map(group => {
+      )
+        .filter(group => isVisibleSettingsView(group.id))
+        .map(group => {
         const view = group.id as SettingsViewId
         const children = settingsSubpages(view)
 
@@ -442,6 +459,7 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
       subpage,
       t,
       setActiveView,
+      locale,
       openProviderView,
       openKeysView,
       openSettingsPage,

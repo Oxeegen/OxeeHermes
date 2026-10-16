@@ -182,6 +182,8 @@ export const KEYBIND_ACTIONS: readonly KeybindActionMeta[] = [
   // ⌘⇧L — "L" for location, the address-bar chord every browser shares. Plain
   // ⌘L is the terminal's selection shortcut, hence the shift.
   { id: 'view.showBrowser', category: 'view', defaults: ['mod+shift+l'] },
+  // Oxeegen: a fresh blank browser tab, address bar ready (src/oxeegen/browser.ts).
+  { id: 'view.newBrowserTab', category: 'view', defaults: ['mod+alt+l'] },
   // ⌘⇧H — "h" for HUD. Enters/leaves the chrome-free floating chat: the app
   // window steps aside and a composer + live reply float over whatever the
   // user is working in. Ships bound because the whole point is leaving the app

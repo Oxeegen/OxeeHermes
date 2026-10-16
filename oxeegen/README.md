@@ -97,12 +97,48 @@ et les `oxeegen-keep` sont dans des fichiers de test : les sauvegarder aussi.
 
 Installer les dépendances avec `npx -y npm@11.17.0 ci` à la racine : le projet refuse npm 11.10 à 11.16.
 
-## Pas encore traité (étape « configuration forcée »)
+## Configuration imposée (étape 2)
 
-- Fournisseurs et modèles imposés (Oxeegen US/EU), suppression du BYOM, de l'offre gratuite et de la facturation Nous.
-- Liens Nous restants (portail, docs, Discord), cartes « Nous » de l'onboarding.
-- Identifiants techniques partagés avec un vrai Hermes installé : protocole `hermes://`, CLI `hermes`,
-  `HERMES_HOME` par défaut (`~/.hermes`).
+**Source unique** : `plugins/model-providers/oxeegen/oxeegen.json` contient les régions, les URLs, les
+modèles et la voix. Les valeurs sont **provisoires**, à remplacer avant diffusion. Après chaque
+modification, lancer `python3 oxeegen/scripts/gen-managed.py`.
+
+| Pièce | Rôle | Où |
+|---|---|---|
+| Fournisseur `oxeegen` | Une région = un endpoint, lu dans `OXEEGEN_BASE_URL` (défaut : EU), clé `OXEEGEN_API_KEY` | `plugins/model-providers/oxeegen/` |
+| Scope managé | Verrouille le fournisseur et le modèle, aucun secours ni endpoint custom, `allowed_providers: [oxeegen]`, voix STT/TTS vers Oxeegen (`${OXEEGEN_API_KEY}` / `${OXEEGEN_BASE_URL}`), télémétrie Nous coupée | `oxeegen/managed/config.yaml` (généré) |
+| `model_catalog.allowed_providers` | Masque tout autre fournisseur dans les sélecteurs **et** refuse à l'exécution tout autre fournisseur (bascule `/model`, secours, `auto`) | `hermes_cli/provider_allowlist.py`, hooks dans `inventory.py` et `runtime_provider.py` |
+| `HERMES_MANAGED_DIR` | Électron le fixe au démarrage vers le scope managé du payload (ou du checkout en dev) | `apps/desktop/electron/oxeegen-managed.ts`, hook dans `main.ts` |
+| Onboarding | Formulaire région + clé (remplace le sélecteur, l'OAuth et l'offre gratuite Nous) | `apps/desktop/src/oxeegen/oxeegen-onboarding.tsx`, hook dans `components/onboarding/index.tsx` |
+| Paramètres → Oxeegen | Même formulaire. Masqués : Modèle, Avancé, Fournisseurs, Facturation, Gateways, Plugins, Mots de passe. Tout lien vers une section masquée retombe sur Oxeegen | `src/oxeegen/oxeegen-settings.tsx`, `settings-policy.ts`, hooks dans `settings/index.tsx`, `use-settings-search.ts`, `command-palette/index.tsx` |
+| Sélecteur de modèle | Masqué dans le composer (un seul modèle) | `app/chat/composer/index.tsx` |
+| Voix | Listes limitées à `openai` (routé vers Oxeegen), mode `chained` uniquement | `app/settings/constants.ts` |
+| Statistiques Nous | Bandeau « Share usage stats » et panneau Confidentialité supprimés | `store/shared-metrics.ts`, `settings/config-settings.tsx` |
+| Nouvel onglet navigateur | Bouton 🌐 dans la barre de titre, entrée de palette, `Ctrl/Cmd+Alt+L` | `src/oxeegen/browser.ts`, hooks dans `titlebar-controls.tsx`, `titlebar-app-actions.ts`, `keybinds/actions.ts`, `use-keybinds.ts`, `command-palette/index.tsx` |
+
+## Isolation vis-à-vis d'un Hermes officiel installé
+
+| Risque | Correctif |
+|---|---|
+| Même dossier de données (`~/.hermes`, `HERMES_HOME` hérité, registre Windows) | Environnement de bundle par défaut : suffixe `-oxeegen` (`~/.hermes-oxeegen`, `%LOCALAPPDATA%\hermes-oxeegen`), `HERMES_HOME`/`HERMES_SHARED_AUTH_DIR`/`HERMES_DESKTOP_USER_DATA_DIR` effacés (`scripts/bundle-env.mjs`) ; le lanceur CLI l'applique aussi (`scripts/build/launcher_wrapper.py`) |
+| Même userData Électron, même verrou d'instance unique, même trousseau | `productName` = nom affiché, toujours (`package.json`, `electron-builder.config.cjs`) |
+| Même AppUserModelID Windows | Toujours `com.oxeegen.*` (`main.ts`) |
+| Commande `hermes` publiée dans `~/.local/bin` / alias MSIX | `oxeegen-hermes*` (`product-identity.cjs`, `hermes_cli/_launchers.py`) |
+| Services gateway `hermes-gateway` / `ai.hermes.gateway` / `Hermes_Gateway` | Suffixe `-oxeegen` dérivé de `HERMES_DATA_DIR_SUFFIX` (`gateway.py` `tagged_service_suffix`, `gateway_runtime_service.py`) |
+| Schéma `hermes://` | `oxeegen-hermes://` (`electron-builder.config.cjs`, `main.ts`, `before-build.mjs`) |
+| `/etc/hermes` (scope managé système d'un Hermes officiel) | Ignoré : `HERMES_MANAGED_DIR` pointe toujours vers le scope Oxeegen |
+| Notes de version, flux de mise à jour | Dépôt `oxeegen/oxeegen-hermes` |
+
+Effet en développement : un build `npm run build` force `~/.hermes-oxeegen`. Pour les captures
+contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}'`.
+
+## Reste à faire
+
+- Vraies valeurs Oxeegen dans `oxeegen.json` (URLs, modèles, URL d'inscription).
+- Liens Nous restants : docs, Discord, Skills Hub et catalogue de plugins (hébergés par Nous), portail.
+- Retour OAuth des connecteurs (`hermes://connections/done` côté passerelle Nous) et boutons « Send to App » du web, qui émettent encore `hermes://`.
+- `hermes_cli/install_state.py` lit (sans écrire) les dossiers `~/.hermes*` pour l'offre d'essai ; le marqueur machine `Nous Research/.machine` reste partagé.
+- Certificat MSIX et URL R2 propres à Oxeegen (`CLOUDFLARE_R2_PUBLIC_URL`) au moment des builds de release.
 - Textes produits par le backend Python (messages d'erreur, descriptions de commandes) : seuls les
   packs de langue passent par la réécriture.
 - Fond du DMG macOS (`packaging/nous-dmg-2b.tiff`) et images Nous inutilisées dans `public/`.

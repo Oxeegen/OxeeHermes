@@ -61,6 +61,7 @@ describe('DesktopOnboardingOverlay first-run skip gate', () => {
 
     render(<DesktopOnboardingOverlay enabled profile="default" requestGateway={pendingGateway} />)
 
-    expect(screen.getByText(HEADER)).toBeTruthy()
+    // Oxeegen: the overlay opens on the Oxeegen region + key form.
+    expect(screen.getByText('Connect to Oxeegen')).toBeTruthy()
   })
 })

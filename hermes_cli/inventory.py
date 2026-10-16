@@ -53,6 +53,9 @@ def load_picker_context() -> ConfigContext:
     else:  # config.model can be a bare string in older configs
         current_model, current_provider, current_base_url = (str(model_cfg) if model_cfg else ""), "", ""
     excluded = cfg.get("model_catalog", {}).get("excluded_providers") or []
+    from hermes_cli.provider_allowlist import excluded_by_allowlist
+
+    excluded = [*(excluded if isinstance(excluded, list) else []), *excluded_by_allowlist(cfg)]
     return ConfigContext(
         current_provider=current_provider, current_model=current_model, current_base_url=current_base_url,
         user_providers=stringify_provider_map(cfg.get("providers")),

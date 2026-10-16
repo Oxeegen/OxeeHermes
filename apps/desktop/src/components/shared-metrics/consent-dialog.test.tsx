@@ -50,7 +50,8 @@ afterEach(() => {
 })
 
 describe('SharedMetricsConsentDialog', () => {
-  it('never blocks launch: an undecided profile becomes a composer offer, not a modal', async () => {
+  // Oxeegen: the metrics offer is disabled (store/shared-metrics.ts), so these upstream flows never run.
+  it.skip('never blocks launch: an undecided profile becomes a composer offer, not a modal', async () => {
     const undecided = backend({ enabled: false, send: false, decided: false })
 
     const { unmount } = render(
@@ -68,7 +69,7 @@ describe('SharedMetricsConsentDialog', () => {
     expect(sharedMetricsOfferPending($sharedMetricsConsent.get())).toBe(false)
   })
 
-  it('details decide nothing when closed and record a chosen answer as both opt-ins', async () => {
+  it.skip('details decide nothing when closed and record a chosen answer as both opt-ins', async () => {
     const { calls, requestGateway } = backend({ enabled: false, send: false, decided: false })
 
     render(<SharedMetricsConsentDialog enabled profile="havoc" requestGateway={requestGateway} />)

@@ -6,7 +6,8 @@
  * caller keeps the commit changelog when nothing comes back.
  */
 
-const REPOSITORY = 'NousResearch/hermes-agent'
+// Oxeegen: release notes come from the Oxeegen repository, never the official changelog.
+const REPOSITORY = 'oxeegen/oxeegen-hermes'
 const API = `https://api.github.com/repos/${REPOSITORY}`
 const SITE = `https://github.com/${REPOSITORY}`
 const MAX_ITEMS = 5

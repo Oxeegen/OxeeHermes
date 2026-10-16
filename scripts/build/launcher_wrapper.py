@@ -34,6 +34,7 @@ directly (tests/scripts/test_desktop_cli_wrapper.py).
 """
 
 import importlib
+import json
 import os
 import site
 import sys
@@ -69,9 +70,26 @@ def default_pycache_dir(environ):
     PYTHONPYCACHEPREFIX."""
     if sys.platform == "win32":
         base = environ.get("LOCALAPPDATA")
-        return os.path.join(base, "hermes", "pycache") if base else None
+        return os.path.join(base, "hermes-oxeegen", "pycache") if base else None
     base = environ.get("HOME")
-    return os.path.join(base, ".cache", "hermes-pycache") if base else None
+    return os.path.join(base, ".cache", "hermes-oxeegen-pycache") if base else None
+
+
+def apply_bundle_environment(repo_entry, environ):
+    """Apply the build's baked ``bundleEnv`` (install-stamp.json beside the payload repo) the way
+    the desktop's launch banner does: ``null`` clears the key, a string fills it only when absent.
+    Oxeegen bakes its own data-home suffix and clears an inherited ``HERMES_HOME``, so the CLI
+    lands in the same isolated home as the app instead of an official install's."""
+    try:
+        with open(os.path.join(repo_entry, "install-stamp.json"), encoding="utf-8") as handle:
+            values = json.load(handle).get("bundleEnv") or {}
+    except (OSError, ValueError):
+        return
+    for key, value in values.items():
+        if value is None:
+            environ[key] = ""
+        elif not environ.get(key):
+            environ[key] = value
 
 
 def configure(here, environ=None):
@@ -84,6 +102,7 @@ def configure(here, environ=None):
     environ.pop("PYTHONPATH", None)
     environ.pop("PYTHONHOME", None)
     repo_entry, site_entry = payload_sys_paths(here)
+    apply_bundle_environment(repo_entry, environ)
     # Repo snapshot first — its hermes_cli wins over anything stale in
     # site-packages (the sealed payload has no working editable install).
     sys.path.insert(0, repo_entry)

@@ -1,3 +1,4 @@
+import { OXEEGEN_BUNDLE_ENV } from './bundle-env.mjs'
 import assert from 'node:assert/strict'
 import { execFileSync, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -51,14 +52,15 @@ test('desktop stamp uses the admitted checkout rather than the dispatch SHA', ()
     assert.equal(stamp.source, 'commit-build')
     assert.equal(stamp.tag, null)
     assert.equal(stamp.updateMechanism, 'external')
-    assert.equal(stamp.bundleEnv, undefined)
-    assert.deepEqual(stamp.runtime, { ...runtime, commands: { hermes: `bin/hermes-${feature.slice(0, 7)}` } })
+    // Oxeegen: every stamp carries the isolation defaults (scripts/bundle-env.mjs).
+    assert.deepEqual(stamp.bundleEnv, OXEEGEN_BUNDLE_ENV)
+    assert.deepEqual(stamp.runtime, { ...runtime, commands: { hermes: `bin/oxeegen-hermes-${feature.slice(0, 7)}` } })
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(build, 'agent-payload/app/install-stamp.json'), 'utf8')), stamp)
     // A commit bundle records its baked defaults/clears as data so the smoke
     // driver can replay them without running the app.
     const bundleEnv = { HERMES_HOME: null, HERMES_DATA_DIR_SUFFIX: '-suffix', HERMES_PREVIEW_FULL_CONNECTORS: '1' }
     assert.equal(run({ HERMES_BUNDLE_ENV_JSON: JSON.stringify(bundleEnv) }).status, 0)
-    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).bundleEnv, bundleEnv)
+    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).bundleEnv, { ...OXEEGEN_BUNDLE_ENV, ...bundleEnv })
     const before = fs.readFileSync(out)
     git('checkout', '-q', 'main')
     assert.notEqual(run({}).status, 0)
@@ -70,7 +72,8 @@ test('desktop stamp uses the admitted checkout rather than the dispatch SHA', ()
     }
     assert.equal(run({ HERMES_BUILD_COMMIT: '', HERMES_PAYLOAD_TAG: 'v1.2.3', GITHUB_SHA: feature }).status, 0)
     assert.equal(JSON.parse(fs.readFileSync(out, 'utf8')).tag, 'v1.2.3')
-    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).runtime, runtime)
+    // Oxeegen: published launchers are oxeegen-hermes* (product-identity.cjs cliName).
+    assert.deepEqual(JSON.parse(fs.readFileSync(out, 'utf8')).runtime, { ...runtime, commands: { hermes: 'bin/oxeegen-hermes' } })
   } finally {
     fs.rmSync(temp, { recursive: true, force: true })
   }

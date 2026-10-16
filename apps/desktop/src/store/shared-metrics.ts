@@ -80,8 +80,10 @@ export const $sharedMetricsConsent = atom<SharedMetricsConsent | null>(null)
 export const $sharedMetricsDetailsOpen = atom(false)
 
 /** The first-run offer is still unanswered for the focused profile. */
-export function sharedMetricsOfferPending(consent: SharedMetricsConsent | null): boolean {
-  return consent?.decided === false
+// Oxeegen: never offer to share metrics with Nous (the managed scope also pins
+// telemetry.shared_metrics off), so the composer strip and its dialog never show.
+export function sharedMetricsOfferPending(_consent: SharedMetricsConsent | null): boolean {
+  return false
 }
 
 /** Record a first-run answer; the strip and the dialog retire as soon as the backend reports it decided. */

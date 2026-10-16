@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 import { isMain, workspaceTool } from '../../../scripts/build/frontend-common.mjs'
-import { environmentDefaultsBanner } from './bundle-env.mjs'
+import { environmentDefaultsBanner, oxeegenBundleEnvironment } from './bundle-env.mjs'
 
 const repoRoot = resolve(import.meta.dirname, '../../..')
 
@@ -39,7 +39,7 @@ export async function bundleElectronMain({ source, out, stamp, dev = false }) {
   const { build } = await import(pathToFileURL(workspaceTool(source, 'apps/desktop', 'esbuild')).href)
   // Defaults must run before bundled modules resolve paths or onboarding flags.
   // Dev bundles leave the environment alone so source-tree resolution keeps working.
-  const envBanner = dev ? '' : environmentDefaultsBanner(process.env.HERMES_BUNDLE_ENV_JSON || '{}')
+  const envBanner = dev ? '' : environmentDefaultsBanner(JSON.stringify(oxeegenBundleEnvironment(process.env.HERMES_BUNDLE_ENV_JSON)))
   const define = {}
   let bakedStamp = null
   if (!dev) {

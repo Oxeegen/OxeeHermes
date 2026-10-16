@@ -7,6 +7,7 @@ import { $pluginRecords } from '@/contrib/plugins-store'
 import { getEnvVars, getHermesConfigSchema } from '@/hermes'
 import { useI18n } from '@/i18n'
 import { type IconComponent, Monitor, Package, Settings2, Wrench } from '@/lib/icons'
+import { isVisibleSettingsView } from '@/oxeegen/settings-policy'
 import { $agentPlugins, isDesktopRelevantPlugin, loadAgentPlugins } from '@/store/agent-plugins'
 import { $gatewayState } from '@/store/session'
 
@@ -174,11 +175,14 @@ export function useSettingsSearchCatalog(enabled: boolean) {
     )
     .filter(entry => !settingLabels.has(`${entry.context}\u0000${entry.label}`))
 
+  // Oxeegen: hidden settings views never surface in search.
+  const visible = (entries: SettingsSearchEntry[]) => entries.filter(entry => isVisibleSettingsView(entry.target.view))
+
   return {
-    subpageEntries,
-    settingEntries,
-    configEntries,
-    credentialEntries,
-    pluginEntries
+    subpageEntries: visible(subpageEntries),
+    settingEntries: visible(settingEntries),
+    configEntries: visible(configEntries),
+    credentialEntries: visible(credentialEntries),
+    pluginEntries: isVisibleSettingsView('plugins') ? pluginEntries : []
   }
 }
