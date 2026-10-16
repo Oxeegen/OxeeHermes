@@ -30,6 +30,7 @@ PY_TESTS=(
   tests/scripts/test_desktop_cli_wrapper.py
   tests/scripts/test_baked_bytecode.py
   tests/scripts/test_oxeegen_bundle_payload.py
+  tests/scripts/test_oxeegen_bundle_icons.py
 )
 
 DESKTOP_TESTS=(

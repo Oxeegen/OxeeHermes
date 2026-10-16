@@ -51,6 +51,20 @@ def flavored_assets(icons: Path, assets: Path):
             path.write_bytes(data)
 
 
+def oxeegen_icons(desktop: Path, rendered: Path) -> None:
+    """Oxeegen: every flavor ships the committed Oxeegen icon set.
+
+    generate_icons.py redraws canary/commit builds from the Nous artwork (tinted
+    tile + SHA badge); put the committed files (oxeegen/scripts/apply-desktop-assets.cjs)
+    back over that render.
+    """
+    shutil.rmtree(rendered / "assets", ignore_errors=True)
+    shutil.copytree(desktop / "assets", rendered / "assets")
+    for name in ("packaging/dmg-volume.icns", "public/apple-touch-icon.png"):
+        (rendered / name).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(desktop / name, rendered / name)
+
+
 def release_version(_repo: Path, tag: str) -> str:
     from scripts.termux.deb_version import channel_for_tag
 
@@ -108,6 +122,7 @@ def _build_prepared(prepared, builder_args: list[str], variant: str | None) -> N
     icons = products / "icons"
     run([str(prepared.icon_python), "-I", str(repo / "scripts/generate_icons.py"),
          "--source", str(repo), "--out", str(icons)], cwd=repo, env=env)
+    oxeegen_icons(desktop, icons / "apps/desktop")
     if variant != "light":
         run([node, "scripts/build/tui.mjs", "--source", str(repo), "--out", str(products / "tui")], cwd=repo, env=env)
         run([node, "scripts/build/web.mjs", "--source", str(repo), "--icons", str(products / "icons"),
