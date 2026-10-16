@@ -1,90 +1,122 @@
 import type { DesktopTheme, DesktopThemeColors, DesktopThemeTypography } from '@/themes/types'
 
 /**
- * Oxeegen — the default desktop theme of Oxeegen Hermes.
+ * Oxeegen — the default desktop theme of Oxeegen Hermes (Fred's theme).
  *
- * Neutrals are the zinc ramp the other Oxee apps use (ink #18181B, paper
- * #F4F4F5); the accent family is Oxeegen violet. Light carries the brand seed
- * #5E4AF5 (white text on it clears AA); dark lifts it to #8E80FF so the accent
- * still reads on near-black chrome, with dark ink on top like upstream's dark
- * accents. Soft surfaces are violet tints of the same seeds.
+ * Mono re-seeded to the Oxeegen blurple #5E4AF5, exactly as the app's own
+ * accent picker computes it (`accentedTheme(mono, '#5e4af5')`), plus:
+ * - light: Claude-Desktop-matched surfaces (warm near-white panes, pure black
+ *   text, subtle grey borders), sampled by Fred;
+ * - dark: ring / midground / composer ring carry the accent seed (a retint
+ *   only moves the hue of Mono's zero-chroma greys, which left them grey), and
+ *   the working-session arc paints in the accent instead of the stylesheet's
+ *   dark-mode foreground (white) — that rule is in oxeegen.css, not in
+ *   `customCSS`, which would displace a user skin's own CSS.
+ *
+ * The retint is frozen as hexes because the engine that computes it (themes/
+ * context.tsx) imports the presets that import this file; theme.test.ts proves
+ * the hexes still equal what the engine computes, so an upstream change to Mono
+ * or to the retint shows up there.
  *
  * Built by a factory (called from themes/presets.ts) so this file never imports
- * presets at module scope — presets imports us, and a cycle would leave the
- * shared typography / terminal palettes uninitialised.
+ * presets at module scope — a cycle would leave typography uninitialised.
  */
-const light: DesktopThemeColors = {
+export const OXEEGEN_THEME_NAME = 'oxeegen'
+export const OXEEGEN_ACCENT = '#5e4af5'
+
+/** `accentedTheme(mono, OXEEGEN_ACCENT)`, light. */
+export const OXEEGEN_RETINT_LIGHT: DesktopThemeColors = {
   background: '#ffffff',
-  foreground: '#18181b',
-  card: '#fafafa',
-  cardForeground: '#18181b',
-  muted: '#f4f4f5',
-  mutedForeground: '#71717a',
+  foreground: '#161616',
+  card: '#ffffff',
+  cardForeground: '#161616',
+  muted: '#f9f9f9',
+  mutedForeground: '#737377',
   popover: '#ffffff',
-  popoverForeground: '#18181b',
+  popoverForeground: '#161616',
   primary: '#5e4af5',
   primaryForeground: '#ffffff',
-  secondary: '#ebe8fe',
-  secondaryForeground: '#18181b',
-  accent: '#f1effe',
-  accentForeground: '#18181b',
-  border: '#e4e4e7',
-  input: '#ffffff',
+  secondary: '#e5e8ff',
+  secondaryForeground: '#505050',
+  accent: '#e9ebff',
+  accentForeground: '#505050',
+  border: '#e1e1e3',
+  input: '#d5d5d8',
   ring: '#5e4af5',
   midground: '#5e4af5',
   midgroundForeground: '#ffffff',
-  composerRing: '#5e4af5',
-  destructive: '#dc2626',
+  destructive: '#b94a3a',
   destructiveForeground: '#ffffff',
-  sidebarBackground: '#fafafa',
-  sidebarBorder: '#e4e4e7',
-  userBubble: '#ece9fe',
-  userBubbleBorder: '#e4e4e7'
+  sidebarBackground: '#f5f5f5',
+  sidebarBorder: '#e1e1e3',
+  userBubble: '#e9ebff',
+  userBubbleBorder: '#e1e1e3'
+}
+
+/** `accentedTheme(mono, OXEEGEN_ACCENT)`, dark. */
+export const OXEEGEN_RETINT_DARK: DesktopThemeColors = {
+  background: '#0e0e0e',
+  foreground: '#eaeaea',
+  card: '#141414',
+  cardForeground: '#eaeaea',
+  muted: '#1e1e1e',
+  mutedForeground: '#808080',
+  popover: '#181818',
+  popoverForeground: '#eaeaea',
+  primary: '#6d65ff',
+  primaryForeground: '#161616',
+  secondary: '#191a2a',
+  secondaryForeground: '#c8c8c8',
+  accent: '#171826',
+  accentForeground: '#d8d8d8',
+  border: '#2a2a2a',
+  input: '#2a2a2a',
+  ring: '#9a9a9a',
+  midground: '#9a9a9a',
+  midgroundForeground: '#161616',
+  destructive: '#a84040',
+  destructiveForeground: '#fef2f2',
+  sidebarBackground: '#0a0a0a',
+  sidebarBorder: '#202020',
+  userBubble: '#1d1e2c',
+  userBubbleBorder: '#363636'
+}
+
+const light: DesktopThemeColors = {
+  ...OXEEGEN_RETINT_LIGHT,
+  foreground: '#000000',
+  cardForeground: '#000000',
+  popoverForeground: '#000000',
+  background: '#fcfcfb',
+  card: '#fcfcfb',
+  popover: '#ffffff',
+  muted: '#f2f1ef',
+  mutedForeground: '#646464',
+  border: '#e3e3e2',
+  input: '#fcfcfb',
+  sidebarBackground: '#fbfbf9',
+  sidebarBorder: '#e3e3e2',
+  userBubbleBorder: '#e3e3e2'
 }
 
 const dark: DesktopThemeColors = {
-  background: '#18181b',
-  foreground: '#f4f4f5',
-  card: '#111113',
-  cardForeground: '#f4f4f5',
-  muted: '#232327',
-  mutedForeground: '#a1a1aa',
-  popover: '#1f1f23',
-  popoverForeground: '#f4f4f5',
-  primary: '#8e80ff',
-  primaryForeground: '#121214',
-  secondary: '#2a2552',
-  secondaryForeground: '#f4f4f5',
-  accent: '#231f3f',
-  accentForeground: '#f4f4f5',
-  border: '#2e2e33',
-  input: '#18181b',
-  ring: '#8e80ff',
-  midground: '#8e80ff',
-  midgroundForeground: '#121214',
-  composerRing: '#8e80ff',
-  destructive: '#f87171',
-  destructiveForeground: '#121214',
-  sidebarBackground: '#111113',
-  sidebarBorder: '#2e2e33',
-  userBubble: '#251f4d',
-  userBubbleBorder: '#2e2e33'
+  ...OXEEGEN_RETINT_DARK,
+  ring: OXEEGEN_RETINT_DARK.primary,
+  midground: OXEEGEN_RETINT_DARK.primary,
+  composerRing: OXEEGEN_RETINT_DARK.primary
 }
 
-export const OXEEGEN_THEME_NAME = 'oxeegen'
-
-export function createOxeegenTheme(base: DesktopTheme, typography: DesktopThemeTypography): DesktopTheme {
+export function createOxeegenTheme(mono: DesktopTheme, typography: DesktopThemeTypography): DesktopTheme {
   return {
+    ...mono,
     name: OXEEGEN_THEME_NAME,
     label: 'Oxeegen',
-    description: 'Oxeegen violet on zinc neutrals',
+    description: 'Mono with the Oxeegen blurple accent',
     colors: light,
     darkColors: dark,
     typography: {
       fontSans: `Geist, ${typography.fontSans}`,
       fontMono: typography.fontMono
-    },
-    terminal: base.terminal,
-    darkTerminal: base.darkTerminal
+    }
   }
 }

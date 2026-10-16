@@ -104,6 +104,20 @@ try {
   await shot('main-dark')
   await page.emulateMedia({ colorScheme: 'light' })
 
+  // File browser (Material icons). Opens only when a workspace is set.
+  const showFiles = page.getByRole('button', { name: /^(Show right sidebar|Afficher la barre latérale droite|Toggle file browser|Basculer l'explorateur de fichiers)$/ })
+  if (await showFiles.first().isVisible().catch(() => false)) {
+    await showFiles.first().click()
+    await settle(2500)
+    await shot('files-light')
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await settle(1000)
+    await shot('files-dark')
+    await page.emulateMedia({ colorScheme: 'light' })
+  } else {
+    step('no file browser toggle (no workspace?)')
+  }
+
   // A restored layout can reopen the browser and its first-use prompt.
   await page.getByRole('button', { name: /^(Not now|Pas maintenant)$/ }).click({ timeout: 3000 }).catch(() => undefined)
   await page.getByRole('button', { name: /New browser tab|Nouvel onglet de navigateur/ }).click()

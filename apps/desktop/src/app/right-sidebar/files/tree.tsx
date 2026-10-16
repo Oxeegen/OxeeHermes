@@ -8,6 +8,7 @@ import { Codicon } from '@/components/ui/codicon'
 import { markRightPanePerf } from '@/debug/right-pane-events'
 import { useResizeObserver } from '@/hooks/use-resize-observer'
 import { cn } from '@/lib/utils'
+import { FileIcon } from '@/oxeegen/file-icons/file-icon'
 import { type RepoChangeKind, repoChangeKindForPath } from '@/store/coding-status'
 import { $renamingPath, beginInlineRename } from '@/store/file-actions'
 import { $revealInTreeRequest } from '@/store/layout'
@@ -370,9 +371,9 @@ function ProjectTreeRow({
         ) : isErrorPlaceholder ? (
           <Codicon name="warning" size="0.75rem" />
         ) : isFolder ? (
-          <Codicon name={node.isOpen ? 'folder-opened' : 'folder'} size="0.875rem" />
+          <FileIcon kind="folder" name={node.data.name} open={node.isOpen} />
         ) : (
-          <Codicon name="file" size="0.875rem" />
+          <FileIcon kind="file" name={node.data.name} />
         )}
       </span>
       {editing ? (

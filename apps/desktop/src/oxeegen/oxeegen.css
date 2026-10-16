@@ -10,3 +10,10 @@
   font-display: swap;
   src: url('./fonts/Geist-Variable.woff2') format('woff2-variations');
 }
+
+/* Oxeegen theme (Fred's): dark mode paints the working-session arc in the
+   accent. styles.css uses --dt-foreground there, white on a Mono base. The
+   prefix match keeps the rule on an accent retint of the theme. */
+:root.dark[data-hermes-theme^='oxeegen'] .arc-border {
+  --arc-c1: var(--dt-midground);
+}

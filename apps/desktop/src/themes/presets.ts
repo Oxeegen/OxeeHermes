@@ -443,7 +443,7 @@ export const slateTheme: DesktopTheme = {
   }
 }
 
-export const oxeegenTheme = createOxeegenTheme(nousTheme, DEFAULT_TYPOGRAPHY)
+export const oxeegenTheme = createOxeegenTheme(monoTheme, DEFAULT_TYPOGRAPHY)
 
 export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
   [OXEEGEN_THEME_NAME]: oxeegenTheme,
