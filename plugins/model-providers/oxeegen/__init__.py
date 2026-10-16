@@ -78,7 +78,19 @@ register_provider(ProviderProfile(
     # another region's key when the active one is missing, and send it to the wrong endpoint.
     env_vars=(_CONFIG["api_key_env"], _CONFIG["base_url_env"]),
     base_url=_REGIONS[_CONFIG["default_region"]]["base_url"],
-    fallback_models=(_CONFIG["models"]["main"],),
+    # The picker offers the chat models from oxeegen.json, not the endpoint's /models catalog,
+    # which also lists embeddings, reranker, OCR and voice models that cannot chat.
+    fallback_models=tuple(m["id"] for m in _CONFIG["models"]["chat"]),
+    supports_model_listing=False,
+    model_capabilities={
+        m["id"]: {
+            "context_window": m["context_window"],
+            "supports_tools": True,
+            "supports_reasoning": True,
+            "supports_vision": bool(_CONFIG["models"].get("supports_vision")),
+        }
+        for m in _CONFIG["models"]["chat"]
+    },
     default_aux_model=_CONFIG["models"]["auxiliary"],
     supports_vision=bool(_CONFIG["models"].get("supports_vision")),
 ))

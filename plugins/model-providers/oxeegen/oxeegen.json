@@ -1,5 +1,5 @@
 {
-  "_comment": "Oxeegen Hermes: the ONE place for Oxeegen endpoints and models (model ids still PROVISIONAL). Each region has its own endpoint AND its own API key. Users store their region id (OXEEGEN_REGION) and one key per region (regions.<id>.api_key_env) in .env; the ACTIVE pair read by the runtime and the managed scope — api_key_env / base_url_env — is derived from them by the desktop on save and by plugins/model-providers/oxeegen/__init__.py on every backend start, so an endpoint changed here reaches every install with the next update. Read by that plugin, the desktop (apps/desktop/src/oxeegen/config.ts) and oxeegen/scripts/gen-managed.py.",
+  "_comment": "Oxeegen Hermes: the ONE place for Oxeegen endpoints and models. Each region has its own endpoint AND its own API key. Users store their region id (OXEEGEN_REGION) and one key per region (regions.<id>.api_key_env) in .env; the ACTIVE pair read by the runtime and the managed scope — api_key_env / base_url_env — is derived from them by the desktop on save and by plugins/model-providers/oxeegen/__init__.py on every backend start, so an endpoint changed here reaches every install with the next update. Read by that plugin, the desktop (apps/desktop/src/oxeegen/config.ts) and oxeegen/scripts/gen-managed.py.",
   "provider": "oxeegen",
   "api_key_env": "OXEEGEN_API_KEY",
   "base_url_env": "OXEEGEN_BASE_URL",
@@ -18,13 +18,36 @@
     }
   },
   "models": {
-    "main": "oxeegen-default",
-    "auxiliary": "oxeegen-default",
+    "main": "Oxee-max",
+    "auxiliary": "Oxee-flash",
+    "_chat_comment": "Models offered in the chat model picker (ids, context windows and capabilities as reported / verified on the EU endpoint 2026-10-16: tools, reasoning, vision).",
+    "chat": [
+      {
+        "id": "Oxee-max",
+        "context_window": 524288
+      },
+      {
+        "id": "Oxee-pro",
+        "context_window": 393216
+      },
+      {
+        "id": "Oxee-ultra",
+        "context_window": 524288
+      },
+      {
+        "id": "Oxee-flash",
+        "context_window": 262144
+      },
+      {
+        "id": "Oxee-instant",
+        "context_window": 262144
+      }
+    ],
     "supports_vision": true
   },
   "voice": {
-    "stt_model": "whisper-1",
-    "tts_model": "tts-1",
+    "stt_model": "voxee-stt",
+    "tts_model": "voxee-tts-pro",
     "tts_voice": "alloy"
   },
   "signup_url": "https://oxeegen.com"

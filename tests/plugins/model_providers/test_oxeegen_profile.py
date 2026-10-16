@@ -86,3 +86,18 @@ def test_an_install_without_a_stored_region_is_left_alone(oxeegen):
     oxeegen.sync_active_region()
 
     assert _read_env(env) == {"OXEEGEN_API_KEY": "sk-legacy"}
+
+
+def test_picker_offers_only_the_chat_models_with_their_context_windows(oxeegen):
+    import providers
+
+    profile = providers.get_provider_profile("oxeegen")
+    chat = [m["id"] for m in CONFIG["models"]["chat"]]
+
+    assert list(profile.fallback_models) == chat
+    assert CONFIG["models"]["main"] in chat
+    assert not profile.supports_model_listing  # the endpoint catalog also lists embeddings / voice models
+    for model in CONFIG["models"]["chat"]:
+        caps = profile.model_capabilities[model["id"]]
+        assert caps["context_window"] == model["context_window"]
+        assert caps["supports_tools"]

@@ -42,6 +42,7 @@ import { accountResetMs, formatReset, modelResetMs } from '@/lib/provider-limit'
 import { reasoningEffortLabel } from '@/lib/reasoning-effort'
 import { foldIncludes, normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
+import { OXEEGEN_MODEL_MENU_EXTRAS } from '@/oxeegen/settings-policy'
 import { $customModels, addCustomModel, customModelCandidate, withCustomModels } from '@/store/custom-models'
 import { $favoriteModels, favoriteModelKey, toggleFavoriteModel } from '@/store/favorite-models'
 import { $localModelsEnabled } from '@/store/local-models-flag'
@@ -895,7 +896,8 @@ export function ModelCatalogMenu({
           trailing block it has always rendered. */}
       <DropdownMenuSeparator className="mx-0" />
       {footer}
-      <DropdownMenuItem
+      {OXEEGEN_MODEL_MENU_EXTRAS && (
+<DropdownMenuItem
         className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)', slugEntry && 'text-foreground')}
         onSelect={event => {
           event.preventDefault()
@@ -909,13 +911,16 @@ export function ModelCatalogMenu({
         <Codicon name="add" size="0.75rem" />
         {copyPicker.addCustomModelAction}
       </DropdownMenuItem>
-      <DropdownMenuItem
-        className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)')}
-        onSelect={() => setModelVisibilityOpen(true)}
-      >
-        <Codicon name="settings-gear" size="0.75rem" />
-        {copy.editModels}
-      </DropdownMenuItem>
+)}
+      {OXEEGEN_MODEL_MENU_EXTRAS && (
+        <DropdownMenuItem
+          className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)')}
+          onSelect={() => setModelVisibilityOpen(true)}
+        >
+          <Codicon name="settings-gear" size="0.75rem" />
+          {copy.editModels}
+        </DropdownMenuItem>
+      )}
     </>
   )
 }

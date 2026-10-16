@@ -7,7 +7,7 @@
 
 model:
   provider: oxeegen
-  default: oxeegen-default
+  default: Oxee-max
 
 # No second source of inference: no fallbacks, no custom endpoints, no other provider.
 fallback_providers: []
@@ -22,13 +22,13 @@ stt:
   openai:
     api_key: "${OXEEGEN_API_KEY}"
     base_url: "${OXEEGEN_BASE_URL}"
-    model: whisper-1
+    model: voxee-stt
 tts:
   provider: openai
   openai:
     api_key: "${OXEEGEN_API_KEY}"
     base_url: "${OXEEGEN_BASE_URL}"
-    model: tts-1
+    model: voxee-tts-pro
     voice: alloy
 
 # Nothing is reported to Nous.

@@ -119,7 +119,9 @@ Installer les dépendances avec `npx -y npm@11.17.0 ci` à la racine : le projet
 
 **Source unique** : `plugins/model-providers/oxeegen/oxeegen.json` contient les régions, leurs URLs, le
 nom de la variable de clé de chaque région, les modèles et la voix. Les URLs sont les vraies : EU
-`inference-04`, US `inference-02`. Les identifiants de modèles sont encore **provisoires**. Après chaque
+`inference-04`, US `inference-02`. Modèles (vérifiés sur l'endpoint EU le 16/10/2026) : principal
+`Oxee-max`, annexes `Oxee-flash`, sélecteur `Oxee-max/pro/ultra/flash/instant`, voix `voxee-stt` et
+`voxee-tts-pro` (voix `alloy`). Après chaque
 modification, lancer `python3 oxeegen/scripts/gen-managed.py`.
 
 **Ce que stocke le poste de l'utilisateur** (`.env` de `~/.hermes-oxeegen`) :
@@ -141,7 +143,7 @@ Aucune URL n'est dans un `config.yaml` : le scope managé ne fait que référenc
 | `HERMES_MANAGED_DIR` | Électron le fixe au démarrage vers le scope managé du payload (ou du checkout en dev) | `apps/desktop/electron/oxeegen-managed.ts`, hook dans `main.ts` |
 | Onboarding | Formulaire région + clé (remplace le sélecteur, l'OAuth et l'offre gratuite Nous) | `apps/desktop/src/oxeegen/oxeegen-onboarding.tsx`, hook dans `components/onboarding/index.tsx` |
 | Paramètres → Oxeegen | Même formulaire. Masqués : Modèle, Avancé, Fournisseurs, Facturation, Gateways, Plugins, Mots de passe. Tout lien vers une section masquée retombe sur Oxeegen | `src/oxeegen/oxeegen-settings.tsx`, `settings-policy.ts`, hooks dans `settings/index.tsx`, `use-settings-search.ts`, `command-palette/index.tsx` |
-| Sélecteur de modèle | Masqué dans le composer (un seul modèle) | `app/chat/composer/index.tsx` |
+| Sélecteur de modèle | Limité aux modèles de chat Oxeegen (`models.chat` de `oxeegen.json`). Pas d'ajout de fournisseur, de modèle personnalisé ni d'édition du catalogue | `src/oxeegen/settings-policy.ts` (`OXEEGEN_MODEL_MENU_EXTRAS`), hooks dans `model-catalog-menu.tsx` et `model-picker.tsx` |
 | Voix | Listes limitées à `openai` (routé vers Oxeegen), mode `chained` uniquement | `app/settings/constants.ts` |
 | Statistiques Nous | Bandeau « Share usage stats » et panneau Confidentialité supprimés | `store/shared-metrics.ts`, `settings/config-settings.tsx` |
 | Nouvel onglet navigateur | Bouton 🌐 dans la barre de titre, entrée de palette, `Ctrl/Cmd+Alt+L` | `src/oxeegen/browser.ts`, hooks dans `titlebar-controls.tsx`, `titlebar-app-actions.ts`, `keybinds/actions.ts`, `use-keybinds.ts`, `command-palette/index.tsx` |
@@ -181,7 +183,7 @@ contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","
 
 ## Reste à faire
 
-- Identifiants de modèles et URL d'inscription réels dans `oxeegen.json`.
+- URL d'inscription réelle (`signup_url`) dans `oxeegen.json`.
 - Liens Nous restants : docs, Discord, Skills Hub et catalogue de plugins (hébergés par Nous), portail.
 - Retour OAuth des connecteurs (`hermes://connections/done` côté passerelle Nous) et boutons « Send to App » du web, qui émettent encore `hermes://`.
 - `hermes_cli/install_state.py` lit (sans écrire) les dossiers `~/.hermes*` pour l'offre d'essai ; le marqueur machine `Nous Research/.machine` reste partagé.

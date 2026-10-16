@@ -10,6 +10,7 @@ import { currentPickerSelection } from '@/lib/model-status-label'
 import { accountResetMs, formatReset, modelResetMs } from '@/lib/provider-limit'
 import { foldIncludes, normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
+import { OXEEGEN_MODEL_MENU_EXTRAS } from '@/oxeegen/settings-policy'
 import { $customModels, addCustomModel, customModelCandidate, withCustomModels } from '@/store/custom-models'
 import { $localModelsEnabled } from '@/store/local-models-flag'
 import {
@@ -218,12 +219,16 @@ export function ModelPickerDialog({
         </Command>
 
         <DialogFooter className="flex-row items-center justify-end gap-2 bg-card p-3">
-          <Button className="mr-auto" onClick={enterSlug} variant="ghost">
-            {copy.addCustomModelAction}
-          </Button>
-          <Button onClick={addProvider} variant="ghost">
-            {copy.addProvider}
-          </Button>
+          {OXEEGEN_MODEL_MENU_EXTRAS && (
+            <>
+              <Button className="mr-auto" onClick={enterSlug} variant="ghost">
+                {copy.addCustomModelAction}
+              </Button>
+              <Button onClick={addProvider} variant="ghost">
+                {copy.addProvider}
+              </Button>
+            </>
+          )}
           <Button onClick={() => onOpenChange(false)} variant="outline">
             {t.common.cancel}
           </Button>

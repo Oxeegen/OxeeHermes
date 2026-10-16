@@ -25,3 +25,10 @@ const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set([
 export function isVisibleSettingsView(view: string): boolean {
   return !HIDDEN_SETTINGS_VIEWS.has(view.split('&')[0] ?? view)
 }
+
+/**
+ * The model menus offer Oxeegen's chat models only: no "add a provider", no
+ * custom model slug, no catalog editing. The backend enforces the same through
+ * the provider allowlist; this keeps the doors out of sight.
+ */
+export const OXEEGEN_MODEL_MENU_EXTRAS = false
