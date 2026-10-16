@@ -43,7 +43,7 @@ export function registerNativeNotifications({
     const icon = typeof payload?.icon === 'string' && payload.icon.trim() ? payload.icon.trim() : undefined
 
     const options = {
-      title: payload?.title || 'Hermes',
+      title: payload?.title || 'Oxeegen Hermes',
       body: payload?.body || '',
       silent: Boolean(payload?.silent),
       ...(icon ? { icon } : {}),

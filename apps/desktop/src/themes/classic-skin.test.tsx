@@ -9,7 +9,7 @@ import { skinToDesktopTheme } from './skin'
 // (`display.skin: default`): the CLI's classic gold skin, by name `default`.
 const stockDefaultSkin = {
   name: 'default',
-  description: 'Classic Hermes — gold and kawaii',
+  description: 'Classic Oxeegen Hermes — gold and kawaii',
   colors: { banner_text: '#FFF8DC', status_bar_bg: '#1a1a2e', ui_accent: '#FFBF00', banner_border: '#CD7F32' }
 }
 
@@ -58,7 +58,7 @@ async function launch(localSkin: typeof stockDefaultSkin | null) {
   return { api, bootPaint, connect }
 }
 
-describe('Classic Hermes is an explicit Desktop pick, never inferred from stock config (#76579)', () => {
+describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred from stock config (#76579)', () => {
   beforeEach(() => window.localStorage.clear())
 
   afterEach(() => {
@@ -71,23 +71,23 @@ describe('Classic Hermes is an explicit Desktop pick, never inferred from stock 
   it.each([
     ['display.skin: default', stockDefaultSkin],
     ['display.skin unset', null]
-  ])('a stock user (%s) with no Desktop pick paints Nous on boot, connect and relaunch', async (_label, local) => {
+  ])('a stock user (%s) with no Desktop pick paints Oxeegen on boot, connect and relaunch', async (_label, local) => {
     let run = await launch(local)
-    expect(run.bootPaint).toBe('nous')
+    expect(run.bootPaint).toBe('oxeegen')
     run.connect()
     run.connect() // reconnect re-seed
-    expect(run.api.theme?.themeName).toBe('nous')
-    expect(paintedSkin()).toBe('nous')
+    expect(run.api.theme?.themeName).toBe('oxeegen')
+    expect(paintedSkin()).toBe('oxeegen')
 
     run = await launch(local)
-    expect(run.bootPaint).toBe('nous')
+    expect(run.bootPaint).toBe('oxeegen')
     run.connect()
-    expect(paintedSkin()).toBe('nous')
+    expect(paintedSkin()).toBe('oxeegen')
   })
 
   it('a Classic pick paints gold/navy (dark mode) and survives connect, reconnect and relaunch; a later Nous pick sticks', async () => {
     let run = await launch(stockDefaultSkin)
-    expect(run.api.theme?.availableThemes.find(t => t.name === 'classic')?.label).toBe('Classic Hermes')
+    expect(run.api.theme?.availableThemes.find(t => t.name === 'classic')?.label).toBe('Classic Oxeegen Hermes')
 
     act(() => run.api.theme?.setMode('dark'))
     act(() => run.api.theme?.setTheme('classic'))
@@ -112,7 +112,7 @@ describe('Classic Hermes is an explicit Desktop pick, never inferred from stock 
     expect(paintedSkin()).toBe('nous')
   })
 
-  it('/skin gold and /skin hermes select Classic; /skin default stays the Desktop default (Nous)', async () => {
+  it('/skin gold and /skin hermes select Classic; /skin default stays the Desktop default (Oxeegen)', async () => {
     const run = await launch(stockDefaultSkin)
 
     act(() => void run.api.skin?.('gold'))
@@ -123,10 +123,10 @@ describe('Classic Hermes is an explicit Desktop pick, never inferred from stock 
     expect(run.api.theme?.themeName).toBe('classic')
 
     act(() => void run.api.skin?.('default'))
-    expect(run.api.theme?.themeName).toBe('nous')
+    expect(run.api.theme?.themeName).toBe('oxeegen')
   })
 
-  it('a cache left by the reverted #130015 build (CLI `default` as "Classic Hermes") shows ONE Classic and is purged', async () => {
+  it('a cache left by the reverted #130015 build (CLI `default` as "Classic Oxeegen Hermes") shows ONE Classic and is purged', async () => {
     // Exactly what that build wrote: the converted CLI `default` skin, relabelled.
     window.localStorage.setItem(
       BACKEND_THEMES_KEY,
@@ -134,7 +134,7 @@ describe('Classic Hermes is an explicit Desktop pick, never inferred from stock 
         default: {
           ...skinToDesktopTheme(stockDefaultSkin),
           description: stockDefaultSkin.description,
-          label: 'Classic Hermes'
+          label: 'Classic Oxeegen Hermes'
         }
       })
     )
@@ -143,9 +143,9 @@ describe('Classic Hermes is an explicit Desktop pick, never inferred from stock 
     run.connect()
 
     const themes = run.api.theme?.availableThemes ?? []
-    expect(themes.filter(t => t.label === 'Classic Hermes').map(t => t.name)).toEqual(['classic'])
+    expect(themes.filter(t => t.label === 'Classic Oxeegen Hermes').map(t => t.name)).toEqual(['classic'])
     expect(themes.some(t => t.name === 'default')).toBe(false)
-    expect(run.api.skin?.('list').match(/Classic Hermes/g)).toHaveLength(1)
+    expect(run.api.skin?.('list').match(/Classic Oxeegen Hermes/g)).toHaveLength(1)
     expect(JSON.parse(window.localStorage.getItem(BACKEND_THEMES_KEY) ?? '{}')).not.toHaveProperty('default')
   })
 

@@ -25,7 +25,7 @@ describe('applyAppearance', () => {
       applied: { accent: 'violet', layout: 'terminal-deck', mode: 'dark' },
       success: true
     })
-    expect($pendingSkinApply.get()).toBe('nous-accent-8a2be2')
+    expect($pendingSkinApply.get()).toBe('oxeegen-accent-8a2be2')
     expect($pendingModeApply.get()).toBe('dark')
     expect($activePresetId.get()).toBe('terminal-deck')
     expect($interfaceMode.get()).toBe('advanced')

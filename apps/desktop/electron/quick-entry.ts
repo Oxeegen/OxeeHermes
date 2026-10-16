@@ -89,7 +89,7 @@ export function createQuickEntrySubmitRelay(options: {
           reconcilable.add(correlationId)
           resolve({
             code: 'timeout',
-            message: 'Hermes has not confirmed the prompt yet — it may still be delivered.',
+            message: 'Oxeegen Hermes has not confirmed the prompt yet — it may still be delivered.',
             ok: false,
             retryable: false
           })

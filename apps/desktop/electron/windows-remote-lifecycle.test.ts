@@ -298,7 +298,7 @@ test('Windows relaunch gate uses strict install-wide marker parsing and fail-clo
   assert.doesNotMatch(script, /ErrorAction SilentlyContinue/)
 })
 
-test('Windows probe validates Hermes and Python topology before selection', async () => {
+test('Windows probe validates Oxeegen Hermes and Python topology before selection', async () => {
   let script = ''
   await probeWindowsRemote(
     sshWith(async (command, options) => {
@@ -658,10 +658,10 @@ test('platform detection surfaces transport failures as themselves, not unsuppor
           throw new Error('not recognized')
         }
 
-        throw new Error('Hermes is not installed on the remote Windows host.')
+        throw new Error('Oxeegen Hermes is not installed on the remote Windows host.')
       })
     ),
-    (err: any) => err.kind === 'unsupported-platform' && /Hermes is not installed/.test(err.message)
+    (err: any) => err.kind === 'unsupported-platform' && /Oxeegen Hermes is not installed/.test(err.message)
   )
 })
 
@@ -706,6 +706,7 @@ test('helper command uses the fixed remote Python entry point and quotes path da
   const encoded = command.split(' ').pop()!
   const script = Buffer.from(encoded, 'base64').toString('utf16le')
   assert.match(script, /-m' 'hermes_cli\.windows_ssh_runtime' 'inspect'/)
+  // oxeegen-keep: a path fixture, not copy
   assert.match(script, /Hermes''s/)
   assert.match(script, /C:\\x y\\hermes\.exe/)
 })

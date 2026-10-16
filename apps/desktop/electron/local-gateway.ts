@@ -104,12 +104,12 @@ export function createStaleGatewayRestarter(
     }
 
     if (pending) {
-      log(`[gateway] owner still runs ${stale.gateway} (this Hermes is ${stale.client}) after a restart; attaching as-is`)
+      log(`[gateway] owner still runs ${stale.gateway} (this Oxeegen Hermes is ${stale.client}) after a restart; attaching as-is`)
 
       return false
     }
 
-    log(`[gateway] owner runs ${stale.gateway} but this Hermes is ${stale.client}; restarting it`)
+    log(`[gateway] owner runs ${stale.gateway} but this Oxeegen Hermes is ${stale.client}; restarting it`)
     const entry = { done: false, promise: restart(gatewayOwnerProfile(endpoint)) }
     restarts.set(key, entry)
 
@@ -139,7 +139,7 @@ export function parseGatewayEnsureOutput(result: { code: number; stdout: string;
 
   const reason = String(result.stderr ?? '').trim().split(/\r?\n/).filter(Boolean).pop()
 
-  throw new Error(`hermes gateway ensure produced no result (exit ${result.code})${reason ? `: ${reason}` : ''}. Update Hermes or check the profile, then retry.`)
+  throw new Error(`hermes gateway ensure produced no result (exit ${result.code})${reason ? `: ${reason}` : ''}. Update Oxeegen Hermes or check the profile, then retry.`)
 }
 
 /** `{ gateway, client }` commits when a ready owner provably runs other code than the ensure

@@ -24,6 +24,8 @@ import {
 } from '@hermes/shared/i18n'
 import { atom } from 'nanostores'
 
+import { rebrandTranslations } from '@/oxeegen/rebrand'
+
 import { isBundledLocale, TRANSLATIONS } from './catalog'
 import type { Locale, Translations } from './types'
 
@@ -243,6 +245,8 @@ export function resolveTranslations(locale: Locale): Translations {
     }
   }
 
+  // Oxeegen: plugin and backend packs carry the upstream product name too.
+  value = rebrandTranslations(value)
   resolved.set(locale, { version, value })
 
   return value

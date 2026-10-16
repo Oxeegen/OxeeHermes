@@ -20,6 +20,8 @@
 
 import { THEME_PRESET_PALETTES } from '@hermes/shared'
 
+import { createOxeegenTheme, OXEEGEN_THEME_NAME } from '@/oxeegen/theme'
+
 import { skinToDesktopTheme } from './skin'
 import type { DesktopTheme, DesktopThemeTypography } from './types'
 
@@ -378,7 +380,7 @@ const classicPalette = (colors: Record<string, string>) => skinToDesktopTheme({ 
  */
 export const classicTheme: DesktopTheme = {
   name: 'classic',
-  label: 'Classic Hermes',
+  label: 'Classic Oxeegen Hermes',
   description: "Gold on navy, the CLI's original look",
   colors: classicPalette(CLASSIC_LIGHT_SKIN_COLORS),
   darkColors: classicPalette(CLASSIC_DARK_SKIN_COLORS)
@@ -441,7 +443,10 @@ export const slateTheme: DesktopTheme = {
   }
 }
 
+export const oxeegenTheme = createOxeegenTheme(nousTheme, DEFAULT_TYPOGRAPHY)
+
 export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
+  [OXEEGEN_THEME_NAME]: oxeegenTheme,
   nous: nousTheme,
   github: githubTheme,
   catppuccin: catppuccinTheme,
@@ -459,7 +464,7 @@ export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
 export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES)
 
 /** Skin used when nothing is persisted or the persisted name is retired. */
-export const DEFAULT_SKIN_NAME = 'nous'
+export const DEFAULT_SKIN_NAME = OXEEGEN_THEME_NAME
 
 /** Names that no longer resolve to a skin of their own. A stored pick of one
  *  falls back to DEFAULT_SKIN_NAME, and a cached backend theme under one is

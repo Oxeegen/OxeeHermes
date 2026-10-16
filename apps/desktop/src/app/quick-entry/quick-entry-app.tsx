@@ -83,7 +83,7 @@ export function QuickEntryApp() {
 
     const offLateResult = api?.onLateResult(payload => {
       dispatch({
-        message: payload?.result?.message ?? 'Hermes could not deliver the prompt.',
+        message: payload?.result?.message ?? 'Oxeegen Hermes could not deliver the prompt.',
         ok: payload?.result?.ok === true,
         type: 'late-result'
       })
@@ -162,7 +162,7 @@ export function QuickEntryApp() {
                 dispatch({ type: 'dismiss' })
               }
             }}
-            placeholder={state.connected ? 'Ask Hermes…' : 'Not connected — open Hermes to reconnect'}
+            placeholder={state.connected ? 'Ask Oxeegen Hermes…' : 'Not connected — open Oxeegen Hermes to reconnect'}
             ref={inputRef}
             spellCheck={false}
             style={{

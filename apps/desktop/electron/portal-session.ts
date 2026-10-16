@@ -233,7 +233,7 @@ export function createPortalSession({
       // hang the discovery call behind an invisible window.
       const outcome = await driveCookieWindow(sess, previous, {
         kind: 'portal-renew',
-        title: 'Renewing Hermes Cloud session…',
+        title: 'Renewing Oxeegen Hermes Cloud session…',
         show: false,
         pollMs: 500,
         deadlineMs: 12_000
@@ -259,7 +259,7 @@ export function createPortalSession({
   // must not close the window before the portal can replace it.
   async function openPortalLoginWindow(): Promise<void> {
     if (!isReady()) {
-      throw new Error('Desktop is not ready to start a Hermes Cloud sign-in.')
+      throw new Error('Desktop is not ready to start a Oxeegen Hermes Cloud sign-in.')
     }
 
     const sess = getOauthSession()
@@ -270,7 +270,7 @@ export function createPortalSession({
 
     const outcome = await driveCookieWindow(sess, await readAccessCookies(), {
       kind: 'portal',
-      title: 'Sign in to Hermes Cloud',
+      title: 'Sign in to Oxeegen Hermes Cloud',
       show: true,
       pollMs: 750
     })

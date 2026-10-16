@@ -197,7 +197,7 @@ export function quickEntryResultEvent(result: QuickEntrySubmitResult, submitId: 
 
   if (result.code === 'timeout') {
     return {
-      message: result.message || 'Hermes has not confirmed the prompt yet — it may still be delivered.',
+      message: result.message || 'Oxeegen Hermes has not confirmed the prompt yet — it may still be delivered.',
       submitId,
       type: 'submit-unknown'
     }

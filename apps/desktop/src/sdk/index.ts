@@ -803,7 +803,7 @@ export const host = {
     const bridge = window.hermesDesktop?.connections
 
     if (!bridge) {
-      throw new Error('This Desktop build has no connection registry. Update Hermes Desktop.')
+      throw new Error('This Desktop build has no connection registry. Update Oxeegen Hermes.')
     }
 
     const registryPayload = await bridge.list()
@@ -820,7 +820,7 @@ export const host = {
     const roster = window.hermesDesktop?.getAgentRoster
 
     if (!roster) {
-      throw new Error('This Desktop build cannot enumerate multi-source agents. Update Hermes Desktop.')
+      throw new Error('This Desktop build cannot enumerate multi-source agents. Update Oxeegen Hermes.')
     }
 
     return roster()
@@ -1290,7 +1290,7 @@ export const host = {
       const openTab = $newSessionTabAction.get()
 
       if (!openTab) {
-        notify({ kind: 'error', message: 'Update Hermes Desktop to open another Bot chat.' })
+        notify({ kind: 'error', message: 'Update Oxeegen Hermes to open another Bot chat.' })
 
         return
       }
@@ -1387,7 +1387,7 @@ export const host = {
     const getProfileRoutes = desktop?.getProfileRoutes
 
     if (!getProfileRoutes) {
-      throw new Error('Hermes Desktop connection routing unavailable')
+      throw new Error('Oxeegen Hermes connection routing unavailable')
     }
 
     let profiles = $profiles.get()
@@ -1545,7 +1545,7 @@ export const host = {
     const gateway = $gateway.get()
 
     if (!gateway) {
-      throw new Error('Hermes gateway unavailable')
+      throw new Error('Oxeegen Hermes gateway unavailable')
     }
 
     return timeoutMs === undefined ? gateway.request<T>(method, params) : gateway.request<T>(method, params, timeoutMs)

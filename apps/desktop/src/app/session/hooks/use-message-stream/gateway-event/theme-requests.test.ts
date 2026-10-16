@@ -50,7 +50,7 @@ describe('set_theme requests', () => {
 
     expect(pickTheme('session-a', { accent: 'pink' })).toBe(true)
     expect(respond).toHaveBeenCalledWith({ picked: { accent: 'pink' } })
-    expect($pendingSkinApply.get()).toBe('nous-accent-e0218a')
+    expect($pendingSkinApply.get()).toBe('oxeegen-accent-e0218a')
     expect($themePicks.get()['session-a']).toBeUndefined()
   })
 

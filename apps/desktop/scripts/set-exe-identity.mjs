@@ -86,10 +86,11 @@ async function stampExeIdentity(
   const options = {
     icon,
     'version-string': {
-      ProductName: 'Hermes',
-      FileDescription: 'Hermes',
-      CompanyName: 'Nous Research',
-      LegalCopyright: 'Copyright (c) 2026 Nous Research'
+      ProductName: 'Oxeegen Hermes',
+      FileDescription: 'Oxeegen Hermes',
+      CompanyName: 'Oxeegen',
+      // MIT: the upstream notice must travel with the software.
+      LegalCopyright: 'Copyright (c) 2026 Oxeegen. Portions Copyright (c) 2025 Nous Research (MIT)'
     }
   }
 
@@ -107,7 +108,7 @@ async function stampExeIdentity(
     }
   }
 
-  console.log('[set-exe-identity] done — Hermes icon + identity stamped')
+  console.log('[set-exe-identity] done — Oxeegen Hermes icon + identity stamped')
 }
 
 export { RCEDIT_COMMIT_RETRY_DELAYS_MS, stampExeIdentity }

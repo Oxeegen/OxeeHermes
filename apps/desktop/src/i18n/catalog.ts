@@ -1,3 +1,5 @@
+import { rebrandTranslations } from '@/oxeegen/rebrand'
+
 import { ar } from './ar'
 import { de } from './de'
 import { en } from './en'
@@ -12,7 +14,7 @@ import { zhHant } from './zh-hant'
 /** The catalogs compiled into the app. Runtime-registered languages (plugin
  *  packs, backend `.desktop.yaml` packs) are NOT here — resolve through
  *  `resolveTranslations()` in `./registry`, which layers them over these. */
-export const TRANSLATIONS: Record<BundledLocale, Translations> = {
+export const TRANSLATIONS: Record<BundledLocale, Translations> = rebrandTranslations({
   en,
   zh,
   'zh-hant': zhHant,
@@ -22,7 +24,7 @@ export const TRANSLATIONS: Record<BundledLocale, Translations> = {
   fr,
   de,
   es
-}
+})
 
 export const BUNDLED_LOCALES = Object.keys(TRANSLATIONS) as readonly BundledLocale[]
 

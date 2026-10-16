@@ -43,11 +43,11 @@ vi.mock('./i18n', () => ({
   useBots: () => ({
     screen: {
       title: 'Screen',
-      portalUnavailable: 'Update the bot’s Hermes to use Screen',
-      portalUnavailableManaged: 'Screen is not available on this managed Hermes release yet',
-      unavailableTitle: 'Screen needs a newer Hermes',
+      portalUnavailable: 'Update the bot’s Oxeegen Hermes to use Screen',
+      portalUnavailableManaged: 'Screen is not available on this managed Oxeegen Hermes release yet',
+      unavailableTitle: 'Screen needs a newer Oxeegen Hermes',
       managedNotIncludedTitle: 'Screen isn’t included on this bot',
-      managedNotIncludedBody: 'Hermes Cloud includes Screen on bots with 8 GB of memory or more.',
+      managedNotIncludedBody: 'Oxeegen Hermes Cloud includes Screen on bots with 8 GB of memory or more.',
       notInstalledTitle: 'Screen packages missing',
       install: 'Install on host'
     }
@@ -79,8 +79,8 @@ it('a managed Cloud backend gets the managed-release copy, not a self-update ins
   const view = render(<BotScreenPane bot={cloudBot} />)
   await act(async () => {})
 
-  expect(view.getByText('Screen is not available on this managed Hermes release yet')).toBeTruthy()
-  expect(view.queryByText('Update the bot’s Hermes to use Screen')).toBeNull()
+  expect(view.getByText('Screen is not available on this managed Oxeegen Hermes release yet')).toBeTruthy()
+  expect(view.queryByText('Update the bot’s Oxeegen Hermes to use Screen')).toBeNull()
   view.unmount()
 })
 
@@ -89,8 +89,8 @@ it('a self-upgradable backend keeps the update instruction', async () => {
   const view = render(<BotScreenPane bot={gitBot} />)
   await act(async () => {})
 
-  expect(view.getByText('Update the bot’s Hermes to use Screen')).toBeTruthy()
-  expect(view.queryByText('Screen is not available on this managed Hermes release yet')).toBeNull()
+  expect(view.getByText('Update the bot’s Oxeegen Hermes to use Screen')).toBeTruthy()
+  expect(view.queryByText('Screen is not available on this managed Oxeegen Hermes release yet')).toBeNull()
   view.unmount()
 })
 

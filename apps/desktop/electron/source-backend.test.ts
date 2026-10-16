@@ -190,6 +190,7 @@ test.skipIf(process.platform === 'win32')(
               encoding: 'utf8',
               timeout: 15_000
             }),
+            // oxeegen-keep: the Python CLI's own --version text
             /Hermes/
           )
           assert.equal(fs.existsSync(poison), false)

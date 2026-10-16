@@ -9,16 +9,17 @@
 'use strict'
 
 const variants = {
-  '': { display: 'Hermes', kebab: 'hermes', pascal: 'Hermes' },
+  // Oxeegen: product name and package identity (see oxeegen/README.md).
+  '': { display: 'Oxeegen Hermes', kebab: 'oxeegen-hermes', pascal: 'OxeegenHermes' },
   light: {
-    display: 'Hermes Light',
-    kebab: 'hermes-light',
-    pascal: 'HermesLight'
+    display: 'Oxeegen Hermes Light',
+    kebab: 'oxeegen-hermes-light',
+    pascal: 'OxeegenHermesLight'
   },
   bundled: {
-    display: 'Hermes Agent',
-    kebab: 'hermes-bundled',
-    pascal: 'HermesBundled'
+    display: 'Oxeegen Hermes Agent',
+    kebab: 'oxeegen-hermes-bundled',
+    pascal: 'OxeegenHermesBundled'
   }
 }
 
@@ -66,14 +67,14 @@ const identity = {
   store,
   light,
   displayName,
-  appId: `com.nousresearch.${name.kebab}${kebabSuffix}`,
+  appId: `com.oxeegen.${name.kebab}${kebabSuffix}`,
   // Store and commit builds do not publish a release feed.
   channel: store || buildCommit ? null : light ? (canary ? 'light-canary' : 'light') : (canary ? 'canary' : 'latest'),
   appNamePascal: `${name.pascal}${pascalSuffix}`,
   artifactNamePascal: name.pascal,
   windowsExecutableName: kebabSuffix ? cliName : displayName,
   cliName,
-  msixAppIdWithOrg: `NousResearch.${name.pascal}${pascalSuffix}`,
+  msixAppIdWithOrg: `Oxeegen.${name.pascal}${pascalSuffix}`,
   ...(store
     ? {
         storeMsix: {

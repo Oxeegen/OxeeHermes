@@ -1,0 +1,12 @@
+/* Oxeegen brand layer, imported last from src/styles.css. Colours live in the
+   `oxeegen` theme (./theme.ts); this file only carries what a theme cannot. */
+
+/* Geist — the Oxeegen UI face (SIL OFL 1.1, see ./fonts/Geist-OFL.txt).
+   One variable file covers every weight the UI asks for. */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/Geist-Variable.woff2') format('woff2-variations');
+}

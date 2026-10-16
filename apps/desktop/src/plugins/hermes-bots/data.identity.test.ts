@@ -84,6 +84,7 @@ describe('the @handle a bot answers to', () => {
 
 describe('renamed bots stay taggable', () => {
   it('drops reserved tokens so a rename cannot hijack a built-in tag', () => {
+    // oxeegen-keep: the reserved token is the agent's own `hermes` name
     expect(mentionNameForms('Hermes')).toEqual([])
     expect(mentionNameForms('@everyone')).toEqual([])
     expect(mentionNameForms('')).toEqual([])
