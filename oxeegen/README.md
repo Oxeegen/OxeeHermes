@@ -160,7 +160,8 @@ s'installent à la demande, par le réseau, si un utilisateur active la fonction
 | `scripts/bundles/native_prepared.py` | uv-cache retiré des entrées vérifiées |
 | `pyproject.toml` `[tool.hermes] opt-in-extras` | Extensions exclues du bundle |
 | `apps/desktop/electron/feature-flags.ts` | `localModels` seulement avec `--local` |
-| `scripts/msix-shared.mjs` | Éditeur MSIX Oxeegen (`OXEEGEN_MSIX_PUBLISHER` pour la release) |
+| `scripts/msix-shared.mjs` | Éditeur MSIX Oxeegen (`OXEEGEN_MSIX_PUBLISHER` pour la release, sinon identité de test) |
+| `oxeegen/scripts/sign-local-msix.ps1` | Signe un MSIX local avec un certificat auto-signé (Windows refuse un paquet non signé qui déclare des alias de commande) |
 
 ## Isolation vis-à-vis d'un Hermes officiel installé
 

@@ -75,13 +75,12 @@ describe('product identity', () => {
     assert.ok(!JSON.stringify(config.publish).includes('NousResearch'))
   })
 
-  test('the sideload MSIX is published by Oxeegen, installable unsigned for local builds', () => {
+  test('the sideload MSIX is published by Oxeegen (local test identity unless a release certificate is set)', () => {
     delete process.env.OXEEGEN_MSIX_PUBLISHER
     process.env.HERMES_DESKTOP_VARIANT = 'bundled'
     const config = freshCjs<Record<string, any>>('electron-builder.config.cjs')
 
-    assert.match(config.msix.publisher, /^CN=Oxeegen\b/)
-    assert.match(config.msix.publisher, /OID\.2\.25\.311729368913984317654407730594956997722=1/)
+    assert.equal(config.msix.publisher, 'CN=Oxeegen Local Build, O=Oxeegen')
     assert.doesNotMatch(config.msix.publisher + config.msix.publisherDisplayName, /Nous/)
   })
 
