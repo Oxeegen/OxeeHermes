@@ -75,6 +75,16 @@ describe('product identity', () => {
     assert.ok(!JSON.stringify(config.publish).includes('NousResearch'))
   })
 
+  test('the sideload MSIX is published by Oxeegen, installable unsigned for local builds', () => {
+    delete process.env.OXEEGEN_MSIX_PUBLISHER
+    process.env.HERMES_DESKTOP_VARIANT = 'bundled'
+    const config = freshCjs<Record<string, any>>('electron-builder.config.cjs')
+
+    assert.match(config.msix.publisher, /^CN=Oxeegen\b/)
+    assert.match(config.msix.publisher, /OID\.2\.25\.311729368913984317654407730594956997722=1/)
+    assert.doesNotMatch(config.msix.publisher + config.msix.publisherDisplayName, /Nous/)
+  })
+
   test('the dev package name is not the official one either', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(DESKTOP, 'package.json'), 'utf8'))
 

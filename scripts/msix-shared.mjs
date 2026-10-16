@@ -40,8 +40,13 @@ export function channelBuildRequest(env = process.env) {
 // what Windows compares against the package manifest publisher at install.
 // Mirrored from electron-builder.config.cjs so the .appinstaller and the
 // manifest can never drift.
+//
+// Oxeegen: OXEEGEN_MSIX_PUBLISHER is the subject of Oxeegen's signing certificate
+// for released packages. Without it (local builds), the publisher carries the
+// Windows "unsigned package" marker OID, so the unsigned MSIX installs with
+// `Add-AppxPackage -AllowUnsigned` (Windows 11) — never under Nous Research's name.
 export const OUT_OF_STORE_PUBLISHER =
-  'CN=Nous Research Inc., O=Nous Research Inc., L=Austin, S=Texas, C=US'
+  process.env.OXEEGEN_MSIX_PUBLISHER || 'CN=Oxeegen, O=Oxeegen, OID.2.25.311729368913984317654407730594956997722=1'
 
 // Content-Type for MSIX / App Installer artifacts. Without the right MIME the
 // browser cannot hand a clicked .appinstaller / .msixbundle to the OS App
