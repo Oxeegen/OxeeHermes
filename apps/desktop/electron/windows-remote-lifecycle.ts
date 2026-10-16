@@ -87,9 +87,9 @@ async function probeWindowsRemote(ssh, explicitHermesPath = '') {
     '$candidates+=$fallbackProfileCandidate',
     '$hermes=$null',
     'foreach($candidate in $candidates){Assert-NoReparse $candidate $true;$candidatePython=[IO.Path]::Combine([IO.Path]::GetDirectoryName($candidate), "python.exe");Assert-NoReparse $candidatePython $true;try{$item=Get-Item -LiteralPath $candidate -Force -ErrorAction Stop;if(($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0 -and -not $item.PSIsContainer){$hermes=$item.FullName;break}}catch [Management.Automation.ItemNotFoundException]{continue}}',
-    'if(-not $hermes){throw "Oxeegen Hermes is not installed on the remote Windows host."}',
+    'if(-not $hermes){throw "Oxee Desktop is not installed on the remote Windows host."}',
     'Assert-NoReparse $hermes $false',
-    'if($explicit -and $hermes -ne $explicit){throw "The configured Oxeegen Hermes path is not an executable file."}',
+    'if($explicit -and $hermes -ne $explicit){throw "The configured Oxee Desktop path is not an executable file."}',
     '$python=[IO.Path]::Combine([IO.Path]::GetDirectoryName($hermes), "python.exe")',
     'Assert-NoReparse $python $false',
     '[ordered]@{os="Windows";arch=$env:PROCESSOR_ARCHITECTURE;hermesHome=$hermesHome;hermesPath=$hermes;python=$python}|ConvertTo-Json -Compress'
@@ -212,7 +212,7 @@ async function assertWindowsRemoteInstallUpdateClear(ssh, hermesHome, python = '
         })
       ).pop() || ''
   } catch (cause) {
-    const error: any = new Error('Could not prove that the remote Oxeegen Hermes install is clear for SSH startup.')
+    const error: any = new Error('Could not prove that the remote Oxee Desktop install is clear for SSH startup.')
     error.kind = 'update-in-progress'
     error.cause = cause
     throw error
@@ -226,10 +226,10 @@ async function assertWindowsRemoteInstallUpdateClear(ssh, hermesHome, python = '
 
   const error: any = new Error(
     live
-      ? `Remote Oxeegen Hermes update process ${live[1]} is still running; SSH startup is paused.`
+      ? `Remote Oxee Desktop update process ${live[1]} is still running; SSH startup is paused.`
       : observation === 'HELD'
-        ? 'A process the remote Oxeegen Hermes update started still holds the install; SSH startup is paused.'
-        : 'The remote Oxeegen Hermes update marker is unreadable or malformed; refusing SSH startup.'
+        ? 'A process the remote Oxee Desktop update started still holds the install; SSH startup is paused.'
+        : 'The remote Oxee Desktop update marker is unreadable or malformed; refusing SSH startup.'
   )
 
   error.kind = 'update-in-progress'
@@ -637,7 +637,7 @@ async function connectWindowsRemote(deps) {
   const inspection = await helper(ssh, runtime, 'inspect', [runtime.hermesPath])
 
   if (!inspection.supported) {
-    const error: any = new Error('Update Oxeegen Hermes on the remote Windows host before connecting with Desktop SSH.')
+    const error: any = new Error('Update Oxee Desktop on the remote Windows host before connecting with Desktop SSH.')
     error.kind = 'update-required'
     throw error
   }
@@ -829,7 +829,7 @@ function buildWindowsInteractiveCommand(remoteCwd = '') {
     )
   }
 
-  script.push('$host.UI.RawUI.WindowTitle="Oxeegen Hermes SSH"', 'powershell.exe -NoLogo')
+  script.push('$host.UI.RawUI.WindowTitle="Oxee Desktop SSH"', 'powershell.exe -NoLogo')
 
   return powerShellCommand(script.join(';'))
 }

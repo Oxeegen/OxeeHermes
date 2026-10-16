@@ -98,7 +98,7 @@ export function remoteMediaEndpoint(baseUrl: string, filePath: string, profile?:
   const url = new URL(`${normalizedBase}/api/files/stream`)
 
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error(`Unsupported Oxeegen Hermes backend URL protocol: ${url.protocol}`)
+    throw new Error(`Unsupported Oxee Desktop backend URL protocol: ${url.protocol}`)
   }
 
   url.searchParams.set('path', filePath)

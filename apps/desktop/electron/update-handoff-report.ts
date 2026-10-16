@@ -65,8 +65,8 @@ export function reportHandoffResult(host: HandoffReportHost): void {
       host.log(`[updates] detached update finished with warnings: ${result.warnings.join(' | ')}`)
       void host.dialog.showMessageBox({
         type: 'info',
-        title: 'Oxeegen Hermes update',
-        message: 'Oxeegen Hermes updated, but some follow-up steps need another try',
+        title: 'Oxee Desktop update',
+        message: 'Oxee Desktop updated, but some follow-up steps need another try',
         detail: `${result.warnings.join('\n')}\n\nHermes retries them on the next launch or the next update.`
       })
     } else if (result && result.ok && result.manual) {
@@ -76,7 +76,7 @@ export function reportHandoffResult(host: HandoffReportHost): void {
       host.log(`[updates] detached update finished with manual action (branch ${result.branch}): ${result.message}`)
       host.dialog.showMessageBox({
         type: 'warning',
-        title: 'Oxeegen Hermes update',
+        title: 'Oxee Desktop update',
         message: 'The update finished, but needs one more step',
         detail: result.message
       })
@@ -92,8 +92,8 @@ export function reportHandoffResult(host: HandoffReportHost): void {
       void host.dialog
         .showMessageBox({
           type: 'error',
-          title: 'Oxeegen Hermes update',
-          message: "Oxeegen Hermes couldn't finish updating",
+          title: 'Oxee Desktop update',
+          message: "Oxee Desktop couldn't finish updating",
           detail:
             "You're still on the previous version and can keep using it. Try the update again, or open the update log to report the problem.\n\n" +
             `Details: ${result.message}`,

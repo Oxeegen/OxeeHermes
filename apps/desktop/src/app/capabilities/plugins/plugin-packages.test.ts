@@ -82,8 +82,8 @@ describe('mergePluginPackages', () => {
       [
         desktop({
           id: 'hermes-talk',
-          name: 'Oxeegen Hermes Talk',
-          description: 'GPT-Live subscription or explicit API voice, with Oxeegen Hermes task delegation.',
+          name: 'Oxee Desktop Talk',
+          description: 'GPT-Live subscription or explicit API voice, with Oxee Desktop task delegation.',
           packageName: 'hermes-talk',
           file: '/Users/me/.hermes/desktop-plugins/hermes-talk/plugin.js'
         })
@@ -94,7 +94,7 @@ describe('mergePluginPackages', () => {
     expect(rows).toHaveLength(1)
     expect(rows[0]).toMatchObject({
       key: 'hermes-talk',
-      name: 'Oxeegen Hermes Talk',
+      name: 'Oxee Desktop Talk',
       kind: 'both',
       desktopMissing: false,
       agentMissingInProfile: false
@@ -108,7 +108,7 @@ describe('mergePluginPackages', () => {
       [
         desktop({
           id: 'hermes-talk',
-          name: 'Oxeegen Hermes Talk',
+          name: 'Oxee Desktop Talk',
           file: '/Users/me/.hermes/desktop-plugins/hermes-talk/plugin.js'
         })
       ],

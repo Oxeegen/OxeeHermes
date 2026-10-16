@@ -42,7 +42,7 @@ test.describe('Oxeegen branding', () => {
       await fixture.page.screenshot({ path: path.join(SHOTS, 'main-system-dark.png') })
 
       expect(await bareProductNames(fixture.page)).toEqual([])
-      expect(await fixture.page.title()).toContain('Oxeegen Hermes')
+      expect(await fixture.page.title()).toContain('Oxee Desktop')
     } finally {
       await fixture.cleanup()
     }

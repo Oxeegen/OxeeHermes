@@ -120,9 +120,9 @@ function writeMsixExtensions() {
       Description="Launch ${xmlAttribute(displayName)} with the Copilot key"
       PublicFolder="Public">
     <uap3:Properties>
-      <SingleTap>oxeegen-hermes://copilot-key/start?state=Tap</SingleTap>
-      <PressAndHoldStart>oxeegen-hermes://copilot-key/start?state=Down</PressAndHoldStart>
-      <PressAndHoldStop>oxeegen-hermes://copilot-key/stop?state=Up</PressAndHoldStop>
+      <SingleTap>oxee-desktop://copilot-key/start?state=Tap</SingleTap>
+      <PressAndHoldStart>oxee-desktop://copilot-key/start?state=Down</PressAndHoldStart>
+      <PressAndHoldStop>oxee-desktop://copilot-key/stop?state=Up</PressAndHoldStop>
     </uap3:Properties>
   </uap3:AppExtension>
 </uap3:Extension>

@@ -21,7 +21,7 @@ interface OxeegenConnectionFormProps {
   submitLabel?: string
 }
 
-/** Region + API key: the only inference settings Oxeegen Hermes exposes. */
+/** Region + API key: the only inference settings Oxee Desktop exposes. */
 export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submitLabel }: OxeegenConnectionFormProps) {
   const s = useOxeegenStrings()
   const [current, setCurrent] = useState<null | OxeegenConnection>(null)

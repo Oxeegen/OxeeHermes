@@ -56,7 +56,7 @@ describe('ugitGitBinaries (#61494)', () => {
 })
 
 describe('managedGitBinaries', () => {
-  test('finds the newest PM-managed Git under Oxeegen Hermes tools', () => {
+  test('finds the newest PM-managed Git under Oxee Desktop tools', () => {
     const managed = path.join(LAD, 'hermes', 'tools', 'git-2.53.0+3-win32-x64', 'cmd', 'git.exe')
     const fs = fakeFs(
       { [path.join(LAD, 'hermes', 'tools')]: ['git-2.52.0+2-win32-x64', 'git-2.53.0+3-win32-x64'] },

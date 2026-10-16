@@ -42,7 +42,7 @@ export async function resolveGatewayWsUrl(deps: ResolveGatewayWsUrlDeps, conn: G
 
   if (conn.authMode === 'oauth') {
     if (!mint) {
-      throw new Error('This Desktop build cannot refresh OAuth WebSocket tickets. Update Oxeegen Hermes and try again.')
+      throw new Error('This Desktop build cannot refresh OAuth WebSocket tickets. Update Oxee Desktop and try again.')
     }
 
     try {

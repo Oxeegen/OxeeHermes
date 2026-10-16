@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { enumOptionsFor } from '@/app/settings/helpers'
 import { BrandMark } from '@/components/brand-mark'
+import { Intro } from '@/components/chat/intro'
 import { DesktopOnboardingOverlay } from '@/components/onboarding'
 import { TRANSLATIONS } from '@/i18n'
 import { registerAppLocale, resolveTranslations, unregisterAppLocaleSource } from '@/i18n/registry'
@@ -17,6 +18,7 @@ import { markOnboardingDecided } from '@/store/onboarding-presence'
 import { TITLEBAR_FIXED_TOOLS, titlebarAppActionsClusterCounts } from '@/store/titlebar-app-actions'
 import { BUILTIN_THEMES, DEFAULT_SKIN_NAME } from '@/themes/presets'
 
+import { OxeeTitlebarBrand } from './brand'
 import { NEW_BROWSER_TAB_ACTION } from './browser'
 import { OXEEGEN, OXEEGEN_REGIONS } from './config'
 import { saveOxeegenConnection } from './connection'
@@ -66,7 +68,7 @@ describe('product name', () => {
     registerAppLocale('en', { translations: { 'common.save': 'Save to Hermes' } }, 'plugin:oxeegen-test')
 
     try {
-      expect(resolveTranslations('en').common.save).toBe('Save to Oxeegen Hermes')
+      expect(resolveTranslations('en').common.save).toBe('Save to Oxee Desktop')
     } finally {
       unregisterAppLocaleSource('plugin:oxeegen-test')
     }
@@ -85,6 +87,23 @@ describe('brand', () => {
     const { container } = render(<BrandMark />)
 
     expect(container.querySelector('img')?.getAttribute('src')).toMatch(/oxeegen-icon(-dark)?\.svg$/)
+  })
+
+  it('shows the wordmark over an open sidebar and the icon alone once collapsed', () => {
+    const open = render(<OxeeTitlebarBrand sidebarOpen />)
+
+    expect(open.container.querySelector('img')?.getAttribute('src')).toMatch(/oxee-desktop-wordmark(-dark)?\.svg$/)
+    open.unmount()
+
+    const collapsed = render(<OxeeTitlebarBrand sidebarOpen={false} />)
+
+    expect(collapsed.container.querySelector('img')?.getAttribute('src')).toMatch(/oxeegen-icon(-dark)?\.svg$/)
+  })
+
+  it('greets an empty chat with the wordmark', () => {
+    const { container } = render(<Intro />)
+
+    expect(container.querySelector('[data-oxee-brand="intro"]')?.getAttribute('src')).toMatch(/oxee-desktop-wordmark(-dark)?\.svg$/)
   })
 })
 

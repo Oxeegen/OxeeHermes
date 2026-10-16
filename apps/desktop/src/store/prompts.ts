@@ -371,7 +371,7 @@ export async function answerApproval(
   }
 
   if (!gateway) {
-    throw new Error('Oxeegen Hermes gateway is not connected')
+    throw new Error('Oxee Desktop gateway is not connected')
   }
 
   const params = {

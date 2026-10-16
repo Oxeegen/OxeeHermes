@@ -204,7 +204,7 @@ test('FIX #95701: while a reauth rejection is latched, only re-emits of that fai
   // sibling failure that would flip retryable back on.
   assert.equal(shouldHoldBootProgressForReauth(latched, { error: null }), true)
   assert.equal(shouldHoldBootProgressForReauth(latched, {}), true)
-  assert.equal(shouldHoldBootProgressForReauth(latched, { error: 'Could not reach the remote Oxeegen Hermes gateway' }), true)
+  assert.equal(shouldHoldBootProgressForReauth(latched, { error: 'Could not reach the remote Oxee Desktop gateway' }), true)
 })
 
 test('FIX #95701: with no reauth latch every boot-progress update flows as before', () => {

@@ -572,7 +572,7 @@ test.runIf(process.platform !== 'win32')(
 
       assert.equal(clean.ok, true)
       assert.equal(clean.owed, undefined)
-      assert.equal(clean.message, 'Remote Oxeegen Hermes updated and every managed SSH profile is ready.')
+      assert.equal(clean.message, 'Remote Oxee Desktop updated and every managed SSH profile is ready.')
 
       // The debt survives a failed restoration: update and restore verdicts stay independent.
       const unrestored = await run([{ step: 'dependencies', reason: 'sync failed' }], { restoreFails: true })

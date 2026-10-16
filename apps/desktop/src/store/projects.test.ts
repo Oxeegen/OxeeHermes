@@ -399,7 +399,7 @@ describe('startWorkInRepo remote capability gate (#81724)', () => {
     desktopGit.mockReturnValue({
       worktreeAdd: vi.fn(async () => {
         throw new Error(
-          'Expected JSON from https://vps/api/git/worktree/add but got HTML (status 404). The endpoint is likely missing on the Oxeegen Hermes backend.'
+          'Expected JSON from https://vps/api/git/worktree/add but got HTML (status 404). The endpoint is likely missing on the Oxee Desktop backend.'
         )
       })
     } as never)
@@ -516,7 +516,7 @@ describe('createProject', () => {
   })
 
   it.each(['default', 'coder'])('creates in the active %s profile without leaving All profiles', async profile => {
-    const created = { folders: [], id: 'p_new', name: 'Oxeegen Hermes', primary_path: '/srv/hermes' }
+    const created = { folders: [], id: 'p_new', name: 'Oxee Desktop', primary_path: '/srv/hermes' }
     const tree = { id: created.id, label: created.name, path: created.primary_path, repos: [], sessionCount: 0 }
     const request = vi.fn().mockResolvedValue({ project: created })
     activeGateway.mockReturnValue({ connectionState: 'open', request } as never)
@@ -544,8 +544,8 @@ describe('createProject', () => {
     $activeGatewayProfile.set('coder')
     setShowAllProfiles(true)
 
-    const pending = createProject({ folders: ['/srv/hermes'], name: 'Oxeegen Hermes' })
-    const rejection = expect(pending).rejects.toThrow('Active Oxeegen Hermes profile changed while connecting')
+    const pending = createProject({ folders: ['/srv/hermes'], name: 'Oxee Desktop' })
+    const rejection = expect(pending).rejects.toThrow('Active Oxee Desktop profile changed while connecting')
     const otherGateway = { connectionState: 'open', request }
     $activeGatewayProfile.set('other')
     activeGateway.mockReturnValue(otherGateway as never)

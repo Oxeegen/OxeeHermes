@@ -117,7 +117,7 @@ function channelRecord(channel: 'stable' | 'canary', sequence: number): FixtureR
     nextSequence: sequence + 1,
     identity: {
       token: 'b'.repeat(16),
-      displayName: channel === 'stable' ? 'Oxeegen Hermes Stable' : 'Oxeegen Hermes Canary',
+      displayName: channel === 'stable' ? 'Oxee Desktop Stable' : 'Oxee Desktop Canary',
       appNamePascal: 'Hermes',
       artifactNamePascal: 'Hermes',
       appId: 'chat.nous.hermes',
@@ -143,7 +143,7 @@ function buildManifest(
 ): FixtureManifest {
   const identity: FixtureIdentity = {
     token: 'b'.repeat(16),
-    displayName: channel === 'stable' ? 'Oxeegen Hermes Stable' : 'Oxeegen Hermes Canary',
+    displayName: channel === 'stable' ? 'Oxee Desktop Stable' : 'Oxee Desktop Canary',
     appNamePascal: 'Hermes',
     artifactNamePascal: 'Hermes',
     appId: 'chat.nous.hermes',

@@ -4,15 +4,16 @@ import { rebrandText, rebrandTranslations } from './rebrand'
 
 describe('rebrandText', () => {
   it.each([
-    ['Ask Hermes…', 'Ask Oxeegen Hermes…'],
-    ['Update Hermes Desktop to continue.', 'Update Oxeegen Hermes to continue.'],
-    ['Welcome to Hermes Agent', 'Welcome to Oxeegen Hermes'],
-    ['HERMES AGENT', 'OXEEGEN HERMES'],
-    ["Hermes's memory", "Oxeegen Hermes's memory"],
-    ['Hermes (default)', 'Oxeegen Hermes (default)'],
-    ['Restart Hermes.', 'Restart Oxeegen Hermes.'],
-    ['"Hermes"', '"Oxeegen Hermes"'],
-    ['auf dem Remote-Hermes statt', 'auf dem Remote-Oxeegen Hermes statt']
+    ['Ask Hermes…', 'Ask Oxee Desktop…'],
+    ['Update Hermes Desktop to continue.', 'Update Oxee Desktop to continue.'],
+    ['Welcome to Hermes Agent', 'Welcome to Oxee Desktop'],
+    ['HERMES AGENT', 'OXEE DESKTOP'],
+    ["Hermes's memory", "Oxee Desktop's memory"],
+    ['Hermes (default)', 'Oxee Desktop (default)'],
+    ['Restart Hermes.', 'Restart Oxee Desktop.'],
+    ['"Hermes"', '"Oxee Desktop"'],
+    ['auf dem Remote-Hermes statt', 'auf dem Remote-Oxee Desktop statt'],
+    ['This Hermes desktop app was installed by Nix.', 'This Oxee Desktop app was installed by Nix.']
   ])('rewrites %j', (input, expected) => {
     expect(rebrandText(input)).toBe(expected)
   })
@@ -23,7 +24,7 @@ describe('rebrandText', () => {
     'HERMES_HOME',
     'hermes://open',
     'HermesBots roster',
-    'Oxeegen Hermes is ready',
+    'Oxee Desktop is ready',
     'X-Hermes-Session-Token',
     'Hermes-owned venv',
     '/Applications/Hermes.app',
@@ -51,9 +52,9 @@ describe('rebrandTranslations', () => {
       count: 3
     })
 
-    expect(out.title).toBe('Oxeegen Hermes')
-    expect(out.nested.greet('Ana')).toBe('Oxeegen Hermes says hi to Ana')
-    expect(out.list).toEqual(['Oxeegen Hermes', 'other'])
+    expect(out.title).toBe('Oxee Desktop')
+    expect(out.nested.greet('Ana')).toBe('Oxee Desktop says hi to Ana')
+    expect(out.list).toEqual(['Oxee Desktop', 'other'])
     expect(out.count).toBe(3)
   })
 })

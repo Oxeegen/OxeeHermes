@@ -1,7 +1,7 @@
-"""Composes the Oxeegen Hermes wordmarks from the icon geometry and outlined text.
+"""Composes the Oxee Desktop wordmarks from the icon geometry and outlined text.
 
 usage: python oxeegen/scripts/wordmarks.py <outlines dir> <out dir>
-The outlines dir holds out-Oxeegen.txt / out-Hermes.txt / out-Oxeegen Hermes.txt
+The outlines dir holds out-Oxee.txt / out-Desktop.txt / out-Oxee Desktop.txt
 from outline_text.py (Geist SemiBold, 68 px, tracking -2).
 """
 import os
@@ -16,10 +16,10 @@ def outline(name):
     return float(width), d.strip()
 
 
-W_OX, OX = outline('Oxeegen')
-W_HE, HE = outline('Hermes')
-W_ALL, _ = outline('Oxeegen Hermes')
-HE_X = W_ALL - W_HE  # where "Hermes" starts once the space is shaped in
+W_OX, OX = outline('Oxee')
+W_DE, DE = outline('Desktop')
+W_ALL, _ = outline('Oxee Desktop')
+DE_X = W_ALL - W_DE  # where "Desktop" starts once the space is shaped in
 
 ICON = ('<rect width="1024" height="1024" rx="230" fill="url(#oxg)"/><g fill="#fff">'
         '<path d="M362 252.2 A300 300 0 0 0 362 771.8 Z"/><path d="M662 252.2 A300 300 0 0 1 662 771.8 Z"/>'
@@ -42,18 +42,18 @@ def write(name, vb, body):
 def words(x, y, ink, accent, s=1.0):
     return (f'<g transform="translate({x} {y}) scale({s})">'
             f'<path fill="{ink}" d="{OX}"/>'
-            f'<g transform="translate({HE_X:.2f} 0)"><path fill="{accent}" d="{HE}"/></g></g>')
+            f'<g transform="translate({DE_X:.2f} 0)"><path fill="{accent}" d="{DE}"/></g></g>')
 
 
 for theme, (ink, accent) in THEMES.items():
     # Horizontal: 100 px icon, text on the OxeePhone baseline
     w = 124 + W_ALL + 4
-    write(f'oxeegen-hermes-wordmark-{theme}.svg', f'0 0 {w:.0f} 100',
+    write(f'oxee-desktop-wordmark-{theme}.svg', f'0 0 {w:.0f} 100',
           f'<g transform="scale(0.097656)">{ICON}</g>' + words(124, 72, ink, accent))
     # Stacked: icon above, text centred below
     sw = W_ALL + 40
-    write(f'oxeegen-hermes-stacked-{theme}.svg', f'0 0 {sw:.0f} 270',
+    write(f'oxee-desktop-stacked-{theme}.svg', f'0 0 {sw:.0f} 270',
           f'<g transform="translate({(sw - 160) / 2:.1f} 0) scale(0.15625)">{ICON}</g>' + words(20, 250, ink, accent))
     # Text only (no icon), for places that already show the icon
-    write(f'oxeegen-hermes-text-{theme}.svg', f'0 0 {W_ALL + 4:.0f} 72',
+    write(f'oxee-desktop-text-{theme}.svg', f'0 0 {W_ALL + 4:.0f} 72',
           words(2, 56, ink, accent))

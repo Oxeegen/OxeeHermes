@@ -23,7 +23,7 @@ test('default data roots append the suffix literally on each platform', (): void
     const paths: typeof path = platform === 'win32' ? path.win32 : path.posix
     const home: string = platform === 'win32' ? 'C:\\Users\\test' : '/home/test'
     const local: string = paths.join(home, 'AppData', 'Local')
-    const userData: string = paths.join(home, 'app-data', 'Oxeegen Hermes')
+    const userData: string = paths.join(home, 'app-data', 'Oxee Desktop')
     const base: string = platform === 'win32' ? paths.join(local, 'hermes') : paths.join(home, '.hermes')
 
     for (const suffix of ['', '-asdfasdf', 'magic-test', ' spaced ']) {

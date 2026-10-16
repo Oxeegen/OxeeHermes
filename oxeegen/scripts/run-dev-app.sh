@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Launch Oxeegen Hermes from this checkout for manual testing, against the
+# Launch Oxee Desktop from this checkout for manual testing, against the
 # isolated dev home (.dev-home) — never ~/.hermes or ~/.hermes-oxeegen.
 #
 #   oxeegen/scripts/run-dev-app.sh            # build if needed, then launch
@@ -42,7 +42,7 @@ if [[ $REBUILD -eq 1 || ! -f dist/electron-main.mjs ]]; then
   HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}' npm run build >/dev/null
 fi
 
-echo "Launching Oxeegen Hermes (data: $HERMES_HOME)…"
+echo "Launching Oxee Desktop (data: $HERMES_HOME)…"
 exec env -u WAYLAND_DISPLAY \
   HERMES_DESKTOP_HERMES="$ROOT/.hermes/bin/hermes" \
   HERMES_DESKTOP_SKIP_PROTOCOL_REGISTRATION=1 \

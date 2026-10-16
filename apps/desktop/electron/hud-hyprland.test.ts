@@ -16,7 +16,7 @@ import {
   resetHyprlandDispatchSyntax
 } from './hud-hyprland'
 
-const TITLE = 'Oxeegen Hermes HUD'
+const TITLE = 'Oxee Desktop HUD'
 const ADDRESS = '0x55d1'
 const SOCKET_ENV = { HYPRLAND_INSTANCE_SIGNATURE: 'abc123', XDG_RUNTIME_DIR: '/run/user/1000' }
 
@@ -47,7 +47,7 @@ test('classifies Hyprland dispatch replies the way 0.54 and 0.56 actually write 
 test('finds the HUD by exact title among other windows of the same pid', () => {
   const found = parseHudHyprlandClient(
     JSON.stringify([
-      { address: '0x111', pid: 42, title: 'Oxeegen Hermes', floating: true, pinned: false },
+      { address: '0x111', pid: 42, title: 'Oxee Desktop', floating: true, pinned: false },
       hudClient({ pid: 42 })
     ]),
     TITLE
@@ -240,7 +240,7 @@ test('retries until Hyprland lists the HUD', async () => {
         lookups += 1
 
         if (lookups < 3) {
-          return JSON.stringify([{ address: '0x111', title: 'Oxeegen Hermes', floating: true }])
+          return JSON.stringify([{ address: '0x111', title: 'Oxee Desktop', floating: true }])
         }
 
         return JSON.stringify([hudClient({ floating: true, pinned: true })])

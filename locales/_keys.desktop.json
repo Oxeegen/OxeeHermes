@@ -1773,6 +1773,7 @@
     "keybinds.actions.view.findNext",
     "keybinds.actions.view.findPrevious",
     "keybinds.actions.view.flipPanes",
+    "keybinds.actions.view.newBrowserTab",
     "keybinds.actions.view.newTerminal",
     "keybinds.actions.view.nextTerminal",
     "keybinds.actions.view.prevTerminal",

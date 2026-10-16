@@ -13,7 +13,7 @@ class StuckSocket extends EventTarget {
   }
 }
 
-const connectErrorMessage = 'Could not connect to Oxeegen Hermes gateway'
+const connectErrorMessage = 'Could not connect to Oxee Desktop gateway'
 
 const rejection = (pending: Promise<void>): Promise<Error> =>
   pending.then(

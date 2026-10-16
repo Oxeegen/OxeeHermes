@@ -97,11 +97,11 @@ test('canImportHermesCli returns false when binary does not exist', async () => 
   assert.equal(await canImportHermesCli(ghost), false)
 })
 
-test('explicit Oxeegen Hermes override is authoritative', () => {
+test('explicit Oxee Desktop override is authoritative', () => {
   assert.equal(shouldTrustHermesOverride('/nix/store/abc/bin/hermes'), true)
 })
 
-test('empty Oxeegen Hermes override is not authoritative', () => {
+test('empty Oxee Desktop override is not authoritative', () => {
   assert.equal(shouldTrustHermesOverride(''), false)
   assert.equal(shouldTrustHermesOverride(undefined), false)
 })

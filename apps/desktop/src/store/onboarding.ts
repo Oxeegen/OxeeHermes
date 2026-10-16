@@ -306,7 +306,7 @@ function shouldPreserveConfiguredOnBootRace(runtime: RuntimeReadinessResult, sta
 }
 
 function notifyReady(provider: string) {
-  notify({ kind: 'success', title: 'Oxeegen Hermes is ready', message: `${provider} connected.` })
+  notify({ kind: 'success', title: 'Oxee Desktop is ready', message: `${provider} connected.` })
 }
 
 // Human-friendly labels for tools auto-routed through the Nous Tool Gateway,
@@ -490,7 +490,7 @@ async function completeWithModelConfirm(
         return
       }
 
-      onFail(error instanceof Error ? error.message : 'Oxeegen Hermes could not save the selected model.')
+      onFail(error instanceof Error ? error.message : 'Oxee Desktop could not save the selected model.')
 
       return
     }
@@ -530,8 +530,8 @@ function providerResolutionFailure(reason: null | string) {
   const detail = reason?.trim()
 
   return detail
-    ? `Connected, but Oxeegen Hermes still cannot resolve a usable provider. ${detail}`
-    : 'Connected, but Oxeegen Hermes still cannot resolve a usable provider.'
+    ? `Connected, but Oxee Desktop still cannot resolve a usable provider. ${detail}`
+    : 'Connected, but Oxee Desktop still cannot resolve a usable provider.'
 }
 
 /** Re-read the OAuth provider list into the onboarding cache. Exported so a
@@ -811,7 +811,7 @@ export async function refreshOnboarding(ctx: OnboardingContext, stillWanted?: ()
         kind: 'info',
         title: 'Runtime not ready',
         message:
-          'Oxeegen Hermes could not verify the running backend on startup. Some features may be unavailable until the gateway is reachable.'
+          'Oxee Desktop could not verify the running backend on startup. Some features may be unavailable until the gateway is reachable.'
       })
     }
 
@@ -1112,7 +1112,7 @@ export async function recheckExternalSignin(ctx: OnboardingContext) {
       provider,
       message:
         reason?.trim() ||
-        `Oxeegen Hermes still cannot reach ${provider.name}. Run \`${provider.cli_command}\` in a terminal first.`
+        `Oxee Desktop still cannot reach ${provider.name}. Run \`${provider.cli_command}\` in a terminal first.`
     })
   )
 }
@@ -1297,7 +1297,7 @@ export async function saveOnboardingLocalEndpoint(
     if (!runtime.ready) {
       const detail = (runtime.reason ?? '').trim()
 
-      return { ok: false, message: detail || `Saved, but Oxeegen Hermes still cannot reach ${resolvedUrl}.` }
+      return { ok: false, message: detail || `Saved, but Oxee Desktop still cannot reach ${resolvedUrl}.` }
     }
 
     notifyReady('Local / custom endpoint')

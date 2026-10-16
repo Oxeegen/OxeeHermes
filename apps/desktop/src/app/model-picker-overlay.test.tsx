@@ -58,7 +58,8 @@ afterEach(() => {
   $gatewayState.set('idle')
 })
 
-it('reads the catalog from the backend profile but hands the Desktop alias to provider setup', async () => {
+// Oxeegen: no "Add provider" in the model picker (OXEEGEN_MODEL_MENU_EXTRAS), so this upstream flow never runs.
+it.skip('reads the catalog from the backend profile but hands the Desktop alias to provider setup', async () => {
   $gatewayState.set('open')
   $modelPickerOpen.set(true)
   $selectedStoredSessionId.set('primary-a')

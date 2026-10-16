@@ -1,7 +1,7 @@
 import type { DesktopTheme, DesktopThemeColors, DesktopThemeTypography } from '@/themes/types'
 
 /**
- * Oxeegen — the default desktop theme of Oxeegen Hermes (Fred's theme).
+ * Oxeegen — the default desktop theme of Oxee Desktop (Fred's theme).
  *
  * Mono re-seeded to the Oxeegen blurple #5E4AF5, exactly as the app's own
  * accent picker computes it (`accentedTheme(mono, '#5e4af5')`), plus:

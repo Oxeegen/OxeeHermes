@@ -1,6 +1,6 @@
 # oxeegen/
 
-Tout ce qui est propre au fork **Oxeegen Hermes** du dépôt officiel
+Tout ce qui est propre au fork **Oxee Desktop** du dépôt officiel
 [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) (licence MIT,
 © 2025 Nous Research ; la notice doit accompagner toute distribution). L'objectif : un diff
 petit et régénérable par rapport à l'upstream, pour que les mises à jour restent mécaniques.
@@ -30,8 +30,8 @@ petit et régénérable par rapport à l'upstream, pour que les mises à jour re
 | Thème par défaut « Oxeegen » (violet `#5E4AF5`, neutres zinc, Geist) | Preset ajouté en tête et `DEFAULT_SKIN_NAME` | `apps/desktop/src/oxeegen/theme.ts`, hook dans `src/themes/presets.ts` et `use-skin-command.ts` |
 | Police Geist (OFL) | `@font-face` | `apps/desktop/src/oxeegen/oxeegen.css` (importé par `src/styles.css`) |
 
-Règle de nommage (`rebrand.ts`) : `Hermes Agent` et `Hermes Desktop` deviennent `Oxeegen Hermes`,
-`Hermes` devient `Oxeegen Hermes`, `HERMES AGENT` devient `OXEEGEN HERMES`. Seul le mot capitalisé
+Règle de nommage (`rebrand.ts`) : `Hermes Agent` et `Hermes Desktop` deviennent `Oxee Desktop`,
+`Hermes` devient `Oxee Desktop`, `HERMES AGENT` devient `OXEE DESKTOP`. Seul le mot capitalisé
 isolé est concerné. Ne sont jamais touchés :
 
 - `hermes` en minuscules (CLI, `~/.hermes`, `hermes://`, paquets) et les variables `HERMES_*` ;
@@ -56,9 +56,12 @@ chaîne intacte (données de test qui imitent le backend ou un chemin).
 | `apps/desktop/src/themes/use-skin-command.ts` | alias `default` → `oxeegen` |
 | `apps/desktop/src/styles.css` | `@import './oxeegen/oxeegen.css'` |
 | `apps/desktop/src/components/brand-mark.tsx` | images `oxeegen-icon*.svg` |
+| `apps/desktop/src/app/shell/titlebar-controls.tsx` | `<OxeeTitlebarBrand>` après le bouton de barre latérale (logo texte, icône seule si réduite) |
+| `apps/desktop/src/components/chat/intro.tsx` | `<OxeeIntroWordmark />` à la place du lettrage `HERMES AGENT` d'une conversation vide |
+| `apps/desktop/src/app/right-sidebar/files/tree.tsx` | `<FileIcon>` (icônes Material, `src/oxeegen/file-icons/`) à la place des codicons dossier/fichier |
 | `apps/desktop/product-identity.cjs`, `electron-builder.config.cjs`, `scripts/set-exe-identity.mjs` | identité, éditeur, dépôt de mise à jour |
 | `apps/desktop/vitest.config.ts` | `setupFiles` charge `src/oxeegen/vitest-setup.ts` (catalogues réécrits pour les tests) |
-| Tests ajustés à la main | thème par défaut `oxeegen` (`classic-skin`, `persist-accent`, `appearance-apply`, `theme-requests`, `backend-sync`), variante bundled (`product-identity`) |
+| Tests ajustés à la main | thème par défaut `oxeegen` (`classic-skin`, `persist-accent`, `appearance-apply`, `theme-requests`, `backend-sync`), variante bundled (`product-identity`), menus de modèles sans « Edit Models » / « Add provider » (`model-catalog-menu`, `model-picker-overlay`), libellé `view.newBrowserTab` (`overlay-gaps.json`, `locales/_keys.desktop.json`) |
 
 ## Après une mise à jour depuis l'upstream
 
@@ -172,11 +175,15 @@ s'installent à la demande, par le réseau, si un utilisateur active la fonction
 | Même dossier de données (`~/.hermes`, `HERMES_HOME` hérité, registre Windows) | Environnement de bundle par défaut : suffixe `-oxeegen` (`~/.hermes-oxeegen`, `%LOCALAPPDATA%\hermes-oxeegen`), `HERMES_HOME`/`HERMES_SHARED_AUTH_DIR`/`HERMES_DESKTOP_USER_DATA_DIR` effacés (`scripts/bundle-env.mjs`) ; le lanceur CLI l'applique aussi (`scripts/build/launcher_wrapper.py`) |
 | Même userData Électron, même verrou d'instance unique, même trousseau | `productName` = nom affiché, toujours (`package.json`, `electron-builder.config.cjs`) |
 | Même AppUserModelID Windows | Toujours `com.oxeegen.*` (`main.ts`) |
-| Commande `hermes` publiée dans `~/.local/bin` / alias MSIX | `oxeegen-hermes*` (`product-identity.cjs`, `hermes_cli/_launchers.py`) |
+| Commande `hermes` publiée dans `~/.local/bin` / alias MSIX | `oxee-desktop*` (`product-identity.cjs`, `hermes_cli/_launchers.py`) |
 | Services gateway `hermes-gateway` / `ai.hermes.gateway` / `Hermes_Gateway` | Suffixe `-oxeegen` dérivé de `HERMES_DATA_DIR_SUFFIX` (`gateway.py` `tagged_service_suffix`, `gateway_runtime_service.py`) |
-| Schéma `hermes://` | `oxeegen-hermes://` (`electron-builder.config.cjs`, `main.ts`, `before-build.mjs`) |
+| Schéma `hermes://` | `oxee-desktop://` (`electron-builder.config.cjs`, `main.ts`, `before-build.mjs`) |
 | `/etc/hermes` (scope managé système d'un Hermes officiel) | Ignoré : `HERMES_MANAGED_DIR` pointe toujours vers le scope Oxeegen |
-| Notes de version, flux de mise à jour | Dépôt `oxeegen/oxeegen-hermes` |
+| Notes de version, flux de mise à jour | Dépôt `oxeegen/oxee-desktop` |
+
+Le produit s'appelle « Oxee Desktop » (anciennement « Oxeegen Hermes »). Les identifiants techniques
+invisibles gardent `oxeegen` : dossier de données `hermes-oxeegen`, suffixe `-oxeegen` des services,
+AUMID `com.oxeegen.*`. Ainsi une mise à jour conserve la région, les clés et les sessions.
 
 Effet en développement : un build `npm run build` force `~/.hermes-oxeegen`. Pour les captures
 contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}'`.
@@ -192,4 +199,4 @@ contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","
   packs de langue passent par la réécriture.
 - Fond du DMG macOS (`packaging/nous-dmg-2b.tiff`) et images Nous inutilisées dans `public/`.
 - Bandeau « Share usage stats? … Share with Nous » (télémétrie vers Nous) visible sur l'écran principal.
-- Labels de Bot Mode : le bot par défaut s'appelle désormais « Oxeegen Hermes » dans les transcripts de groupe.
+- Labels de Bot Mode : le bot par défaut s'appelle désormais « Oxee Desktop » dans les transcripts de groupe.

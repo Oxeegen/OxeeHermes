@@ -183,13 +183,13 @@ export function createMinimizeToTray(options: Options) {
             height: process.platform === 'darwin' ? 18 : 24
           })
         )
-        tray.setToolTip('Oxeegen Hermes')
+        tray.setToolTip('Oxee Desktop')
         tray.setContextMenu(
           Menu.buildFromTemplate([
-            { label: 'Show Oxeegen Hermes', click: restore },
+            { label: 'Show Oxee Desktop', click: restore },
             { type: 'separator' },
             // Do not bypass the ordinary active-work confirmation or teardown.
-            { label: 'Quit Oxeegen Hermes', click: () => app.quit() }
+            { label: 'Quit Oxee Desktop', click: () => app.quit() }
           ])
         )
 

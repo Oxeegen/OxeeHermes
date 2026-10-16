@@ -17,7 +17,7 @@ describe('isMissingRpcMethod', () => {
   })
 
   it('ignores unrelated failures', () => {
-    expect(isMissingRpcMethod(new Error('Oxeegen Hermes gateway is not connected'))).toBe(false)
+    expect(isMissingRpcMethod(new Error('Oxee Desktop gateway is not connected'))).toBe(false)
     expect(isMissingRpcMethod(new Error('no such project'))).toBe(false)
   })
 })

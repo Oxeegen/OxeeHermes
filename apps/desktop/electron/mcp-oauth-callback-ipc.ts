@@ -35,7 +35,7 @@ const DONE_HTML =
   '<!doctype html><meta charset="utf-8"><title>Authorization received</title>' +
   '<body style="font:15px system-ui;margin:3rem;text-align:center">' +
   '<h2>&#10003; Authorization received</h2>' +
-  '<p>You can close this window and return to Oxeegen Hermes.</p>' +
+  '<p>You can close this window and return to Oxee Desktop.</p>' +
   '<script>setTimeout(()=>window.close(),800)</script>'
 
 interface CallbackResult {

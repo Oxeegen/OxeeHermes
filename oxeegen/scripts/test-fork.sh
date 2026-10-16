@@ -49,6 +49,11 @@ DESKTOP_TESTS=(
   electron/feature-flags.test.ts
   src/app/settings/connections-registry.test.tsx
   src/app/settings/gateway-settings.test.tsx
+  src/app/model-picker-overlay.test.tsx
+  src/app/shell/model-catalog-menu.test.tsx
+  src/i18n/overlay-completeness.test.ts
+  scripts/i18n-keys.test.mjs
+  src/components/chat/intro.test.tsx
 )
 
 echo "== Python (Oxeegen)"

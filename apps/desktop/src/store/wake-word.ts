@@ -159,7 +159,7 @@ const gatewayRequester: WakeRequester = async <T>(method: string, params: Record
   const gateway = $gateway.get()
 
   if (!gateway) {
-    throw new Error('Oxeegen Hermes gateway unavailable')
+    throw new Error('Oxee Desktop gateway unavailable')
   }
 
   return method === 'wake.start'

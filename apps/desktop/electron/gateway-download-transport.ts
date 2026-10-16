@@ -11,7 +11,7 @@ export async function downloadViaTokenToFile(url, token, ctx, finalizeGatewayDow
   const parsed = new URL(url)
 
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`Unsupported Oxeegen Hermes backend URL protocol: ${parsed.protocol}`)
+    throw new Error(`Unsupported Oxee Desktop backend URL protocol: ${parsed.protocol}`)
   }
 
   const res: http.IncomingMessage = await withRetry(async () => {
@@ -31,7 +31,7 @@ export async function downloadViaTokenToFile(url, token, ctx, finalizeGatewayDow
       })
 
       req.on('error', reject)
-      req.setTimeout(timeoutMs, () => req.destroy(new Error(`Timed out connecting to Oxeegen Hermes backend after ${timeoutMs}ms`)))
+      req.setTimeout(timeoutMs, () => req.destroy(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`)))
       req.end()
     })
   }, { method: 'GET' })

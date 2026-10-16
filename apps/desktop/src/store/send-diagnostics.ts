@@ -97,7 +97,7 @@ export async function confirmSendDiagnostics(): Promise<void> {
     const gateway = $gateway.get()
 
     if (!gateway) {
-      throw new Error('Oxeegen Hermes gateway unavailable')
+      throw new Error('Oxee Desktop gateway unavailable')
     }
 
     const extraFiles = await collectLocalExtras()

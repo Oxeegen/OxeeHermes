@@ -158,7 +158,7 @@ test('an ensure child that never reached the protocol boundary is diagnosed from
   await expect(ensureLocalGateway(async () => ({ code: 1, stdout: '', stderr: "Error: Profile 'gone' does not exist.\n" }))).rejects.toThrow(/exit 1\): Error: Profile 'gone' does not exist\./)
   // A protocol outcome is never re-diagnosed: `incompatible` stays the gateway's own verdict.
   await expect(ensureLocalGateway(async () => ({ code: 3, stdout: '{"endpoint":null,"reason_code":"runtime_protocol","state":"incompatible"}', stderr: 'noise' }))).rejects.toThrow('Gateway incompatible (runtime_protocol)')
-  await expect(ensureLocalGateway(async () => ({ code: 0, stdout: '', stderr: '' }))).rejects.toThrow(/produced no result \(exit 0\)\. Update Oxeegen Hermes/)
+  await expect(ensureLocalGateway(async () => ({ code: 0, stdout: '', stderr: '' }))).rejects.toThrow(/produced no result \(exit 0\)\. Update Oxee Desktop/)
 })
 
 test('private dial credential is one-use and bound to the requesting native window', () => {
@@ -199,7 +199,7 @@ test('a dial against a replaced local gateway forgets the cached endpoint once a
   expect(ensures).toBe(2)
 })
 
-test('a ready owner running other code than this Oxeegen Hermes is restarted once, then re-ensured', async () => {
+test('a ready owner running other code than this Oxee Desktop is restarted once, then re-ensured', async () => {
   // After `hermes update` the live gateway still serves the old code and answers model calls
   // 503 "Restart required"; attaching to it on every dial pinned the user to it forever.
   const { createStaleGatewayRestarter } = await import('./local-gateway')
@@ -495,7 +495,7 @@ test('a session write that names its owner only in the body gets a grant for tha
 
 test('an ensure refusal names its remedy instead of only a status pointer', async () => {
   // A gateway another install owns is refused, not replaced; ensure says what to do in `detail`.
-  const detail = "another Oxeegen Hermes install's gateway owns this profile; stop it there: hermes gateway stop"
+  const detail = "another Oxee Desktop install's gateway owns this profile; stop it there: hermes gateway stop"
 
   await expect(ensureLocalGateway(async () => ({
     code: 3, stdout: JSON.stringify({ state: 'incompatible', reason_code: 'runtime_protocol', detail, endpoint: null })

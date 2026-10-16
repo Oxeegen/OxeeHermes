@@ -9,7 +9,7 @@ import { skinToDesktopTheme } from './skin'
 // (`display.skin: default`): the CLI's classic gold skin, by name `default`.
 const stockDefaultSkin = {
   name: 'default',
-  description: 'Classic Oxeegen Hermes — gold and kawaii',
+  description: 'Classic Oxee Desktop — gold and kawaii',
   colors: { banner_text: '#FFF8DC', status_bar_bg: '#1a1a2e', ui_accent: '#FFBF00', banner_border: '#CD7F32' }
 }
 
@@ -58,7 +58,7 @@ async function launch(localSkin: typeof stockDefaultSkin | null) {
   return { api, bootPaint, connect }
 }
 
-describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred from stock config (#76579)', () => {
+describe('Classic Oxee Desktop is an explicit Desktop pick, never inferred from stock config (#76579)', () => {
   beforeEach(() => window.localStorage.clear())
 
   afterEach(() => {
@@ -87,7 +87,7 @@ describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred fro
 
   it('a Classic pick paints gold/navy (dark mode) and survives connect, reconnect and relaunch; a later Nous pick sticks', async () => {
     let run = await launch(stockDefaultSkin)
-    expect(run.api.theme?.availableThemes.find(t => t.name === 'classic')?.label).toBe('Classic Oxeegen Hermes')
+    expect(run.api.theme?.availableThemes.find(t => t.name === 'classic')?.label).toBe('Classic Oxee Desktop')
 
     act(() => run.api.theme?.setMode('dark'))
     act(() => run.api.theme?.setTheme('classic'))
@@ -126,7 +126,7 @@ describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred fro
     expect(run.api.theme?.themeName).toBe('oxeegen')
   })
 
-  it('a cache left by the reverted #130015 build (CLI `default` as "Classic Oxeegen Hermes") shows ONE Classic and is purged', async () => {
+  it('a cache left by the reverted #130015 build (CLI `default` as "Classic Oxee Desktop") shows ONE Classic and is purged', async () => {
     // Exactly what that build wrote: the converted CLI `default` skin, relabelled.
     window.localStorage.setItem(
       BACKEND_THEMES_KEY,
@@ -134,7 +134,7 @@ describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred fro
         default: {
           ...skinToDesktopTheme(stockDefaultSkin),
           description: stockDefaultSkin.description,
-          label: 'Classic Oxeegen Hermes'
+          label: 'Classic Oxee Desktop'
         }
       })
     )
@@ -143,9 +143,9 @@ describe('Classic Oxeegen Hermes is an explicit Desktop pick, never inferred fro
     run.connect()
 
     const themes = run.api.theme?.availableThemes ?? []
-    expect(themes.filter(t => t.label === 'Classic Oxeegen Hermes').map(t => t.name)).toEqual(['classic'])
+    expect(themes.filter(t => t.label === 'Classic Oxee Desktop').map(t => t.name)).toEqual(['classic'])
     expect(themes.some(t => t.name === 'default')).toBe(false)
-    expect(run.api.skin?.('list').match(/Classic Oxeegen Hermes/g)).toHaveLength(1)
+    expect(run.api.skin?.('list').match(/Classic Oxee Desktop/g)).toHaveLength(1)
     expect(JSON.parse(window.localStorage.getItem(BACKEND_THEMES_KEY) ?? '{}')).not.toHaveProperty('default')
   })
 

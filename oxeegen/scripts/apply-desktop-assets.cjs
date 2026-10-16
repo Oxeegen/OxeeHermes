@@ -29,7 +29,10 @@ const COPIES = [
 // In-app brand badge (BrandMark) and anything else the renderer shows.
 const SVG_COPIES = [
   ['icon.svg', 'public/oxeegen-icon.svg'],
-  ['icon-dark.svg', 'public/oxeegen-icon-dark.svg']
+  ['icon-dark.svg', 'public/oxeegen-icon-dark.svg'],
+  // Titlebar and empty-chat wordmark (src/oxeegen/brand.tsx)
+  ['wordmark/oxee-desktop-wordmark-light.svg', 'public/oxee-desktop-wordmark.svg'],
+  ['wordmark/oxee-desktop-wordmark-dark.svg', 'public/oxee-desktop-wordmark-dark.svg']
 ]
 
 const svg = name => fs.readFileSync(path.join(SRC, name), 'utf8')

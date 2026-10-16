@@ -65,7 +65,7 @@ async function fixture(): Promise<{
     bundleEnv: {},
     identity: {
       token: '1234567890abcdef',
-      displayName: 'Oxeegen Hermes fresh-preview-29',
+      displayName: 'Oxee Desktop fresh-preview-29',
       appId: 'chat.nous.hermes.h1234567890abcdef',
       appNamePascal: 'HermesH1234567890abcdef',
       artifactNamePascal: 'HermesH1234567890abcdef',

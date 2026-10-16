@@ -15,6 +15,7 @@ import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { formatModifierToken } from '@/lib/keybinds/combo'
 import { cn } from '@/lib/utils'
+import { OxeeTitlebarBrand } from '@/oxeegen/brand'
 import { NEW_BROWSER_TAB_ACTION, newBrowserTab } from '@/oxeegen/browser'
 import { recordAction } from '@/store/desktop-metrics'
 import { toggleHud } from '@/store/hud'
@@ -334,6 +335,7 @@ export function TitlebarControls({ leftTools = [], tools = [], onOpenSettings }:
         {visibleLeftTools.map(tool => (
           <TitlebarToolButton key={tool.id} navigate={navigate} tool={tool} />
         ))}
+        <OxeeTitlebarBrand sidebarOpen={leftEdge.open} />
         <Slot area="titleBar.left" />
         <Slot area="titleBar.center" />
       </div>

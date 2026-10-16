@@ -1,5 +1,5 @@
 /**
- * Which Settings views Oxeegen Hermes shows. Hidden views drop out of the nav,
+ * Which Settings views Oxee Desktop shows. Hidden views drop out of the nav,
  * the router enum (so any `?tab=<hidden>` deep link — "Open Settings →
  * Providers", billing recovery, gateway pills — falls back to the Oxeegen
  * page), the settings search and the command palette.

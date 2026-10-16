@@ -120,7 +120,7 @@ describe('FreeTierSignInDialog', () => {
         setOnboardingSurfaceActive('onboarding', false)
       })
 
-      await waitFor(() => expect(screen.getByText('Keep going with Oxeegen Hermes')).toBeTruthy())
+      await waitFor(() => expect(screen.getByText('Keep going with Oxee Desktop')).toBeTruthy())
       expect(requestGateway).toHaveBeenCalledWith('free_tier.claim_nudge')
     })
 
@@ -136,7 +136,7 @@ describe('FreeTierSignInDialog', () => {
 
       await act(async () => noteFreeTierTurnComplete())
 
-      await waitFor(() => expect(screen.getByText('Keep going with Oxeegen Hermes')).toBeTruthy())
+      await waitFor(() => expect(screen.getByText('Keep going with Oxee Desktop')).toBeTruthy())
     })
 
     it('Sign in continues into the normal sign-in flow', async () => {
@@ -155,7 +155,7 @@ describe('FreeTierSignInDialog', () => {
       await act(async () => screen.getByRole('button', { name: 'Not now' }).click())
 
       expect($freeTierSignIn.get()).toEqual({ status: 'closed' })
-      expect(screen.queryByText('Keep going with Oxeegen Hermes')).toBeNull()
+      expect(screen.queryByText('Keep going with Oxee Desktop')).toBeNull()
     })
   })
 })

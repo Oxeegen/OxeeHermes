@@ -192,5 +192,5 @@ test('the quit abort sentinel is marked as an expected shutdown transition', asy
 
   assert.equal(lifecycle.signal.aborted, true)
   assert.equal(isExpectedTransition(lifecycle.signal.reason), true)
-  assert.equal((lifecycle.signal.reason as Error).message, 'Oxeegen Hermes is quitting.')
+  assert.equal((lifecycle.signal.reason as Error).message, 'Oxee Desktop is quitting.')
 })

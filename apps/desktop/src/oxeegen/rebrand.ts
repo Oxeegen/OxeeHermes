@@ -16,7 +16,7 @@
  * directly (type stripping) from the codemod.
  */
 
-export const PRODUCT_NAME = 'Oxeegen Hermes'
+export const PRODUCT_NAME = 'Oxee Desktop'
 
 // A word glued to `-`, `_`, `/`, `\` or a dotted suffix is an identifier, not
 // prose: `X-Hermes-Session-Token`, `Hermes.app`, `C:\Hermes\venv`. Those
@@ -29,9 +29,10 @@ const NOT_BEFORE = String.raw`(?![-_/\\]|\.\w)`
 const rule = (core: string, flags = 'g') => new RegExp(`${NOT_AFTER}${core}${NOT_BEFORE}`, flags)
 
 const RULES: ReadonlyArray<readonly [RegExp, string]> = [
-  [rule(String.raw`HERMES (?:AGENT|DESKTOP)\b`), 'OXEEGEN HERMES'],
-  [rule(String.raw`(?<!Oxeegen )Hermes (?:Agent|Desktop)\b`), PRODUCT_NAME],
-  [rule(String.raw`(?<!Oxeegen )Hermes\b`), PRODUCT_NAME]
+  [rule(String.raw`HERMES (?:AGENT|DESKTOP)\b`), 'OXEE DESKTOP'],
+  // "Hermes desktop app" must not become "Oxee Desktop desktop app".
+  [rule(String.raw`Hermes (?:Agent|[Dd]esktop)\b`), PRODUCT_NAME],
+  [rule(String.raw`Hermes\b`), PRODUCT_NAME]
 ]
 
 const MARKER = /\bHermes\b|\bHERMES (?:AGENT|DESKTOP)\b/

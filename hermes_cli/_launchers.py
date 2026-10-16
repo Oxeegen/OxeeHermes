@@ -1001,8 +1001,8 @@ def _symlink_sealed_launchers(payload_bin) -> dict:
             source = payload_bin / name
             if not source.is_file():
                 continue
-            # Oxeegen: published as oxeegen-hermes*, never over an official `hermes`.
-            target = link_dir / f"oxeegen-{name}"
+            # Oxeegen: published as oxee-desktop*, never over an official `hermes`.
+            target = link_dir / f"oxee-desktop{name.removeprefix('hermes')}"
             if target.is_symlink():
                 current = os.readlink(target)
                 if current == str(source):

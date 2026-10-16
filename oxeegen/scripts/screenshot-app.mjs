@@ -104,6 +104,13 @@ try {
   await shot('main-dark')
   await page.emulateMedia({ colorScheme: 'light' })
 
+  // Collapsed sidebar: the titlebar keeps the icon alone.
+  await page.getByRole('button', { name: /^(Hide sidebar|Masquer la barre latérale)$/ }).first().click()
+  await settle(1200)
+  await shot('sidebar-collapsed')
+  await page.getByRole('button', { name: /^(Show sidebar|Afficher la barre latérale)$/ }).first().click()
+  await settle(800)
+
   // File browser (Material icons). Opens only when a workspace is set.
   const showFiles = page.getByRole('button', { name: /^(Show right sidebar|Afficher la barre latérale droite|Toggle file browser|Basculer l'explorateur de fichiers)$/ })
   if (await showFiles.first().isVisible().catch(() => false)) {

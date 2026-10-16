@@ -10,16 +10,18 @@
 
 const variants = {
   // Oxeegen: product name and package identity (see oxeegen/README.md).
-  '': { display: 'Oxeegen Hermes', kebab: 'oxeegen-hermes', pascal: 'OxeegenHermes' },
+  // Users install the bundled app ("Oxee Desktop"); the runtime-less client keeps
+  // its own display name, which owns userData and the single-instance lock.
+  '': { display: 'Oxee Desktop Client', kebab: 'oxee-desktop', pascal: 'OxeeDesktop' },
   light: {
-    display: 'Oxeegen Hermes Light',
-    kebab: 'oxeegen-hermes-light',
-    pascal: 'OxeegenHermesLight'
+    display: 'Oxee Desktop Light',
+    kebab: 'oxee-desktop-light',
+    pascal: 'OxeeDesktopLight'
   },
   bundled: {
-    display: 'Oxeegen Hermes Agent',
-    kebab: 'oxeegen-hermes-bundled',
-    pascal: 'OxeegenHermesBundled'
+    display: 'Oxee Desktop',
+    kebab: 'oxee-desktop-bundled',
+    pascal: 'OxeeDesktopBundled'
   }
 }
 
@@ -56,7 +58,7 @@ const displayName = buildCommit
 const kebabSuffix = buildCommit ? `-${buildCommit}` : canary ? '-canary' : ''
 const pascalSuffix = buildCommit ? `Commit${buildCommit}` : canary ? 'Canary' : ''
 // Oxeegen: published CLI names (~/.local/bin links, MSIX aliases) never shadow an official `hermes`.
-const cliName = `${light ? 'oxeegen-hermes-light' : 'oxeegen-hermes'}${kebabSuffix}`
+const cliName = `${light ? 'oxee-desktop-light' : 'oxee-desktop'}${kebabSuffix}`
 if (store && (canary || buildCommit)) {
   throw new Error('Store packaging is only eligible for stable releases')
 }

@@ -228,7 +228,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): CheckoutStra
     }
 
     return refuse(
-      'The updater could not take the update lock, so nothing was changed. Oxeegen Hermes keeps running on the previous version — try the update again.',
+      'The updater could not take the update lock, so nothing was changed. Oxee Desktop keeps running on the previous version — try the update again.',
       'updater-spawn-failed'
     )
   }
@@ -256,7 +256,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): CheckoutStra
       }
 
       failure =
-        'The updater did not start, so nothing was changed. Oxeegen Hermes keeps running on the previous version — try the update again.\n\n' +
+        'The updater did not start, so nothing was changed. Oxee Desktop keeps running on the previous version — try the update again.\n\n' +
         `Details: the hand-off script never took the update lock within ${Math.round((deps.handoffClaimTimeoutMs ?? HANDOFF_CLAIM_TIMEOUT_MS) / 1000)} s.`
     }
 
@@ -496,7 +496,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): CheckoutStra
     deps.emitUpdateProgress({
       stage: 'restart',
       message:
-        'Updating Oxeegen Hermes — this window will close and the updater will open. Don’t reopen Oxeegen Hermes yourself; it restarts automatically when the update finishes.',
+        'Updating Oxee Desktop — this window will close and the updater will open. Don’t reopen Oxee Desktop yourself; it restarts automatically when the update finishes.',
       percent: 100
     })
     deps.repairMacUpdaterHelper(updater)
@@ -738,7 +738,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): CheckoutStra
     deps.emitUpdateProgress({
       stage: 'restart',
       message:
-        'Updating Oxeegen Hermes — this window will close. Don’t reopen Oxeegen Hermes yourself; it restarts automatically when the update finishes.',
+        'Updating Oxee Desktop — this window will close. Don’t reopen Oxee Desktop yourself; it restarts automatically when the update finishes.',
       percent: 100
     })
 

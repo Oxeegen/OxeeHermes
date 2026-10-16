@@ -50,7 +50,7 @@ if (import.meta.env.MODE !== 'production' || import.meta.env.VITE_PERF_PROBE ===
 const winParam = new URLSearchParams(window.location.search).get('win')
 
 if (winParam === 'hud') {
-  document.title = 'Oxeegen Hermes HUD'
+  document.title = 'Oxee Desktop HUD'
 }
 
 // The `?win=` kinds whose Electron window is `transparent: true` and so paints

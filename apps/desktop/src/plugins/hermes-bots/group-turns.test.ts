@@ -341,7 +341,7 @@ describe('session-gone classification', () => {
   // typed `display_kind: failed_turn` (agent/turn_failure_copy.py). That row is
   // a transcript boundary, not the member speaking: read as the reply, the
   // room posted it as the bot's answer, re-drove the member and hid the error.
-  it('reports a failed turn whose transcript Oxeegen Hermes closed with the failed-turn notice', async () => {
+  it('reports a failed turn whose transcript Oxee Desktop closed with the failed-turn notice', async () => {
     let now = 1_000_000
     const clock = vi.spyOn(Date, 'now').mockImplementation(() => (now += 60_000))
 

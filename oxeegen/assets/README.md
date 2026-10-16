@@ -1,4 +1,4 @@
-# Icône Oxeegen Hermes
+# Icône Oxee Desktop
 
 Retenue : **B1**. Les deux demi-disques du logo Oxeegen, écartés, avec une étincelle IA au centre.
 Tuile : dégradé diagonal `#4A44E2` → `#7F5CFB`, coins arrondis `rx=230/1024` (même tuile qu'OxeePhone).
@@ -28,21 +28,21 @@ python3 oxeegen/scripts/pack.py oxeegen/assets/generated
 
 `raster.cjs` utilise le Playwright du monorepo (`npm ci` à la racine).
 
-## Logo texte « Oxeegen Hermes »
+## Logo texte « Oxee Desktop »
 
 Dans `wordmark/`. Le texte est en Geist SemiBold vectorisée : il s'affiche pareil partout, sans police installée.
-« Oxeegen » à l'encre (`#18181B` / `#F4F4F5`), « Hermes » en violet de marque (`#5E4AF5` / `#8E80FF`), comme OxeePhone.
+« Oxee » à l'encre (`#18181B` / `#F4F4F5`), « Desktop » en violet de marque (`#5E4AF5` / `#8E80FF`), comme OxeePhone.
 
 | Fichier | Usage |
 |---|---|
-| `oxeegen-hermes-wordmark-{light,dark}.svg` | Horizontal : icône + texte (en-têtes, site, docs) |
-| `oxeegen-hermes-stacked-{light,dark}.svg` | Empilé : icône au-dessus (écran d'accueil, splash, installeur) |
-| `oxeegen-hermes-text-{light,dark}.svg` | Texte seul (là où l'icône est déjà visible) |
+| `oxee-desktop-wordmark-{light,dark}.svg` | Horizontal : icône + texte (en-têtes, site, docs) |
+| `oxee-desktop-stacked-{light,dark}.svg` | Empilé : icône au-dessus (écran d'accueil, splash, installeur) |
+| `oxee-desktop-text-{light,dark}.svg` | Texte seul (là où l'icône est déjà visible) |
 
 Regénérer :
 
 ```bash
-uv run --no-project --with fonttools --with brotli --with uharfbuzz python oxeegen/scripts/outline_text.py <geist-latin.woff2> "Oxeegen" 68 -2 > <dir>/out-Oxeegen.txt
-# idem pour "Hermes" et "Oxeegen Hermes"
+uv run --no-project --with fonttools --with brotli --with uharfbuzz python oxeegen/scripts/outline_text.py apps/desktop/src/oxeegen/fonts/Geist-Variable.woff2 "Oxee" 68 -2 > <dir>/out-Oxee.txt
+# idem pour "Desktop" et "Oxee Desktop"
 python3 oxeegen/scripts/wordmarks.py <dir> oxeegen/assets/wordmark
 ```

@@ -84,7 +84,7 @@ describe('useMessageStream agent-init error surfacing (#63078)', () => {
 
     act(() =>
       stream.handleEvent({
-        payload: { message: 'Oxeegen Hermes could not start the assistant for this session. Details: no provider.' },
+        payload: { message: 'Oxee Desktop could not start the assistant for this session. Details: no provider.' },
         session_id: SID,
         type: 'error'
       })
@@ -126,7 +126,7 @@ describe('useMessageStream agent-init error surfacing (#63078)', () => {
 
     act(() =>
       stream.handleEvent({
-        payload: { message: 'Oxeegen Hermes could not start the assistant for this session. Details: no provider.' },
+        payload: { message: 'Oxee Desktop could not start the assistant for this session. Details: no provider.' },
         session_id: SID,
         type: 'error'
       })

@@ -298,7 +298,7 @@ test('Windows relaunch gate uses strict install-wide marker parsing and fail-clo
   assert.doesNotMatch(script, /ErrorAction SilentlyContinue/)
 })
 
-test('Windows probe validates Oxeegen Hermes and Python topology before selection', async () => {
+test('Windows probe validates Oxee Desktop and Python topology before selection', async () => {
   let script = ''
   await probeWindowsRemote(
     sshWith(async (command, options) => {
@@ -658,10 +658,10 @@ test('platform detection surfaces transport failures as themselves, not unsuppor
           throw new Error('not recognized')
         }
 
-        throw new Error('Oxeegen Hermes is not installed on the remote Windows host.')
+        throw new Error('Oxee Desktop is not installed on the remote Windows host.')
       })
     ),
-    (err: any) => err.kind === 'unsupported-platform' && /Oxeegen Hermes is not installed/.test(err.message)
+    (err: any) => err.kind === 'unsupported-platform' && /Oxee Desktop is not installed/.test(err.message)
   )
 })
 

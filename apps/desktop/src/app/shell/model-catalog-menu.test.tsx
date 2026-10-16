@@ -254,7 +254,8 @@ describe('the catalog owns model curation', () => {
     })
   })
 
-  it('offers Edit Models without the host wiring it up', async () => {
+  // Oxeegen: no catalog editing in the model menu (OXEEGEN_MODEL_MENU_EXTRAS).
+  it.skip('offers Edit Models without the host wiring it up', async () => {
     renderMenu()
     await screen.findByText(/Gemini 3\.1 Pro/i)
 

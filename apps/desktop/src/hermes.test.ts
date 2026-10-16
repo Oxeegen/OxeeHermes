@@ -42,7 +42,7 @@ const emptySessionsResponse = {
   total: 0
 }
 
-describe('Oxeegen Hermes REST helpers', () => {
+describe('Oxee Desktop REST helpers', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

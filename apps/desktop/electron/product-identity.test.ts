@@ -92,8 +92,8 @@ test('nonstable runtime pins userData before the app name can change', async ():
   const canary: ProductIdentity = await identityForVariant('bundled')
   const runtime: { applyDesktopIdentity: typeof applyDesktopIdentity } = await import('./product-identity')
   const root: string = fs.mkdtempSync(path.join(os.tmpdir(), 'identity-userdata-'))
-  const paths: Record<string, string> = { appData: root, userData: path.join(root, 'Oxeegen Hermes') }
-  let name: string = 'Oxeegen Hermes'
+  const paths: Record<string, string> = { appData: root, userData: path.join(root, 'Oxee Desktop') }
+  let name: string = 'Oxee Desktop'
 
   const app: Parameters<typeof applyDesktopIdentity>[0] = {
     getPath: (key: string): string => paths[key],
@@ -108,7 +108,7 @@ test('nonstable runtime pins userData before the app name can change', async ():
 
   try {
     assert.equal(runtime.applyDesktopIdentity(app, stable), null)
-    assert.equal(paths.userData, path.join(root, 'Oxeegen Hermes'))
+    assert.equal(paths.userData, path.join(root, 'Oxee Desktop'))
     assert.equal(runtime.applyDesktopIdentity(app, canary), canary.displayName)
     assert.equal(paths.userData, path.join(paths.appData, canary.appNamePascal))
     assert.equal(name, canary.displayName)
@@ -118,9 +118,9 @@ test('nonstable runtime pins userData before the app name can change', async ():
 })
 
 test.each([
-  [undefined, 'Oxeegen Hermes', 'oxeegen-hermes', 'latest', 'canary'],
-  ['bundled', 'Oxeegen Hermes Agent', 'oxeegen-hermes', 'latest', 'canary'],
-  ['light', 'Oxeegen Hermes Light', 'oxeegen-hermes-light', 'light', 'light-canary']
+  [undefined, 'Oxee Desktop Client', 'oxee-desktop', 'latest', 'canary'],
+  ['bundled', 'Oxee Desktop', 'oxee-desktop', 'latest', 'canary'],
+  ['light', 'Oxee Desktop Light', 'oxee-desktop-light', 'light', 'light-canary']
 ] as const)(
   '%s separates stable, canary and independent commits',
   async (
@@ -256,7 +256,7 @@ test('packaging isolates boot metadata and executable names without renaming rel
     assert.equal(artifact.name, identity.artifactNamePascal)
     assert.equal(artifact.identity.msixAppIdWithOrg, config.msix.identityName)
     // Oxeegen: its own deep-link scheme, never an official Hermes's hermes://.
-    assert.deepEqual(config.protocols[0].schemes, ['oxeegen-hermes'])
+    assert.deepEqual(config.protocols[0].schemes, ['oxee-desktop'])
 
     if (build !== 'canary') {
       assert.equal(config.publish, null)

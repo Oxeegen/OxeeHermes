@@ -27,7 +27,7 @@ test('scrapeReadyPort explains a missing remote profile', async () => {
     (err: any) => {
       assert.equal(err.kind, 'remote-profile-missing')
       assert.equal(err.profile, 'operator')
-      assert.match(err.message, /remote Oxeegen Hermes profile 'operator' does not exist/)
+      assert.match(err.message, /remote Oxee Desktop profile 'operator' does not exist/)
       assert.match(err.message, /hermes profile create operator/)
 
       return true

@@ -1287,7 +1287,7 @@ function acquireSingleInstanceLock(): boolean {
 const isPrimaryInstance: boolean = acquireSingleInstanceLock()
 
 if (!isPrimaryInstance) {
-  console.error('[hermes] another Oxeegen Hermes instance holds the single-instance lock; exiting')
+  console.error('[hermes] another Oxee Desktop instance holds the single-instance lock; exiting')
   app.exit(0)
 }
 
@@ -1443,7 +1443,7 @@ const BOOT_FAKE_STEP_MS = (() => {
   return Math.max(120, raw)
 })()
 
-const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Oxeegen Hermes'
+const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Oxee Desktop'
 const HUD_WINDOW_TITLE = `${APP_NAME} HUD`
 const TITLEBAR_HEIGHT = 34
 const MACOS_TRAFFIC_LIGHTS_HEIGHT = 14
@@ -2006,7 +2006,7 @@ let desktopLogFlushPromise = Promise.resolve()
 // Land a spawn failure in desktop.log.
 function logPoolSpawnFailure(label: string, error: unknown): void {
   rememberLog(
-    `Oxeegen Hermes backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
+    `Oxee Desktop backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
   )
 }
 
@@ -2068,7 +2068,7 @@ let bootProgressState = {
   error: null,
   fakeMode: BOOT_FAKE_MODE,
   isCloudBackendDown: false,
-  message: 'Waiting to start Oxeegen Hermes backend',
+  message: 'Waiting to start Oxee Desktop backend',
   phase: 'idle',
   progress: 0,
   retryable: false,
@@ -2896,7 +2896,7 @@ async function waitForUpdateToFinish() {
 
         await advanceBootProgress(
           'backend.update-wait',
-          'An update is still running — Oxeegen Hermes will start automatically when it finishes. Its progress is in logs/update.log.',
+          'An update is still running — Oxee Desktop will start automatically when it finishes. Its progress is in logs/update.log.',
           12
         )
 
@@ -2905,7 +2905,7 @@ async function waitForUpdateToFinish() {
 
       await advanceBootProgress(
         'backend.update-wait',
-        'An update is finishing — Oxeegen Hermes will start automatically when it completes…',
+        'An update is finishing — Oxee Desktop will start automatically when it completes…',
         12
       )
     },
@@ -2949,7 +2949,7 @@ async function waitForUpdateToFinish() {
       log: rememberLog
     })
   ) {
-    await advanceBootProgress('backend.update-restart', 'Restarting Oxeegen Hermes to load the updated app…', 14)
+    await advanceBootProgress('backend.update-restart', 'Restarting Oxee Desktop to load the updated app…', 14)
     // Park while the scheduled exit lands so this stale build never starts a
     // backend; the failsafe below only runs if the exit somehow does not.
     await new Promise(resolve => setTimeout(resolve, BUNDLE_SWAP_RELAUNCH_FAILSAFE_MS))
@@ -4001,7 +4001,7 @@ function killExternalVenvHolders(updateRoot) {
 
     if (Number.isInteger(pid) && pid > 0) {
       rememberLog(
-        `[updates] stopping external Oxeegen Hermes venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
+        `[updates] stopping external Oxee Desktop venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
       )
 
       try {
@@ -4363,7 +4363,7 @@ async function claimBackendChild(
   if (decision.action === 'fail') {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Oxeegen Hermes backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
+      `Oxee Desktop backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
     )
   }
 
@@ -4372,7 +4372,7 @@ async function claimBackendChild(
   if (decision.action === 'degrade') {
     startMarker = pidOnlyStartMarker(child.pid)
     rememberLog(
-      `WARNING: process start marker probe failed for live Oxeegen Hermes backend PID ${child.pid}; ` +
+      `WARNING: process start marker probe failed for live Oxee Desktop backend PID ${child.pid}; ` +
         `claiming with PID-only identity instead of stopping it: ${decision.reason}`
     )
   } else {
@@ -4399,7 +4399,7 @@ async function claimBackendChild(
   } catch (error) {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Could not persist ownership for the Oxeegen Hermes backend: ${error.message}${outputTail?.describe() ?? ''}`
+      `Could not persist ownership for the Oxee Desktop backend: ${error.message}${outputTail?.describe() ?? ''}`
     )
   }
 }
@@ -5104,12 +5104,12 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
     } else if (!isWindowsBinaryPathInWsl(hermesOverride, { isWsl: IS_WSL })) {
       hermesCommand = hermesOverride
     } else {
-      rememberLog(`Ignoring Windows Oxeegen Hermes override under WSL: ${hermesOverride}`)
+      rememberLog(`Ignoring Windows Oxee Desktop override under WSL: ${hermesOverride}`)
     }
 
     if (hermesCommand) {
       if (looksLikeDesktopAppBinary(hermesCommand)) {
-        rememberLog(`Ignoring desktop app executable on PATH while resolving Oxeegen Hermes CLI: ${hermesCommand}`)
+        rememberLog(`Ignoring desktop app executable on PATH while resolving Oxee Desktop CLI: ${hermesCommand}`)
         hermesCommand = null
       } else {
         const unwrapped: Awaited<ReturnType<typeof unwrapWindowsVenvHermesCommand>> =
@@ -5126,7 +5126,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
           (await verifyHermesCli(hermesCommand, { shell: shellForProbe }))
         ) {
           return {
-            label: `existing Oxeegen Hermes CLI at ${hermesCommand}`,
+            label: `existing Oxee Desktop CLI at ${hermesCommand}`,
             command: hermesCommand,
             args: backendArgs,
             bootstrap: false,
@@ -5138,7 +5138,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
         }
 
         rememberLog(
-          `Ignoring existing Oxeegen Hermes CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
+          `Ignoring existing Oxee Desktop CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
         )
       }
     }
@@ -5162,7 +5162,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   if (activeBackend && !bootstrapRepairRequested) {
     if (!activeRuntime.hasValidMarker) {
       rememberLog(
-        `[bootstrap] Active Oxeegen Hermes runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
+        `[bootstrap] Active Oxee Desktop runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
       )
     }
 
@@ -5185,14 +5185,14 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
       )
 
       if (userBackend) {
-        rememberLog(`[boot] Using Oxeegen Hermes install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
+        rememberLog(`[boot] Using Oxee Desktop install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
 
         return userBackend
       }
 
-      rememberLog(`[bootstrap] Oxeegen Hermes install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
+      rememberLog(`[bootstrap] Oxee Desktop install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
     } else {
-      rememberLog(`[bootstrap] no usable Oxeegen Hermes install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
+      rememberLog(`[bootstrap] no usable Oxee Desktop install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
     }
   }
 
@@ -5208,7 +5208,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   //    is a recoverable state the GUI can drive through.
   return {
     kind: 'bootstrap-needed',
-    label: 'Oxeegen Hermes not installed yet; bootstrap required',
+    label: 'Oxee Desktop not installed yet; bootstrap required',
     command: null,
     args: backendArgs,
     bootstrap: true,
@@ -5269,7 +5269,7 @@ async function ensureRuntime(
     rememberLog('[bootstrap] REFUSING installer on a bundled install; payload missing or damaged — reinstall the app')
 
     const bundledError: Error & { isBootstrapFailure?: boolean } = new Error(
-      'This app bundles its own Oxeegen Hermes runtime, but the runtime files are missing or damaged. Reinstall Oxeegen Hermes to restore it.'
+      'This app bundles its own Oxee Desktop runtime, but the runtime files are missing or damaged. Reinstall Oxee Desktop to restore it.'
     )
 
     bundledError.isBootstrapFailure = true
@@ -5278,11 +5278,11 @@ async function ensureRuntime(
   }
 
   if (backend.kind === 'bootstrap-needed') {
-    rememberLog('[bootstrap] no Oxeegen Hermes install found; starting first-launch bootstrap')
+    rememberLog('[bootstrap] no Oxee Desktop install found; starting first-launch bootstrap')
 
     if (await handOffWindowsBootstrapRecovery('bootstrap-needed')) {
       const handoffError: Error & { isBootstrapFailure?: boolean; bootstrapHandedOff?: boolean } = new Error(
-        'Oxeegen Hermes recovery was handed off to Oxeegen Hermes Setup. The desktop will restart when recovery completes.'
+        'Oxee Desktop recovery was handed off to Oxee Desktop Setup. The desktop will restart when recovery completes.'
       )
 
       handoffError.isBootstrapFailure = true
@@ -5346,7 +5346,7 @@ async function ensureRuntime(
     bootstrapAbortController = null
 
     if (bootstrapResult.cancelled) {
-      const cancelledError = new Error('Oxeegen Hermes install was cancelled.') as any
+      const cancelledError = new Error('Oxee Desktop install was cancelled.') as any
       cancelledError.isBootstrapFailure = true
       cancelledError.bootstrapCancelled = true
       bootstrapFailure = cancelledError
@@ -5426,7 +5426,7 @@ function fetchJson(url, token, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Oxeegen Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Oxee Desktop backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5502,7 +5502,7 @@ function fetchJson(url, token, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Oxeegen Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`))
         })
 
         // From here the request goes on the wire: a later transport error can no
@@ -5546,7 +5546,7 @@ function fetchPublicJson(url, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Oxeegen Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Oxee Desktop backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5607,7 +5607,7 @@ function fetchPublicJson(url, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Oxeegen Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`))
         })
 
         // Past this point the request is on the wire — see fetchJson.
@@ -7426,7 +7426,7 @@ function openOauthLoginWindow(
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: silent ? 'Connecting to Oxeegen Hermes Cloud agent…' : 'Sign in to Oxeegen Hermes gateway',
+        title: silent ? 'Connecting to Oxee Desktop Cloud agent…' : 'Sign in to Oxee Desktop gateway',
         autoHideMenuBar: true,
         // Silent cascade: start HIDDEN. The auto-SSO 302 chain completes in
         // well under a second, so the window normally never needs to show. We
@@ -7557,7 +7557,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
       }
 
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        reject(new Error(`Unsupported Oxeegen Hermes backend URL protocol: ${parsed.protocol}`))
+        reject(new Error(`Unsupported Oxee Desktop backend URL protocol: ${parsed.protocol}`))
 
         return
       }
@@ -7600,7 +7600,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
           // already finished
         }
 
-        reject(new Error(`Timed out connecting to Oxeegen Hermes backend after ${timeoutMs}ms`))
+        reject(new Error(`Timed out connecting to Oxee Desktop backend after ${timeoutMs}ms`))
       }, timeoutMs)
 
       request.on('response', (res: Electron.IncomingMessage): void => {
@@ -7993,7 +7993,7 @@ async function discoverCloudAgents(org?: string) {
 
   if (!(await hasLivePortalSession())) {
     const err = new Error(
-      'You are not signed in to Oxeegen Hermes Cloud. Open Settings → Gateway, choose Oxeegen Hermes Cloud, and sign in.'
+      'You are not signed in to Oxee Desktop Cloud. Open Settings → Gateway, choose Oxee Desktop Cloud, and sign in.'
     ) as any
 
     err.needsCloudLogin = true
@@ -8044,7 +8044,7 @@ async function discoverCloudAgents(org?: string) {
       // recover it) — surface it as a re-login, not a generic failure.
       if (error && error.statusCode === 401) {
         const err = new Error(
-          'Your Oxeegen Hermes Cloud session has expired. Open Settings → Gateway and sign in again.'
+          'Your Oxee Desktop Cloud session has expired. Open Settings → Gateway and sign in again.'
         ) as any
 
         err.needsCloudLogin = true
@@ -8139,7 +8139,7 @@ async function cloudAgentSilentSignIn(dashboardUrl) {
   // interactive prompt rather than a silent cascade. Discovery already gates on
   // this, but a selection can arrive after the session lapsed.
   if (!(await hasLivePortalSession())) {
-    const err = new Error('Your Oxeegen Hermes Cloud session has expired. Sign in to Oxeegen Hermes Cloud again.') as any
+    const err = new Error('Your Oxee Desktop Cloud session has expired. Sign in to Oxee Desktop Cloud again.') as any
     err.needsCloudLogin = true
     throw err
   }
@@ -9477,7 +9477,7 @@ async function buildRemoteConnection(
 
   if (!token) {
     throw new Error(
-      'Remote Oxeegen Hermes gateway is selected, but no session token is saved. ' +
+      'Remote Oxee Desktop gateway is selected, but no session token is saved. ' +
         'Open Settings → Gateway and save a token, or switch back to Local.'
     )
   }
@@ -10573,7 +10573,7 @@ async function testDesktopConnectionConfig(input: any = {}) {
             return {
               reachable: false,
               sshError: 'update-required',
-              error: 'Update Oxeegen Hermes on the remote host before connecting with Desktop SSH.'
+              error: 'Update Oxee Desktop on the remote host before connecting with Desktop SSH.'
             }
           }
 
@@ -12077,7 +12077,7 @@ async function startHermes(requestedProfile?: string) {
   // otherwise SIGTERMs the running instance's live backend (#87295).
   if (!isPrimaryInstance) {
     rememberLog('[boot] non-primary instance: skipping backend machinery')
-    throw new Error('Oxeegen Hermes is already running in another window.')
+    throw new Error('Oxee Desktop is already running in another window.')
   }
 
   await reapOrphanedBackendsOnce()
@@ -12107,7 +12107,7 @@ async function startHermes(requestedProfile?: string) {
   // E2E: simulate a boot failure without breaking the real backend. The boot
   // progresses a few steps, then fails with the given error message.
   if (BOOT_FAKE_ERROR) {
-    await advanceBootProgress('backend.resolve', 'Resolving Oxeegen Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', 'Resolving Oxee Desktop backend', 8)
     const error = new Error(BOOT_FAKE_ERROR) as any
     error.isBootstrapFailure = true
     bootstrapFailure = error
@@ -12160,7 +12160,7 @@ async function startHermes(requestedProfile?: string) {
       // remotes and Apply invalidated this attempt), bail before probing.
       backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
-      await advanceBootProgress('backend.remote', `Connecting to remote Oxeegen Hermes backend at ${remote.baseUrl}`, 24)
+      await advanceBootProgress('backend.remote', `Connecting to remote Oxee Desktop backend at ${remote.baseUrl}`, 24)
       await waitForRemoteHermes(remote)
 
       // Second async boundary: the health probe itself can outlive the
@@ -12169,7 +12169,7 @@ async function startHermes(requestedProfile?: string) {
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Remote Oxeegen Hermes backend is ready',
+        message: 'Remote Oxee Desktop backend is ready',
         progress: 94,
         running: true,
         error: null
@@ -12178,7 +12178,7 @@ async function startHermes(requestedProfile?: string) {
       return createPrimaryRemoteConnection(remote, hermesLog.slice(-80), getWindowState())
     }
 
-    await advanceBootProgress('backend.resolve', 'Resolving Oxeegen Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', 'Resolving Oxee Desktop backend', 8)
     // Resolve for the desktop's primary profile so a per-profile remote
     // override on the active profile is honored (falls back to env / global).
 
@@ -12218,7 +12218,7 @@ async function startHermes(requestedProfile?: string) {
       ensureLocalRuntime: backend =>
         ensureRuntime(backend, () => backendConnectionState.assertCurrentAttempt(connectionAttempt)),
       prepareLocalBackend: async () => {
-        await advanceBootProgress('backend.runtime', 'Resolving Oxeegen Hermes runtime', 28)
+        await advanceBootProgress('backend.runtime', 'Resolving Oxee Desktop runtime', 28)
 
         return resolveHermesBackend(backendArgs)
       },
@@ -12276,8 +12276,8 @@ async function startHermes(requestedProfile?: string) {
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
     backendStartFailure = null
-    rememberLog('[backend] Oxeegen Hermes gateway is ready')
-    updateBootProgress({ phase: 'backend.ready', message: 'Oxeegen Hermes gateway is ready', progress: 94, running: true, error: null })
+    rememberLog('[backend] Oxee Desktop gateway is ready')
+    updateBootProgress({ phase: 'backend.ready', message: 'Oxee Desktop gateway is ready', progress: 94, running: true, error: null })
     bootstrapRepairAttempt = 0
 
     // The primary descriptor names its own profile: a profile-less descriptor
@@ -12619,7 +12619,7 @@ function spawnSecondaryWindow({
     height: SESSION_WINDOW_MIN_HEIGHT,
     minWidth: SESSION_WINDOW_MIN_WIDTH,
     minHeight: SESSION_WINDOW_MIN_HEIGHT,
-    title: 'Oxeegen Hermes',
+    title: 'Oxee Desktop',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -12724,7 +12724,7 @@ function spawnBrowserWindow(tabId) {
     height: BROWSER_WINDOW_HEIGHT,
     minWidth: BROWSER_WINDOW_MIN_WIDTH,
     minHeight: BROWSER_WINDOW_MIN_HEIGHT,
-    title: 'Oxeegen Hermes',
+    title: 'Oxee Desktop',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -12836,7 +12836,7 @@ function createInstanceWindow(
     ...nextInstanceBounds(source),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Oxeegen Hermes',
+    title: 'Oxee Desktop',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13921,7 +13921,7 @@ function createWindow() {
     ),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Oxeegen Hermes',
+    title: 'Oxee Desktop',
     // Frameless title bar on every platform so the renderer can paint the
     // "hide sidebar" button (and other left-side titlebar tools) flush with
     // the top edge — matching the macOS layout where the traffic lights sit
@@ -14301,7 +14301,7 @@ function createWindow() {
         const exit = details?.exitCode === undefined ? '' : `, exit code ${String(details.exitCode)}`
         rememberLog(`[renderer:main] renderer terminated while live (reason=${reason}${exit}); surfacing recovery page`)
         void loadRendererLoadErrorPage(mainWindow, {
-          title: 'Oxeegen Hermes desktop UI was terminated',
+          title: 'Oxee Desktop UI was terminated',
           errorDescription:
             `The desktop UI process was terminated unexpectedly (reason: ${reason}${exit}). ` +
             'Your sessions and the background gateway are unaffected — reload to continue.',
@@ -14630,7 +14630,7 @@ ipcMain.handle('hermes:window:openInTerminal', async (_event, sessionId, opts) =
     const backend = await resolveHermesBackend(tuiResumeArgs(sessionId.trim(), profile || undefined))
 
     if (!backend.command) {
-      return { ok: false, error: 'Oxeegen Hermes is not installed yet' }
+      return { ok: false, error: 'Oxee Desktop is not installed yet' }
     }
 
     const { cwd } = sanitizeWorkspaceCwd(opts?.cwd)
@@ -17281,7 +17281,7 @@ ipcMain.handle('hermes:quick-entry:submit', (event, payload) => {
   }
 
   if (!mainWindow || mainWindow.isDestroyed()) {
-    return { code: 'no-primary', message: 'The primary Oxeegen Hermes window is unavailable.', ok: false, retryable: true }
+    return { code: 'no-primary', message: 'The primary Oxee Desktop window is unavailable.', ok: false, retryable: true }
   }
 
   const target =
@@ -17872,7 +17872,7 @@ async function runDesktopUninstall(mode: string): Promise<DesktopUninstallResult
     return {
       ok: false,
       error: 'agent-missing',
-      message: `Can't run the uninstaller: no Oxeegen Hermes agent venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Oxee Desktop agent venv at ${VENV_ROOT}.`
     }
   }
 
@@ -18002,9 +18002,9 @@ ipcMain.handle('hermes:vscode-theme:search', async (_event, query) => searchMark
 // Win/Linux running-app 'second-instance' (argv), Win/Linux cold-start argv.
 // ---------------------------------------------------------------------------
 // Oxeegen: its own scheme, so it never takes over (or receives) an official Hermes's hermes:// links.
-const HERMES_PROTOCOL = DEV_SERVER ? 'oxeegen-hermes-dev' : 'oxeegen-hermes'
+const HERMES_PROTOCOL = DEV_SERVER ? 'oxee-desktop-dev' : 'oxee-desktop'
 /** Schemes accepted when parsing inbound URLs (dev accepts both). */
-const DEEPLINK_SCHEMES = DEV_SERVER ? ['oxeegen-hermes-dev', 'oxeegen-hermes'] : ['oxeegen-hermes']
+const DEEPLINK_SCHEMES = DEV_SERVER ? ['oxee-desktop-dev', 'oxee-desktop'] : ['oxee-desktop']
 let _pendingDeepLink = null
 let _rendererReadyForDeepLink = false
 // Set by sendOpenUpdatesRequested() when the renderer cannot hear it yet.

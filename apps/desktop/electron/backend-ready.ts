@@ -120,7 +120,7 @@ function waitForDashboardPort(
           cleanup()
           reject(
             new Error(
-              `Timed out waiting for Oxeegen Hermes backend port announcement (${timeoutMs}ms)${deadline ? ' while an update completion was in progress' : ''}`
+              `Timed out waiting for Oxee Desktop backend port announcement (${timeoutMs}ms)${deadline ? ' while an update completion was in progress' : ''}`
             )
           )
         },
@@ -168,7 +168,7 @@ function waitForDashboardPort(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Oxeegen Hermes backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(new Error(`Oxee Desktop backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
     }
 
     function onError(err) {
@@ -256,7 +256,7 @@ function waitForDashboardReadyFile(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Oxeegen Hermes backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(new Error(`Oxee Desktop backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
     }
 
     function onError(err) {
@@ -266,7 +266,7 @@ function waitForDashboardReadyFile(
 
     const timer = setTimeout(() => {
       cleanup()
-      reject(new Error(`Timed out waiting for Oxeegen Hermes backend port announcement (${timeoutMs}ms)`))
+      reject(new Error(`Timed out waiting for Oxee Desktop backend port announcement (${timeoutMs}ms)`))
     }, timeoutMs)
 
     child.on('exit', onExit)

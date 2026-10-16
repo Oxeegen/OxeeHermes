@@ -53,7 +53,7 @@ afterEach((): void => {
   fs.rmSync(root, { recursive: true, force: true })
 })
 
-test('writes and startup consumption stay in each installation despite a shared Oxeegen Hermes home', async (): Promise<void> => {
+test('writes and startup consumption stay in each installation despite a shared Oxee Desktop home', async (): Promise<void> => {
   const globalMarker: string = path.join(hermesHome, PENDING_RELAUNCH_FILENAME)
   const legacyContents: string = JSON.stringify({ schemaVersion: 1, fromVersion: 'legacy', startedAt: 1 })
   fs.writeFileSync(globalMarker, legacyContents)

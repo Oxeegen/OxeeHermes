@@ -249,7 +249,7 @@ def _prepare_native(*, out: Path, ref: str, source: Path, cache: Path,
     facts.record_state("venv", Venv(repo_dir).expected_stamp(features, plugin_dirs=[]), features)
     print(f"✓ enabled-features.json ({len(features)} extras recorded)")
 
-    # Oxeegen: no uv cache in the payload (~1 GB of wheels). Oxeegen Hermes needs the network for
+    # Oxeegen: no uv cache in the payload (~1 GB of wheels). Oxee Desktop needs the network for
     # every model call anyway; a later venv change (on-demand extra, plugin, repair) resolves from
     # PyPI instead of shipped wheels. The runtime seeds from the payload cache only when it exists
     # (pm/packages.py uv_cache_dir).
