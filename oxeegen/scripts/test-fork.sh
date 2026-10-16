@@ -29,6 +29,7 @@ PY_TESTS=(
   tests/scripts/test_launcher_bundle_env.py
   tests/scripts/test_desktop_cli_wrapper.py
   tests/scripts/test_baked_bytecode.py
+  tests/scripts/test_oxeegen_bundle_payload.py
 )
 
 DESKTOP_TESTS=(
@@ -45,6 +46,7 @@ DESKTOP_TESTS=(
   src/app/settings/helpers.test.ts
   src/components/onboarding/skip-gate.test.tsx
   src/lib/keybinds/actions.test.ts
+  electron/feature-flags.test.ts
 )
 
 echo "== Python (Oxeegen)"

@@ -8,15 +8,12 @@ import { test } from 'vitest'
 
 import { isCanaryTag, resolveFeatureFlags } from './feature-flags'
 
-const shipsLocalModels: boolean =
-  process.platform === 'win32' ||
-  process.platform === 'darwin' ||
-  (process.platform === 'linux' && (process.arch === 'x64' || process.arch === 'arm64'))
-
-test('without --local, local models follow the platform on every channel', () => {
+// Oxeegen: no local engines ship and inference is Oxeegen-only, so local models stay
+// hidden on every platform unless explicitly opted into with --local.
+test('without --local, local models stay hidden on every channel and platform', () => {
   for (const canary of [false, true]) {
-    assert.deepEqual(resolveFeatureFlags({ argv: [], canary }), { localModels: shipsLocalModels })
-    assert.deepEqual(resolveFeatureFlags({ argv: ['Hermes.exe'], canary }), { localModels: shipsLocalModels })
+    assert.deepEqual(resolveFeatureFlags({ argv: [], canary }), { localModels: false })
+    assert.deepEqual(resolveFeatureFlags({ argv: ['Hermes.exe'], canary }), { localModels: false })
   }
 })
 

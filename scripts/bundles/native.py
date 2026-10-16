@@ -15,11 +15,17 @@ from pm.lock import Facts
 from pm.registry import get_package, walk
 from pm.store import current_target
 
+# Oxeegen: inference is the remote Oxeegen API only (managed scope + provider allowlist), so the
+# local-model engines would be ~2 GB of dead weight per install. Settings → Local models is hidden too
+# (apps/desktop/electron/feature-flags.ts); a user cannot reach them.
+OXEEGEN_EXCLUDED_PREFIXES = ("llamacpp-", "whispercpp-")
+
+
 def _bundle_package_names() -> list[str]:
     names = [
         n
         for n in _lockfile().names()
-        if not get_package(n).internal or n == "uv"
+        if (not get_package(n).internal or n == "uv") and not n.startswith(OXEEGEN_EXCLUDED_PREFIXES)
     ]
     if "python" not in names:
         names.append("python")
@@ -243,21 +249,13 @@ def _prepare_native(*, out: Path, ref: str, source: Path, cache: Path,
     facts.record_state("venv", Venv(repo_dir).expected_stamp(features, plugin_dirs=[]), features)
     print(f"✓ enabled-features.json ({len(features)} extras recorded)")
 
-    # Ship the full uv cache (build-only sdist sources and wheel ZIPs are
-    # already excluded by stage_uv_cache). Any per-install venv rebuild —
-    # plugin extras, feature changes — resolves entirely from the shipped
-    # wheels with zero network access, on every profile of this install.
+    # Oxeegen: no uv cache in the payload (~1 GB of wheels). Oxeegen Hermes needs the network for
+    # every model call anyway; a later venv change (on-demand extra, plugin, repair) resolves from
+    # PyPI instead of shipped wheels. The runtime seeds from the payload cache only when it exists
+    # (pm/packages.py uv_cache_dir).
     payload_cache = out / "uv-cache"
     if payload_cache.exists():
         shutil.rmtree(payload_cache, ignore_errors=True)
-    src_cache = cache
-    if src_cache.is_dir():
-        print(f"  uv-cache: copying {src_cache} → payload...", flush=True)
-        stage_uv_cache(src_cache, payload_cache)
-        pruned = prune_uv_cache_to_lock(payload_cache, repo_dir)
-        print(f"✓ uv-cache (lock-scoped: pruned {pruned} stale entries; offline rebuilds resolve from shipped wheels)", flush=True)
-    else:
-        raise InstallError("uv-cache", "runtime dependency cache is missing")
 
     bad = _arch_guard(store_dir)
     for line in bad:

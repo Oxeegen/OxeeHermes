@@ -87,8 +87,9 @@ def _input_paths(inputs: AgentInputs, out: Path) -> list[Path]:
             or inputs.resources != {name: inputs.code / name for name in RESOURCE_ENV}
             or not inputs.site_packages.is_relative_to(inputs.environment)):
         raise ValueError("native prepared input layout changed")
+    # Oxeegen: no shipped uv cache (scripts/bundles/native.py).
     paths = [inputs.code, inputs.tools, inputs.environment, inputs.pm_runtime,
-             inputs.python, inputs.features, out / "uv-cache"]
+             inputs.python, inputs.features]
     for path in [inputs.project, inputs.site_packages, *inputs.resources.values(), *paths]:
         _owned(path, out)
     return paths

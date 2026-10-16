@@ -563,7 +563,22 @@ hermes-acp = "acp_adapter.entry:main"
 # build with --all-extras and pass --no-extra for each of these, so their
 # closures never ship. KittenTTS pulls torch, transformers and spaCy through
 # misaki[en]: installed when the user picks it, not preinstalled.
-opt-in-extras = ["kittentts"]
+opt-in-extras = [
+  "kittentts",
+  # Oxeegen: the bundle carries only what an Oxeegen-only agent uses (MCP, ACP, browser, computer
+  # use, documents, vision, audio I/O, web search). Messaging connectors, local voice / wake word,
+  # other providers' SDKs and cloud sandboxes install on demand if a user enables one. `all` pulls
+  # some of these back in, so it is opted out too (its useful members are listed on their own).
+  "all",
+  "feishu", "dingtalk", "google", "google-chat", "google-meet", "messaging", "telegram", "discord",
+  "slack", "teams", "wecom", "sms", "termux", "termux-all",
+  "voice", "stt-whisper", "piper", "wake", "wake-openwakeword", "wake-sherpa", "wake-porcupine",
+  "edge-tts", "tts-premium",
+  "anthropic", "bedrock", "vertex", "mistral", "azure-identity", "fal",
+  "modal", "daytona", "vercel",
+  "exa", "firecrawl", "parallel-web",
+  "trace-upload", "otlp", "silk",
+]
 
 # Per-extra platform gates (settled 2026-09-02): an extra listed here is
 # only installable on platforms matching the marker. pm consults this

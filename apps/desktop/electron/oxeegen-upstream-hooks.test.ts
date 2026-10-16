@@ -62,6 +62,12 @@ const HOOKS: Hook[] = [
   { file: 'hermes_cli/_launchers.py', needs: ['link_dir / f"oxeegen-{name}"'], why: 'macOS CLI links never shadow `hermes`' },
   { file: 'hermes_cli/gateway.py', needs: ['def tagged_service_suffix(', 'return tagged_service_suffix("")'], why: 'own gateway service names' },
   { file: 'hermes_cli/gateway_runtime_service.py', needs: ['tagged_service_suffix('], why: 'finds our own gateway services' },
+  // Lean bundle (no local engines, no uv cache, opted-out extras)
+  { file: 'scripts/bundles/native.py', needs: ['not n.startswith(OXEEGEN_EXCLUDED_PREFIXES)', 'Oxeegen: no uv cache in the payload'], why: 'bundle skips local-model engines and the uv cache' },
+  { file: 'scripts/bundles/native_prepared.py', needs: ['Oxeegen: no shipped uv cache'], why: 'prepared payload does not require a uv cache' },
+  { file: 'pyproject.toml', needs: ['# Oxeegen: the bundle carries only what an Oxeegen-only agent uses'], why: 'unneeded extras stay out of the bundle venv' },
+  { file: 'apps/desktop/electron/feature-flags.ts', needs: ["localModels: ({ argv }) => argv.includes('--local')"], why: 'Local models UI hidden (no engines shipped)' },
+  { file: 'scripts/msix-shared.mjs', needs: ['process.env.OXEEGEN_MSIX_PUBLISHER ||'], why: 'MSIX published by Oxeegen' },
   // Provider allowlist
   { file: 'hermes_cli/inventory.py', needs: ['excluded_by_allowlist(cfg)'], why: 'pickers hide non-Oxeegen providers' },
   { file: 'hermes_cli/runtime_provider.py', needs: ['enforce_allowed_runtime(runtime)'], why: 'runtime refuses non-Oxeegen providers' }

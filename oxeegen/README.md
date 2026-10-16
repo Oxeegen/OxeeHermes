@@ -146,6 +146,22 @@ Aucune URL n'est dans un `config.yaml` : le scope managé ne fait que référenc
 | Statistiques Nous | Bandeau « Share usage stats » et panneau Confidentialité supprimés | `store/shared-metrics.ts`, `settings/config-settings.tsx` |
 | Nouvel onglet navigateur | Bouton 🌐 dans la barre de titre, entrée de palette, `Ctrl/Cmd+Alt+L` | `src/oxeegen/browser.ts`, hooks dans `titlebar-controls.tsx`, `titlebar-app-actions.ts`, `keybinds/actions.ts`, `use-keybinds.ts`, `command-palette/index.tsx` |
 
+## Payload allégé (installeur)
+
+Oxeegen n'utilise que l'API distante : le bundle n'embarque ni les moteurs locaux (llama.cpp, ~2 Go),
+ni le cache de paquets hors ligne (~1 Go), ni ~40 extensions Python inutiles (connecteurs de
+messagerie, voix locale, SDK d'autres fournisseurs, sandboxes cloud). Les extensions retirées
+s'installent à la demande, par le réseau, si un utilisateur active la fonction. La section
+« Modèles locaux » est masquée.
+
+| Où | Quoi |
+|---|---|
+| `scripts/bundles/native.py` | `OXEEGEN_EXCLUDED_PREFIXES`, uv-cache non copié |
+| `scripts/bundles/native_prepared.py` | uv-cache retiré des entrées vérifiées |
+| `pyproject.toml` `[tool.hermes] opt-in-extras` | Extensions exclues du bundle |
+| `apps/desktop/electron/feature-flags.ts` | `localModels` seulement avec `--local` |
+| `scripts/msix-shared.mjs` | Éditeur MSIX Oxeegen (`OXEEGEN_MSIX_PUBLISHER` pour la release) |
+
 ## Isolation vis-à-vis d'un Hermes officiel installé
 
 | Risque | Correctif |

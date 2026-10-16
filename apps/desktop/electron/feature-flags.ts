@@ -1,10 +1,8 @@
 const featureFlags = {
   /** Local-models GUI surfaces (settings pane, pickers, statusbar, tips). */
-  localModels: ({ argv }) =>
-    process.platform === 'win32' ||
-    process.platform === 'darwin' ||
-    (process.platform === 'linux' && (process.arch === 'x64' || process.arch === 'arm64')) ||
-    argv.includes('--local')
+  // Oxeegen: inference is the remote Oxeegen API only and the bundle ships no
+  // local engines (scripts/bundles/native.py), so the surfaces stay hidden.
+  localModels: ({ argv }) => argv.includes('--local')
 } satisfies Record<string, (args: FeatureFlagInput) => boolean>
 
 export type FeatureFlags = { [K in keyof typeof featureFlags]: boolean }
