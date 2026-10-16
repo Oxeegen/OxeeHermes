@@ -20,8 +20,10 @@ export const PRODUCT_NAME = 'Oxeegen Hermes'
 
 // A word glued to `-`, `_`, `/`, `\` or a dotted suffix is an identifier, not
 // prose: `X-Hermes-Session-Token`, `Hermes.app`, `C:\Hermes\venv`. Those
-// stay verbatim; a trailing sentence period (`… Hermes.`) still matches.
-const NOT_AFTER = String.raw`(?<![-_/\\.\w])`
+// stay verbatim; a trailing sentence period (`… Hermes.`) still matches. A
+// leading hyphen alone is prose (German `Remote-Hermes`): identifiers that
+// start that way continue with `-` too, which NOT_BEFORE refuses.
+const NOT_AFTER = String.raw`(?<![_/\\.\w])`
 const NOT_BEFORE = String.raw`(?![-_/\\]|\.\w)`
 
 const rule = (core: string, flags = 'g') => new RegExp(`${NOT_AFTER}${core}${NOT_BEFORE}`, flags)

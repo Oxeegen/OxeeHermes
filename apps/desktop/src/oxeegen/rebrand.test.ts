@@ -11,7 +11,8 @@ describe('rebrandText', () => {
     ["Hermes's memory", "Oxeegen Hermes's memory"],
     ['Hermes (default)', 'Oxeegen Hermes (default)'],
     ['Restart Hermes.', 'Restart Oxeegen Hermes.'],
-    ['"Hermes"', '"Oxeegen Hermes"']
+    ['"Hermes"', '"Oxeegen Hermes"'],
+    ['auf dem Remote-Hermes statt', 'auf dem Remote-Oxeegen Hermes statt']
   ])('rewrites %j', (input, expected) => {
     expect(rebrandText(input)).toBe(expected)
   })

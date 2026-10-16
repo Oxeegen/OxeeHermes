@@ -67,14 +67,32 @@ git fetch upstream main && git checkout main && git merge --ff-only upstream/mai
 git checkout oxeegen && git merge main            # résoudre les hooks ci-dessus si besoin
 node oxeegen/scripts/rebrand-source.mts           # nouvelles chaînes « Hermes »
 node oxeegen/scripts/apply-desktop-assets.cjs     # icônes écrasées par l'upstream
-node oxeegen/scripts/rebrand-source.mts --check   # doit afficher 0
-cd apps/desktop && npm run typecheck && npx vitest run
+oxeegen/scripts/test-fork.sh --full               # doit finir par « ✓ Oxeegen fork tests passed »
 ```
 
 Pour refaire le codemod à partir de zéro (après avoir changé la règle) : sauvegarder le diff des
 fichiers « hooks » ci-dessus, `git checkout -- apps/desktop/src apps/desktop/electron apps/shared/src
 apps/desktop/index.html`, réappliquer ce diff, puis relancer le codemod. Les tests ajustés à la main
 et les `oxeegen-keep` sont dans des fichiers de test : les sauvegarder aussi.
+
+## Tests du fork
+
+`oxeegen/scripts/test-fork.sh` lance tout ce qui est spécifique à Oxeegen et sort en erreur au moindre
+problème, erreurs de collecte Python comprises. `--full` ajoute toute la suite desktop.
+
+| Couche | Fichier | Ce qui casse si une fusion upstream l'abîme |
+|---|---|---|
+| Garde des hooks | `apps/desktop/electron/oxeegen-upstream-hooks.test.ts` | Chaque hook Oxeegen dans un fichier upstream (≈35), avec le fichier et la raison en cas d'absence |
+| Comportement desktop | `apps/desktop/src/oxeegen/fork-behaviour.test.tsx` | Nom dans les 9 catalogues et les packs, thème, logo, onboarding région + clé, clé par région, voix, nouvel onglet |
+| Règle de nommage | `apps/desktop/src/oxeegen/rebrand.test.ts` | Ce qui est réécrit ou protégé (identifiants, chemins, en-têtes) |
+| Politique | `apps/desktop/src/oxeegen/policy.test.ts` | Régions, sections masquées, aucune offre de métriques |
+| Packaging et isolation | `apps/desktop/electron/oxeegen-fork.test.ts` | Identité, `productName`, schéma, dépôt de mise à jour, environnement de bundle, scope managé, icônes, `rebrand-source --check` |
+| Python | `tests/hermes_cli/test_provider_allowlist.py`, `test_oxeegen_managed_scope.py`, `test_gateway_service_tag.py`, `test_oxeegen_launchers.py`, `tests/plugins/model_providers/test_oxeegen_profile.py`, `tests/scripts/test_launcher_bundle_env.py` | Allowlist, scope managé (et sa fraîcheur vs `oxeegen.json`), région et clés, services gateway, noms CLI, lanceur |
+
+Tests upstream adaptés au comportement Oxeegen (également lancés par le script) : `product-identity`,
+`commit-stamp-identity`, `titlebar-app-actions`, `classic-skin`, `persist-accent`, `backend-sync`,
+`helpers` (voix), `skip-gate`, `actions` (raccourci). Deux tests de `consent-dialog` sont `skip` :
+la fonctionnalité est désactivée.
 
 ## Vérifier
 

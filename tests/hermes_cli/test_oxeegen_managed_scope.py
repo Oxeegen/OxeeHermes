@@ -48,3 +48,17 @@ def test_voice_uses_the_oxeegen_key_and_region(oxeegen_managed):
         assert cfg[section]["provider"] == "openai"
         assert cfg[section]["openai"]["api_key"] == "sk-oxeegen-test"
         assert cfg[section]["openai"]["base_url"] == "https://us.api.oxeegen.com/v1"
+
+
+def test_shipped_managed_scope_is_generated_from_oxeegen_json():
+    """Editing oxeegen.json without re-running oxeegen/scripts/gen-managed.py leaves the app on stale values."""
+    import importlib.util
+    import json
+
+    root = MANAGED_DIR.parents[1]
+    spec = importlib.util.spec_from_file_location("gen_managed", root / "oxeegen" / "scripts" / "gen-managed.py")
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+    source = json.loads((root / "plugins/model-providers/oxeegen/oxeegen.json").read_text(encoding="utf-8"))
+
+    assert (MANAGED_DIR / "config.yaml").read_text(encoding="utf-8") == gen.render(source)
