@@ -7,10 +7,10 @@ import { useI18n } from '@/i18n'
  */
 const EN = {
   apiKey: 'API key',
-  apiKeyHint: 'Your Oxeegen API key. It is stored on this computer only.',
+  apiKeyHint: 'Each region has its own API key. It is stored on this computer only.',
   apiKeyKeep: 'Leave empty to keep the saved key.',
-  apiKeyMissing: 'Enter your Oxeegen API key.',
-  apiKeySaved: 'A key is saved.',
+  apiKeyMissing: 'Enter your API key for this region.',
+  apiKeySaved: 'A key is saved for this region.',
   connect: 'Connect',
   connected: 'Connected to Oxeegen',
   getKey: 'Get an API key',
@@ -31,10 +31,10 @@ type OxeegenStrings = typeof EN
 
 const FR: OxeegenStrings = {
   apiKey: 'Clé API',
-  apiKeyHint: 'Votre clé API Oxeegen. Elle reste enregistrée sur cet ordinateur.',
+  apiKeyHint: 'Chaque région a sa propre clé API. Elle reste enregistrée sur cet ordinateur.',
   apiKeyKeep: 'Laisser vide pour conserver la clé enregistrée.',
-  apiKeyMissing: 'Saisissez votre clé API Oxeegen.',
-  apiKeySaved: 'Une clé est enregistrée.',
+  apiKeyMissing: 'Saisissez votre clé API pour cette région.',
+  apiKeySaved: 'Une clé est enregistrée pour cette région.',
   connect: 'Se connecter',
   connected: 'Connecté à Oxeegen',
   getKey: 'Obtenir une clé API',

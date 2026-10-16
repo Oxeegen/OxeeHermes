@@ -40,14 +40,23 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
           setRegion(connection.region ?? OXEEGEN.defaultRegion)
         }
       })
-      .catch(() => live && setCurrent({ keySet: false, keyPreview: null, region: null }))
+      .catch(
+        () =>
+          live &&
+          setCurrent({
+            keys: Object.fromEntries(OXEEGEN_REGIONS.map(r => [r.id, { preview: null, set: false }])) as OxeegenConnection['keys'],
+            region: null
+          })
+      )
 
     return () => {
       live = false
     }
   }, [profile])
 
-  const keyRequired = !current?.keySet
+  // A key is valid in its own region only: switching region needs that region's key.
+  const regionKey = current?.keys[region]
+  const keyRequired = !regionKey?.set
   const dirty = apiKey.trim().length > 0 || region !== current?.region
   const canSubmit = current !== null && !saving && (keyRequired ? apiKey.trim().length > 0 : dirty)
 
@@ -95,18 +104,20 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
       </div>
 
       <label className="grid gap-1.5">
-        <span className="text-sm font-medium">{s.apiKey}</span>
+        <span className="text-sm font-medium">
+          {s.apiKey} — {s.regionLabel(region, OXEEGEN_REGIONS.find(r => r.id === region)?.label ?? region)}
+        </span>
         <Input
           autoComplete="off"
           disabled={saving}
           onChange={event => setApiKey(event.target.value)}
-          placeholder={current?.keySet ? (current.keyPreview ?? '••••••••') : 'sk-…'}
+          placeholder={regionKey?.set ? (regionKey.preview ?? '••••••••') : 'sk-…'}
           spellCheck={false}
           type="password"
           value={apiKey}
         />
         <span className="text-xs text-(--ui-text-tertiary)">
-          {current?.keySet ? `${s.apiKeySaved} ${s.apiKeyKeep}` : s.apiKeyHint}{' '}
+          {regionKey?.set ? `${s.apiKeySaved} ${s.apiKeyKeep}` : s.apiKeyHint}{' '}
           <a className="underline" href={OXEEGEN.signupUrl} rel="noreferrer" target="_blank">
             {s.getKey}
           </a>

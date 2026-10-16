@@ -13,7 +13,10 @@ def _write_config(body: str) -> None:
     (home / "config.yaml").write_text(body, encoding="utf-8")
 
 
-@pytest.mark.parametrize(("region_url", "host"), [(None, "https://eu."), ("https://us.api.oxeegen.com/v1", "https://us.")])
+@pytest.mark.parametrize(
+    ("region_url", "host"),
+    [(None, "https://inference-04.oxeegen.com"), ("https://inference-02.oxeegen.com/v1", "https://inference-02.oxeegen.com")],
+)
 def test_allowed_provider_resolves_to_the_chosen_region(monkeypatch, region_url, host):
     from hermes_cli.runtime_provider import resolve_runtime_provider
 

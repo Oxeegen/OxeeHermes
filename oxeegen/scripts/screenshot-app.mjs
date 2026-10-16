@@ -51,6 +51,7 @@ const app = await electron.launch({
 const page = await app.firstWindow()
 const shot = name => page.screenshot({ path: path.join(SHOTS, `${name}.png`) })
 const settle = ms => page.waitForTimeout(ms)
+const step = label => console.log(`[screens] ${label}`)
 
 const visibleBareNames = () =>
   page.evaluate(() => [...document.body.innerText.matchAll(/(?<!Oxeegen )\bHermes\b.{0,40}/g)].map(m => m[0]))
@@ -60,21 +61,41 @@ try {
 
   // Onboarding: region + key. A gateway still running from a previous run keeps
   // the key in memory and the app skips straight to the chat.
+  // The composer mounts under the onboarding overlay, so "ready" means composer
+  // AND no onboarding / connecting veil.
   const onboarding = page.getByText(/Connect to Oxeegen|Connexion à Oxeegen/)
-  await onboarding.or(page.locator('[data-slot="composer-root"]')).first().waitFor({ timeout: 240_000 })
+  await page.waitForFunction(
+    () =>
+      /Connect to Oxeegen|Connexion à Oxeegen/.test(document.body.innerText) ||
+      (document.querySelector('[data-slot="composer-root"]') &&
+        !document.querySelector('[class*="z-(--z-onboarding)"], [class*="z-(--z-connecting)"]')),
+    undefined,
+    { timeout: 240_000 }
+  )
+
+  step(`onboarding visible: ${await onboarding.isVisible()}`)
 
   if (await onboarding.isVisible()) {
     await settle(1500)
+    // A layout restored with a browser pane raises its first-use prompt over the onboarding.
+    await page.getByRole('button', { name: /^(Not now|Pas maintenant)$/ }).click({ timeout: 3000 }).catch(() => undefined)
     await shot('onboarding')
     await page.getByText(/^(United States|États-Unis)$/).first().click()
+    step('region clicked')
     await page.getByPlaceholder(/sk-/).fill('sk-oxeegen-preview')
-    await page.getByRole('button', { name: /^(Connect|Se connecter)$/ }).click()
+    await settle(500)
+    await shot('onboarding-filled')
+    const connect = page.getByRole('button', { name: /^(Connect|Se connecter)$/ })
+    await page.waitForFunction(el => !el.disabled, await connect.elementHandle(), { timeout: 15_000 })
+    await connect.click()
+    step('connect clicked')
   }
 
   await page.waitForSelector('[data-slot="composer-root"]', { timeout: 240_000 })
   await page.waitForFunction(() => !document.querySelector('[class*="z-(--z-onboarding)"], [class*="z-(--z-connecting)"]'), undefined, {
     timeout: 240_000
   })
+  step('main window ready')
   await settle(3000)
   await shot('main-light')
 

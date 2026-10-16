@@ -1,17 +1,20 @@
 {
-  "_comment": "Oxeegen Hermes: the ONE place for Oxeegen endpoints and models. PROVISIONAL values, replace before release. Read by plugins/model-providers/oxeegen/__init__.py, the desktop (apps/desktop/src/oxeegen/config.ts) and oxeegen/scripts/gen-managed.py (which writes oxeegen/managed/config.yaml).",
+  "_comment": "Oxeegen Hermes: the ONE place for Oxeegen endpoints and models (model ids still PROVISIONAL). Each region has its own endpoint AND its own API key. Users store their region id (OXEEGEN_REGION) and one key per region (regions.<id>.api_key_env) in .env; the ACTIVE pair read by the runtime and the managed scope — api_key_env / base_url_env — is derived from them by the desktop on save and by plugins/model-providers/oxeegen/__init__.py on every backend start, so an endpoint changed here reaches every install with the next update. Read by that plugin, the desktop (apps/desktop/src/oxeegen/config.ts) and oxeegen/scripts/gen-managed.py.",
   "provider": "oxeegen",
   "api_key_env": "OXEEGEN_API_KEY",
   "base_url_env": "OXEEGEN_BASE_URL",
+  "region_env": "OXEEGEN_REGION",
   "default_region": "eu",
   "regions": {
     "eu": {
       "label": "Europe",
-      "base_url": "https://eu.api.oxeegen.com/v1"
+      "base_url": "https://inference-04.oxeegen.com/v1",
+      "api_key_env": "OXEEGEN_EU_API_KEY"
     },
     "us": {
       "label": "United States",
-      "base_url": "https://us.api.oxeegen.com/v1"
+      "base_url": "https://inference-02.oxeegen.com/v1",
+      "api_key_env": "OXEEGEN_US_API_KEY"
     }
   },
   "models": {

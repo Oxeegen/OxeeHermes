@@ -99,13 +99,25 @@ Installer les dépendances avec `npx -y npm@11.17.0 ci` à la racine : le projet
 
 ## Configuration imposée (étape 2)
 
-**Source unique** : `plugins/model-providers/oxeegen/oxeegen.json` contient les régions, les URLs, les
-modèles et la voix. Les valeurs sont **provisoires**, à remplacer avant diffusion. Après chaque
+**Source unique** : `plugins/model-providers/oxeegen/oxeegen.json` contient les régions, leurs URLs, le
+nom de la variable de clé de chaque région, les modèles et la voix. Les URLs sont les vraies : EU
+`inference-04`, US `inference-02`. Les identifiants de modèles sont encore **provisoires**. Après chaque
 modification, lancer `python3 oxeegen/scripts/gen-managed.py`.
+
+**Ce que stocke le poste de l'utilisateur** (`.env` de `~/.hermes-oxeegen`) :
+
+| Variable | Contenu | Écrite par |
+|---|---|---|
+| `OXEEGEN_REGION` | Le choix de l'utilisateur : `eu` ou `us` | Le formulaire Oxeegen |
+| `OXEEGEN_EU_API_KEY`, `OXEEGEN_US_API_KEY` | Une clé par région (une clé ne vaut que dans sa région) | Le formulaire Oxeegen |
+| `OXEEGEN_API_KEY`, `OXEEGEN_BASE_URL` | La paire **active**, dérivée de la région : sa clé et son URL. C'est elle que lisent le modèle et la voix | Le formulaire à l'enregistrement, et le plugin à **chaque démarrage de l'agent**. Une URL modifiée dans `oxeegen.json` atteint donc tous les postes à la mise à jour suivante. Sans clé pour la région choisie, la clé active est retirée : jamais la clé d'une autre région |
+
+Aucune URL n'est dans un `config.yaml` : le scope managé ne fait que référencer `${OXEEGEN_API_KEY}` et
+`${OXEEGEN_BASE_URL}`.
 
 | Pièce | Rôle | Où |
 |---|---|---|
-| Fournisseur `oxeegen` | Une région = un endpoint, lu dans `OXEEGEN_BASE_URL` (défaut : EU), clé `OXEEGEN_API_KEY` | `plugins/model-providers/oxeegen/` |
+| Fournisseur `oxeegen` | Lit la paire active `OXEEGEN_API_KEY` / `OXEEGEN_BASE_URL` et la dérive de `OXEEGEN_REGION` au démarrage (défaut : EU) | `plugins/model-providers/oxeegen/` |
 | Scope managé | Verrouille le fournisseur et le modèle, aucun secours ni endpoint custom, `allowed_providers: [oxeegen]`, voix STT/TTS vers Oxeegen (`${OXEEGEN_API_KEY}` / `${OXEEGEN_BASE_URL}`), télémétrie Nous coupée | `oxeegen/managed/config.yaml` (généré) |
 | `model_catalog.allowed_providers` | Masque tout autre fournisseur dans les sélecteurs **et** refuse à l'exécution tout autre fournisseur (bascule `/model`, secours, `auto`) | `hermes_cli/provider_allowlist.py`, hooks dans `inventory.py` et `runtime_provider.py` |
 | `HERMES_MANAGED_DIR` | Électron le fixe au démarrage vers le scope managé du payload (ou du checkout en dev) | `apps/desktop/electron/oxeegen-managed.ts`, hook dans `main.ts` |
@@ -134,7 +146,7 @@ contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","
 
 ## Reste à faire
 
-- Vraies valeurs Oxeegen dans `oxeegen.json` (URLs, modèles, URL d'inscription).
+- Identifiants de modèles et URL d'inscription réels dans `oxeegen.json`.
 - Liens Nous restants : docs, Discord, Skills Hub et catalogue de plugins (hébergés par Nous), portail.
 - Retour OAuth des connecteurs (`hermes://connections/done` côté passerelle Nous) et boutons « Send to App » du web, qui émettent encore `hermes://`.
 - `hermes_cli/install_state.py` lit (sans écrire) les dossiers `~/.hermes*` pour l'offre d'essai ; le marqueur machine `Nous Research/.machine` reste partagé.

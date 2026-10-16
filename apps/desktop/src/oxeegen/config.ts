@@ -7,14 +7,19 @@ import raw from '../../../../plugins/model-providers/oxeegen/oxeegen.json'
 export type OxeegenRegionId = keyof typeof raw.regions
 
 export interface OxeegenRegion {
+  /** Each region has its own key; a key is valid in its region only. */
+  apiKeyEnv: string
   baseUrl: string
   id: OxeegenRegionId
   label: string
 }
 
 export const OXEEGEN = {
+  /** The ACTIVE key / endpoint the runtime reads, derived from the stored region. */
   apiKeyEnv: raw.api_key_env,
   baseUrlEnv: raw.base_url_env,
+  /** What the user chose, stored in .env. */
+  regionEnv: raw.region_env,
   defaultRegion: raw.default_region as OxeegenRegionId,
   mainModel: raw.models.main,
   provider: raw.provider,
@@ -22,18 +27,19 @@ export const OXEEGEN = {
 } as const
 
 export const OXEEGEN_REGIONS: readonly OxeegenRegion[] = (Object.keys(raw.regions) as OxeegenRegionId[]).map(id => ({
+  apiKeyEnv: raw.regions[id].api_key_env,
   baseUrl: raw.regions[id].base_url,
   id,
   label: raw.regions[id].label
 }))
 
-/** The region whose endpoint is `url`, or null for anything else (unset, hand-edited). */
-export function regionForBaseUrl(url: null | string | undefined): null | OxeegenRegionId {
-  const normalized = (url ?? '').trim().replace(/\/+$/, '')
+/** The stored region id when it names a known region, else null. */
+export function parseRegion(value: null | string | undefined): null | OxeegenRegionId {
+  const id = (value ?? '').trim().toLowerCase()
 
-  return OXEEGEN_REGIONS.find(region => region.baseUrl.replace(/\/+$/, '') === normalized)?.id ?? null
+  return OXEEGEN_REGIONS.some(region => region.id === id) ? (id as OxeegenRegionId) : null
 }
 
-export function baseUrlForRegion(region: OxeegenRegionId): string {
-  return raw.regions[region].base_url
+export function oxeegenRegion(id: OxeegenRegionId): OxeegenRegion {
+  return OXEEGEN_REGIONS.find(region => region.id === id)!
 }
