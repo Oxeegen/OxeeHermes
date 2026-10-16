@@ -40,6 +40,8 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/settings/types.ts', needs: ["| 'oxeegen'"], why: 'settings view id' },
   { file: 'apps/desktop/src/app/settings/use-settings-search.ts', needs: ['isVisibleSettingsView(entry.target.view)'], why: 'hidden sections stay out of search' },
   { file: 'apps/desktop/src/app/command-palette/index.tsx', needs: ['SECTIONS.filter(section => isVisibleSettingsView(', 'NON_CONFIG_SETTINGS.filter(entry => isVisibleSettingsView(entry.tab))'], why: 'hidden sections stay out of the palette' },
+  { file: 'apps/desktop/src/app/settings/gateway-settings.tsx', needs: ['{OXEEGEN_HERMES_CLOUD && ('], why: 'Gateways: no Hermes Cloud (Nous) connection mode' },
+  { file: 'apps/desktop/src/app/settings/connections-registry.tsx', needs: ["filter(kind => OXEEGEN_HERMES_CLOUD || kind !== 'cloud')"], why: 'Gateways: no Hermes Cloud connection kind' },
   { file: 'apps/desktop/src/app/shell/model-catalog-menu.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model menu: no custom model / catalog editing' },
   { file: 'apps/desktop/src/components/model-picker.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model picker: no "add provider" / custom model' },
   { file: 'apps/desktop/src/app/settings/constants.ts', needs: ["'stt.provider': ['openai']", "'tts.provider': ['openai']", "'voice.voice_chat_mode': ['chained']"], why: 'voice routed to Oxeegen only' },

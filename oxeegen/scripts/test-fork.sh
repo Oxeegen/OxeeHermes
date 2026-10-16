@@ -47,6 +47,8 @@ DESKTOP_TESTS=(
   src/components/onboarding/skip-gate.test.tsx
   src/lib/keybinds/actions.test.ts
   electron/feature-flags.test.ts
+  src/app/settings/connections-registry.test.tsx
+  src/app/settings/gateway-settings.test.tsx
 )
 
 echo "== Python (Oxeegen)"

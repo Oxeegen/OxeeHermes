@@ -5,8 +5,10 @@
  * page), the settings search and the command palette.
  *
  * Model and Providers are replaced by the Oxeegen page; the rest would let a
- * user route inference elsewhere (gateways, plugins), belong to Nous services
- * (billing) or were dropped from the product (advanced, vault).
+ * user route inference elsewhere (plugins), belong to Nous services (billing)
+ * or were dropped from the product (advanced, vault). Gateways stays: it is
+ * how other Hermes on the network are added (remote URL + token, SSH), with
+ * Hermes Cloud — a Nous service — removed (OXEEGEN_HERMES_CLOUD).
  */
 export const OXEEGEN_SETTINGS_VIEW = 'oxeegen'
 
@@ -14,8 +16,6 @@ const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set([
   'billing',
   'config:advanced',
   'config:model',
-  'connections',
-  'gateway',
   'plugins',
   'providers',
   'vault'
@@ -32,3 +32,6 @@ export function isVisibleSettingsView(view: string): boolean {
  * the provider allowlist; this keeps the doors out of sight.
  */
 export const OXEEGEN_MODEL_MENU_EXTRAS = false
+
+/** Hermes Cloud is Nous's hosted gateway service: never offered as a connection. */
+export const OXEEGEN_HERMES_CLOUD = false

@@ -35,7 +35,8 @@ function* walk(dir: string): Generator<string> {
       if (!SKIP_DIRS.has(entry)) {
         yield* walk(full)
       }
-    } else if (/\.(ts|tsx|mts|cts)$/.test(entry) && !entry.endsWith('.d.ts')) {
+    } else if (/\.(ts|tsx|mts|cts)$/.test(entry) && !entry.endsWith('.d.ts') && !entry.startsWith('oxeegen-')) {
+      // oxeegen-* files are fork-owned (they may name upstream products on purpose).
       yield full
     }
   }

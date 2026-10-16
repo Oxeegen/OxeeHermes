@@ -201,7 +201,9 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('signs a hand-registered Cloud connection in and saves it as oauth (#89529)', async () => {
+  // Oxeegen: Hermes Cloud (a Nous service) is not offered as a connection (OXEEGEN_HERMES_CLOUD).
+
+  it.skip('signs a hand-registered Cloud connection in and saves it as oauth (#89529)', async () => {
     const oauthLoginConnectionConfig = vi.fn().mockResolvedValue({ connected: true, ok: true })
     Object.assign(window.hermesDesktop!, { oauthLoginConnectionConfig })
 
