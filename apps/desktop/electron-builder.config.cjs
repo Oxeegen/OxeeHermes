@@ -241,6 +241,24 @@ module.exports = {
     extraResources: [{ from: 'scripts/update-relaunch-waiter.ps1', to: 'update-relaunch-waiter.ps1' }],
     ...windowsSigning()
   },
+  // Oxeegen setup.exe (scripts\build-bundle.ps1 -Nsis): an assisted installer
+  // whose first page offers "only for me" (no admin) or "for all users"
+  // (Program Files, the VDI image case); silent installs take /S [/allusers].
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowElevation: true,
+    allowToChangeInstallationDirectory: true,
+    artifactName: `${artifactNamePascal}-Setup-\${version}-\${arch}.\${ext}`,
+    shortcutName: displayName,
+    uninstallDisplayName: displayName,
+    // Data lives in %LOCALAPPDATA%\hermes-oxeegen, never under the install dir.
+    deleteAppDataOnUninstall: false,
+    // No electron-updater feed serves these builds: the blockmap would be dead weight.
+    differentialPackage: false,
+    // The oxee-hermes* commands that the MSIX declares as execution aliases.
+    include: 'packaging/oxeegen-installer.nsh'
+  },
   msix: {
     // A store build uses the Partner Center packaging identity (the Store
     // re-signs + rewrites the publisher on submission); everything else uses

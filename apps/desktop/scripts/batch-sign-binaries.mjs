@@ -373,29 +373,48 @@ const SIGNABLE_PACKAGE_EXTENSIONS = ['.msix', '.msixbundle']
 const STORE_ARTIFACT_PREFIX = 'Store-'
 
 /**
- * Match the paths WinPackager.signApp signs after editing the root executable.
- * The per-file hook has no arch/appOutDir: use the same target normalization,
- * output macros and computeAppOutDir as Packager.doBuild/PlatformPackager.pack.
- * @param {string} file
+ * The per-arch output and app directories pack() writes: the per-file hook has
+ * no arch/appOutDir, so use the same target normalization, output macros and
+ * computeAppOutDir as Packager.doBuild/PlatformPackager.pack.
  * @param {import('app-builder-lib').WinPackager} packager
- * @returns {boolean}
+ * @returns {{ outDir: string, appOutDir: string }[]}
  */
-function isProductExe(file, packager) {
+function packOutputs(packager) {
   // Packager initializes targets and validateConfig supplies directories.output
   // before doBuild can invoke this hook (the public input types are optional).
   const targets = /** @type {Map<Arch, string[]>} */ (packager.packagerOptions.targets?.get(packager.platform))
   const output = /** @type {string} */ (packager.config.directories?.output)
   const arches = computeArchToTargetNamesMap(targets, packager, packager.platform)
-  const resolved = path.resolve(file).toLowerCase()
-  for (const arch of arches.keys()) {
+  return [...arches.keys()].map(arch => {
     const outDir = path.resolve(packager.projectDir, packager.expandMacro(output, Arch[arch]))
     // Protected in the declarations, but this is the actual pack() resolver;
     // bracket access avoids inventing a parallel output-directory convention.
-    const appOutDir = packager['computeAppOutDir'](outDir, arch)
-    const productExe = path.resolve(appOutDir, `${packager.appInfo.productFilename}.exe`)
-    if (resolved === productExe.toLowerCase()) return true
-  }
-  return false
+    return { outDir, appOutDir: packager['computeAppOutDir'](outDir, arch) }
+  })
+}
+
+/**
+ * Match the paths WinPackager.signApp signs after editing the root executable.
+ * @param {string} file
+ * @param {import('app-builder-lib').WinPackager} packager
+ * @returns {boolean}
+ */
+function isProductExe(file, packager) {
+  const resolved = path.resolve(file).toLowerCase()
+  const exe = `${packager.appInfo.productFilename}.exe`
+  return packOutputs(packager).some(({ appOutDir }) => resolved === path.resolve(appOutDir, exe).toLowerCase())
+}
+
+/**
+ * The NSIS setup and its uninstaller: NsisTarget writes both straight into the
+ * output directory, outside the app tree the afterPack batch covers.
+ * @param {string} file
+ * @param {import('app-builder-lib').WinPackager} packager
+ * @returns {boolean}
+ */
+function isInstallerExe(file, packager) {
+  const resolved = path.resolve(file).toLowerCase()
+  return resolved.endsWith('.exe') && packOutputs(packager).some(({ outDir }) => path.dirname(resolved) === outDir.toLowerCase())
 }
 
 /**
@@ -422,6 +441,11 @@ export async function customSign(configuration, packager, deps = {}) {
   // after its resources are final, on the same Azure manager sign-msix uses.
   const productName = packager.appInfo.productFilename
   if (base.toLowerCase() === `${productName.toLowerCase()}.exe` && isProductExe(file, packager)) {
+    const { azureSignFile } = await import('./sign-msix.mjs')
+    await (deps.azureSignFile ?? azureSignFile)(file, packager)
+    return true
+  }
+  if (isInstallerExe(file, packager)) {
     const { azureSignFile } = await import('./sign-msix.mjs')
     await (deps.azureSignFile ?? azureSignFile)(file, packager)
     return true

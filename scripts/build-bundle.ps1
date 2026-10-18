@@ -5,6 +5,8 @@
 .DESCRIPTION
   scripts\build-bundle.ps1             Sideload MSIX (bundled variant) for this machine's architecture.
   scripts\build-bundle.ps1 -Store      Microsoft Store MSIX (Store identity).
+  scripts\build-bundle.ps1 -Nsis       Setup .exe (NSIS) instead of the sideload MSIX: no certificate to
+                                       trust, per-user or per-machine install, oxee-hermes* commands on PATH.
 
   The commit does not need to be pushed. The checkout must be clean: the build
   packages HEAD. Output goes to apps\desktop\release\. The script removes the
@@ -27,6 +29,9 @@
 .PARAMETER Store
   Build the Store package instead of the sideload package.
 
+.PARAMETER Nsis
+  Build the NSIS setup .exe instead of the sideload MSIX. Not with -Store.
+
 .PARAMETER Python
   Python 3.11+ to run the driver. Default: the first suitable python on PATH.
 
@@ -36,6 +41,7 @@
 [CmdletBinding()]
 param(
   [switch]$Store,
+  [switch]$Nsis,
   [string]$Python = '',
   [string]$Remote = 'origin'
 )
@@ -98,6 +104,7 @@ function Get-ClaimAttempt([string]$Version) {
 }
 
 Set-Location $Repo
+if ($Store -and $Nsis) { Fail '-Store and -Nsis are exclusive.' }
 $py = Find-Python
 
 if (git status --porcelain --untracked-files=all) {
@@ -148,8 +155,9 @@ try {
     & $py scripts/bundles/desktop.py --prepared (Join-Path $work 'prepared.json') --variant store
     if ($LASTEXITCODE) { Fail "Store packaging failed (exit $LASTEXITCODE)" }
   } else {
-    Write-Host "build-bundle: building $sha (sideload)"
-    & $py scripts/bundles/desktop.py --commit $sha --variant bundled --clean
+    $format = if ($Nsis) { 'nsis' } else { 'msix' }
+    Write-Host "build-bundle: building $sha (sideload $format)"
+    & $py scripts/bundles/desktop.py --commit $sha --variant bundled --clean $format
     if ($LASTEXITCODE) { Fail "build failed (exit $LASTEXITCODE)" }
   }
 } finally {
@@ -166,5 +174,6 @@ Write-Host "build-bundle: done. Unsigned packages in $Repo\apps\desktop\release:
 if ($Store) {
   Write-Host "build-bundle: claim timestamp for combining architectures: HERMES_RELEASE_EPOCH=$claimEpoch (version v$version)"
 }
-Get-ChildItem (Join-Path $Repo 'apps\desktop\release') -Filter '*.msix*' |
+Get-ChildItem (Join-Path $Repo 'apps\desktop\release') -File |
+  Where-Object { $_.Name -like '*.msix*' -or ($_.Extension -eq '.exe' -and $_.Name -notlike '*__uninstaller*') } |
   ForEach-Object { '  {0}  {1:N0} MB' -f $_.Name, ($_.Length / 1MB) }

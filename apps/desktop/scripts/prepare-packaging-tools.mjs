@@ -59,9 +59,9 @@ async function preparePackagingTools({ source, out, cache, target = `${process.p
   pinnedPackageRoot(source, 'electron-builder')
   const require = createRequire(path.join(source, 'apps/desktop/package.json'))
   const config = require(path.join(source, 'apps/desktop/electron-builder.config.cjs'))
-  formats ??= process.platform === 'win32' ? ['msix'] : process.platform === 'darwin' ? ['dmg', 'zip'] : ['AppImage']
+  formats ??= process.platform === 'win32' ? ['msix', 'nsis'] : process.platform === 'darwin' ? ['dmg', 'zip'] : ['AppImage']
   if (process.env.CUSTOM_DMGBUILD_PATH) throw new Error('Preparation must select the pinned dmgbuild supplier, not CUSTOM_DMGBUILD_PATH')
-  const supported = process.platform === 'win32' ? ['dir', 'msix', 'zip'] : process.platform === 'darwin' ? ['dir', 'dmg', 'zip'] : ['dir', 'AppImage', 'deb', 'rpm', 'zip']
+  const supported = process.platform === 'win32' ? ['dir', 'msix', 'nsis', 'zip'] : process.platform === 'darwin' ? ['dir', 'dmg', 'zip'] : ['dir', 'AppImage', 'deb', 'rpm', 'zip']
   if (formats.some(format => !supported.includes(format))) throw new Error(`Unsupported prepared package formats: ${formats.join(', ')}`)
   const dmg = formats.includes('dmg') ? prepareDmgbuild({ source, out, cache, binary: dmgbuild }) : null
   const previousCache = process.env.ELECTRON_BUILDER_CACHE
@@ -110,6 +110,12 @@ async function acquirePackagingTools({ source, out, cache, target, formats, buil
     windows = { makeappx: path.join(kit, 'makeappx.exe'), signtool: path.join(kit, 'signtool.exe'),
       dlib: path.join(kit, 'Azure.CodeSigning.Dlib.dll'), dotnetRoot: copyTool(tools.dotnetRoot, path.join(out, 'dotnet')) }
     toolsets.winCodeSign = kitRoot
+  }
+  if (formats.includes('nsis')) {
+    const nsis = await load('toolsets/nsis.js')
+    // makensis.cmd sits at the bundle root, next to the plugins and elevate.exe the target also reads.
+    const makensis = await nsis.getMakeNsisPath(config.toolsets?.nsis, resourcesDir)
+    toolsets.nsis = copyTool(path.dirname(makensis.path), path.join(out, 'nsis'))
   }
   if (formats.includes('AppImage')) {
     const appimage = await load('toolsets/appimage.js')

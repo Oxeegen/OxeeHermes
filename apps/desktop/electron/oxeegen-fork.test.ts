@@ -84,6 +84,20 @@ describe('product identity', () => {
     assert.doesNotMatch(config.msix.publisher + config.msix.publisherDisplayName, /Nous/)
   })
 
+  test('the setup.exe offers per-user or per-machine install and ships the oxee-hermes command shims', () => {
+    process.env.HERMES_DESKTOP_VARIANT = 'bundled'
+    const config = freshCjs<Record<string, any>>('electron-builder.config.cjs')
+
+    assert.equal(config.nsis.oneClick, false)
+    assert.equal(config.nsis.perMachine, false)
+    assert.match(config.nsis.artifactName, /^OxeeHermes/)
+    assert.equal(config.nsis.deleteAppDataOnUninstall, false)
+    const include = fs.readFileSync(path.join(DESKTOP, config.nsis.include), 'utf8')
+    const shims = include.match(/\$\{PROJECT_DIR\}\\(packaging\\[\w.-]+\.ps1)/)
+    assert.ok(shims, 'the include embeds the shim script')
+    assert.ok(fs.existsSync(path.join(DESKTOP, shims[1].replace('\\', '/'))))
+  })
+
   test('the dev package name is not the official one either', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(DESKTOP, 'package.json'), 'utf8'))
 
