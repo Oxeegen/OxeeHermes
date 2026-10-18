@@ -1,5 +1,9 @@
 # Déployer Oxee Hermes sur des VDI Windows
 
+> **Mise à jour du 18/10/2026** : le setup `.exe` NSIS existe désormais (`scripts\build-bundle.ps1 -Nsis`,
+> voir `oxeegen/README.md`). Il couvre l'installation `perMachine`, le PATH, la signature du setup et
+> l'absence de mises à jour intégrées. Il reste limité aux builds de commit.
+
 Analyse du 16/10/2026 sur le commit `dc241b33`. « Déduction » signale ce qui n'a pas été prouvé par
 le code ou par un test.
 

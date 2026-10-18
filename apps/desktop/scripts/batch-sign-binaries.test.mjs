@@ -163,11 +163,12 @@ test('customSign signs the NSIS setup and uninstaller written to the output dir'
   const deps = { azureSignFile: async (/** @type {string} */ file) => { delegated.push(file) } }
   const setup = path.join(outDir, 'OxeeHermes-Setup-1.0.0-x64.exe')
   const uninstaller = path.join(outDir, 'OxeeHermes-Setup-1.0.0-x64.__uninstaller.exe')
-  for (const file of [setup, uninstaller, path.join(root, 'resources', 'elevate.exe'), path.join(outDir, 'nested', 'tool.exe')]) {
+  const elevate = path.join(tmpTree(), 't-abc', 'elevate-staging-0', 'resources', 'elevate.exe')
+  for (const file of [setup, uninstaller, elevate, path.join(root, 'resources', 'elevate.exe'), path.join(outDir, 'nested', 'tool.exe')]) {
     assert.equal(await customSign({ path: file }, packager, deps), true)
   }
   // Files inside the app tree wait for the afterPack batch.
-  assert.deepEqual(delegated, [setup, uninstaller])
+  assert.deepEqual(delegated, [setup, uninstaller, elevate])
 })
 
 test('batchSignAppTree is a no-op (skipped=true) without the Azure env, and signs via chunked argv-array invocations when set', async () => {

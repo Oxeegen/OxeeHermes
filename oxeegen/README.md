@@ -168,6 +168,35 @@ s'installent à la demande, par le réseau, si un utilisateur active la fonction
 | `scripts/msix-shared.mjs` | Éditeur MSIX Oxeegen (`OXEEGEN_MSIX_PUBLISHER` pour la release, sinon identité de test) |
 | `oxeegen/scripts/sign-local-msix.ps1` | Signe un MSIX local avec un certificat auto-signé (Windows refuse un paquet non signé qui déclare des alias de commande) |
 
+## Installeur Windows `.exe` (NSIS)
+
+`scripts\build-bundle.ps1 -Nsis` produit `apps\desktop\release\OxeeHermesBundled-Setup-<version>-x64.exe`
+à la place du MSIX. Il s'installe sans certificat à approuver. Sans signature, SmartScreen avertit :
+« Informations complémentaires », puis « Exécuter quand même ». Mesuré le 18/10/2026 sur `910f190d` :
+595 Mo (MSIX : 1 Go), environ 4 min d'installation, 20 s de désinstallation. Une build de commit
+s'installe sous le nom `oxee-hermes-<sha>` (dossier, raccourcis, commandes), à côté d'un MSIX éventuel ;
+les deux partagent le même dossier de données.
+
+- **Mode d'installation** : la première page propose « pour moi » (`%LOCALAPPDATA%\Programs`, sans
+  admin) ou « pour tous les utilisateurs » (Program Files, admin ; le cas des images VDI). En
+  silencieux : `/S`, plus `/allusers` pour la machine, et `/D=<dossier>` en dernier argument.
+- **Commandes** : l'installeur écrit un `.cmd` par lanceur déclaré par le payload dans `<install>\cli`
+  et ajoute ce dossier au PATH utilisateur ou machine. Le `hermes.exe` du payload reste hors du PATH.
+  Cette étape passe par PowerShell ; si une stratégie de groupe le bloque, l'app fonctionne sans les
+  commandes.
+- **Mises à jour** : aucune. Le format est réservé aux builds de commit, dont le stamp dit `external` ;
+  `desktop.py` refuse `nsis` pour une version taguée.
+- **Désinstallation** : par « Applications installées ». Les données (`%LOCALAPPDATA%\hermes-oxeegen`)
+  sont conservées.
+
+| Où | Quoi |
+|---|---|
+| `apps/desktop/electron-builder.config.cjs` | Section `nsis` |
+| `apps/desktop/packaging/oxeegen-installer.nsh`, `oxeegen-cli.ps1` | Commandes et PATH à l'installation et à la désinstallation |
+| `apps/desktop/scripts/prepare-packaging-tools.mjs`, `run-electron-builder.mjs`, `prepared-packaging.mjs` | Outils NSIS préparés et format autorisé |
+| `apps/desktop/scripts/batch-sign-binaries.mjs` | En release, signature du setup, de son désinstalleur et d'`elevate.exe` |
+| `scripts/bundles/desktop.py`, `scripts/build-bundle.ps1` | Option `-Nsis`, builds de commit seulement |
+
 ## Isolation vis-à-vis d'un Hermes officiel installé
 
 | Risque | Correctif |

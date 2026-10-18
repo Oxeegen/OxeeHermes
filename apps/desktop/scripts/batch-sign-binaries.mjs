@@ -406,14 +406,16 @@ function isProductExe(file, packager) {
 }
 
 /**
- * The NSIS setup and its uninstaller: NsisTarget writes both straight into the
- * output directory, outside the app tree the afterPack batch covers.
+ * The NSIS setup and its uninstaller, which NsisTarget writes straight into the
+ * output directory, and the elevate.exe helper it stages in a temp dir: all
+ * outside the app tree the afterPack batch covers.
  * @param {string} file
  * @param {import('app-builder-lib').WinPackager} packager
  * @returns {boolean}
  */
 function isInstallerExe(file, packager) {
   const resolved = path.resolve(file).toLowerCase()
+  if (path.basename(resolved) === 'elevate.exe' && path.basename(path.dirname(path.dirname(resolved))).startsWith('elevate-staging-')) return true
   return resolved.endsWith('.exe') && packOutputs(packager).some(({ outDir }) => path.dirname(resolved) === outDir.toLowerCase())
 }
 
