@@ -115,7 +115,9 @@ def _build_prepared(prepared, builder_args: list[str], variant: str | None) -> N
         # A setup.exe has no update owner: the stamp only says 'external' for commit builds.
         if request.tag is not None or request.channel_request is not None:
             raise ValueError("NSIS setup.exe packages are commit builds only (no update feed serves them)")
-        targets = ["--win"]
+        # electron-builder reads formats only right after the platform flag.
+        targets = ["--win", "nsis"]
+        builder_args = [arg for arg in builder_args if arg != "nsis"]
     package_args = ["--prepared", str(prepared.packager), "--native-deps", str(prepared.native),
                     *targets, f"-c.extraMetadata.version={request.version}"]
     run([node, "scripts/run-electron-builder.mjs", "--validate-only", *package_args, *builder_args],
