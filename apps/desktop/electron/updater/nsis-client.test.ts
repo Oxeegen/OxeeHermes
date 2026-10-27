@@ -87,4 +87,26 @@ describe('Windows setup.exe updater', () => {
     // No macOS signature step on Windows.
     expect(d.emitProgress).not.toHaveBeenCalledWith(expect.objectContaining({ stage: 'prepare' }))
   })
+
+  it('turns a GitHub 404 into a short "no release" status and keeps the raw error for the log', async () => {
+    const raw = Object.assign(new Error('404 "method: GET url: https://github.com/oxeegen/oxee-hermes/releases.atom" Headers: { "set-cookie": "_gh_sess=secret" }'), {
+      statusCode: 404
+    })
+    client.checkForUpdates.mockRejectedValueOnce(raw)
+    const d = deps()
+
+    const status = await createNsisStrategy(d).check()
+
+    expect(status).toMatchObject({ supported: true, error: 'no-release', message: 'No Oxee Hermes release is published yet.' })
+    expect(JSON.stringify(status)).not.toContain('_gh_sess')
+    expect(d.log).toHaveBeenCalledWith(expect.stringContaining('_gh_sess'))
+  })
+
+  it('calls any other failure unreachable, and refuses to apply on a failed check', async () => {
+    client.checkForUpdates.mockRejectedValue(Object.assign(new Error('net::ERR_INTERNET_DISCONNECTED'), { code: 'ERR_NETWORK' }))
+
+    await expect(createNsisStrategy(deps()).check()).resolves.toMatchObject({ error: 'feed-unreachable' })
+    await expect(createNsisStrategy(deps()).apply()).rejects.toThrow('could not be reached')
+    expect(client.quitAndInstall).not.toHaveBeenCalled()
+  })
 })

@@ -1,5 +1,6 @@
 import type { AppUpdater } from 'electron-updater'
 
+import { classifyFeedError, FEED_ERROR_MESSAGES } from './feed-errors'
 import { applyPackagedHandoff } from './packaged-handoff'
 
 import type { UpdaterApplyResultWire, UpdaterStatusWire, UpdaterStrategy } from './index'
@@ -10,6 +11,7 @@ export interface MacStrategyDeps {
   expectedVersion?: string
   verifyDownload?: (files: string[]) => Promise<void>
   appVersion: string
+  log?: (message: string) => void
   /** Squirrel verifies the signed app before any backend is stopped. */
   prepareInstall: () => Promise<void>
   /** Progress line while prepareInstall runs; null skips it (the NSIS arm has nothing to verify). */
@@ -34,7 +36,25 @@ export class MacStrategy implements UpdaterStrategy {
   }
 
   private async checkRelease(): Promise<UpdaterStatusWire> {
-    const result = await this.deps.updater.checkForUpdates()
+    let result: Awaited<ReturnType<MacStrategyDeps['updater']['checkForUpdates']>>
+
+    try {
+      result = await this.deps.updater.checkForUpdates()
+    } catch (error) {
+      // Oxee Hermes: a short, classified status; the raw feed error is for the log.
+      const code = classifyFeedError(error)
+      this.deps.log?.(`update check failed (${code}): ${error instanceof Error ? error.message : String(error)}`)
+
+      return {
+        supported: true,
+        mechanism: this.mechanism,
+        currentVersion: this.deps.appVersion,
+        channel: this.deps.channel,
+        error: code,
+        message: FEED_ERROR_MESSAGES[code],
+        fetchedAt: Date.now()
+      }
+    }
 
     if (!result) {
       throw new Error('The macOS updater is not active for this app.')
@@ -77,6 +97,10 @@ export class MacStrategy implements UpdaterStrategy {
         },
         async (stop: () => Promise<void>): Promise<UpdaterApplyResultWire> => {
           const status = await this.checkRelease()
+
+          if (status.error) {
+            throw new Error(status.message ?? status.error)
+          }
 
           if (!status.updateAvailable) {
             return { ok: true, mechanism: this.mechanism }

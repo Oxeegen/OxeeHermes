@@ -38,6 +38,8 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/settings/about-settings.tsx', needs: ['<InstalledReleaseNotes appVersion={version?.appVersion} />'], why: 'About shows the installed release notes' },
   { file: 'apps/desktop/electron/main.ts', needs: ["process.platform === 'win32' ? createNsisStrategy(deps) : createMacStrategy(deps)"], why: 'setup.exe updates through electron-updater' },
   { file: 'apps/desktop/electron/updater/mac-client.ts', needs: ['if (deps.feed || deps.feedBaseUrl) {'], why: 'macOS reads the packaged GitHub feed channel' },
+  { file: 'apps/desktop/electron/updater/mac.ts', needs: ['const code = classifyFeedError(error)'], why: 'feed failures classified, raw error to the log only' },
+  { file: 'apps/desktop/src/components/update-status.tsx', needs: ['oxeegenUpdateErrorLine(status, locale)'], why: 'feed failures worded, never the raw response' },
   { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ["env.HERMES_DESKTOP_PACKAGE === 'nsis' ? 'electron-updater'"], why: 'release setup.exe stamped electron-updater' },
   { file: 'apps/desktop/electron-builder.config.cjs', needs: ["? [{ provider: 'github', owner, repo, channel }]", 'differentialPackage: Boolean(channel)'], why: 'GitHub Releases feed (mac + setup.exe blockmap)' },
   { file: 'scripts/bundles/desktop.py', needs: ['env["HERMES_DESKTOP_PACKAGE"] = "nsis"'], why: 'NSIS release builds reach the stamp' },

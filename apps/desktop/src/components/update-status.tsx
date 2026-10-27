@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { shortVersion } from '@/lib/version-label'
 import { OxeeVersionWordmark } from '@/oxeegen/brand'
 import { OXEEGEN_RELEASES_URL } from '@/oxeegen/release-notes'
+import { oxeegenUpdateErrorLine } from '@/oxeegen/update-errors'
 import {
   $backendUpdateApply,
   $backendUpdateChecking,
@@ -317,7 +318,7 @@ export function UpdateStatusCard({
   showReleaseNotes?: boolean
   target: UpdateTarget
 }): ReactElement {
-  const { t } = useI18n()
+  const { locale, t } = useI18n()
   const u = t.updates
   const isBackend = target === 'backend'
   const status = useStore(isBackend ? $backendUpdateStatus : $updateStatus)
@@ -325,7 +326,7 @@ export function UpdateStatusCard({
   const apply = useStore(isBackend ? $backendUpdateApply : $updateApply)
   const [justChecked, setJustChecked] = useState<boolean>(false)
 
-  const view = deriveUpdateStatus({
+  const derived = deriveUpdateStatus({
     apply,
     checking,
     latestRelease: t.settings.about.channel.latestRelease,
@@ -334,6 +335,10 @@ export function UpdateStatusCard({
     target,
     u
   })
+
+  // Oxee Hermes: a classified feed failure reads as one sentence, never the raw feed error.
+  const feedError = derived.tone === 'error' ? oxeegenUpdateErrorLine(status, locale) : null
+  const view = feedError ? { ...derived, error: undefined, line: feedError } : derived
 
   const handleCheck = async (): Promise<void> => {
     setJustChecked(false)

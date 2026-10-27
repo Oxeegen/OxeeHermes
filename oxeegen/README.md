@@ -198,6 +198,9 @@ les deux partagent le même dossier de données.
 - **À propos → Version et mises à jour** : « Nouveautés de la version X.Y.Z » affiche le texte de la release
   GitHub de la version installée (`src/oxeegen/installed-release-notes.tsx`) ; les liens « Notes de
   version » et installeur pointent vers les releases Oxeegen.
+- **Échec de vérification** : « Aucune version publiée sur GitHub » (404, dépôt privé, release absente) ou
+  « GitHub est injoignable » (`electron/updater/feed-errors.ts`, `src/oxeegen/update-errors.ts`). La réponse
+  brute (en-têtes, cookies) ne va qu'aux logs.
 - **Désinstallation** : par « Applications installées ». Les données (`%LOCALAPPDATA%\hermes-oxeegen`)
   sont conservées.
 
