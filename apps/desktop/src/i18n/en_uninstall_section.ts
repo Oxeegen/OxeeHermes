@@ -8,6 +8,17 @@ export const enUninstallSection: UninstallSectionTranslations = {
   managedBody: 'This install is managed by your system, so Hermes cannot remove itself.',
   dataKept: path => `Your config, chats, and secrets live in ${path}. Removing the app does not delete them.`,
   openAppsSettings: 'Open Apps settings',
+  nativeRemoval: {
+    nix: 'This Hermes app was installed by Nix. Uninstall it the same way you installed it: remove hermes-agent from your flake or profile, then rebuild.',
+    external:
+      'Another package manager installed this Hermes app. Uninstall it with that package manager, the same way you installed it.',
+    windows: 'To uninstall, go to Windows Settings → Apps → Installed apps.',
+    mac: (bundle, folder) => `Quit the app and drag ${bundle} from ${folder} to the Trash.`,
+    macDefault: 'Quit the app and drag the Hermes app from Applications to the Trash.',
+    appImage: path => `Delete the AppImage file at ${path}.`,
+    appDir: path => `Delete the app directory at ${path}.`,
+    linux: 'Delete the Hermes AppImage (or app directory) from wherever you saved it.'
+  },
   chooseHowMuch:
     'Choose how much to remove. The app closes to finish the job; reopen the installer any time to come back.',
   confirmUninstall: 'Confirm uninstall',

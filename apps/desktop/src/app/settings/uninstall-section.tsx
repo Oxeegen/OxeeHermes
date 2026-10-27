@@ -1,8 +1,9 @@
 import { type ReactElement, useContext, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import type { DesktopUninstallMode, DesktopUninstallResult, DesktopUninstallSummary } from '@/global'
+import type { DesktopNativeRemoval, DesktopUninstallMode, DesktopUninstallResult, DesktopUninstallSummary } from '@/global'
 import { useI18n } from '@/i18n'
+import type { UninstallSectionTranslations } from '@/i18n/types_uninstall_section'
 import { AlertTriangle, Loader2, Trash2 } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,33 @@ interface ModeOption {
   consequence: string
   /** True when the option removes the Python agent (hidden if no agent). */
   needsAgent: boolean
+}
+
+type NativeRemovalWords = UninstallSectionTranslations['nativeRemoval']
+
+const NATIVE_REMOVAL_TEXT: {
+  [K in DesktopNativeRemoval['kind']]: (words: NativeRemovalWords, removal: Extract<DesktopNativeRemoval, { kind: K }>) => string
+} = {
+  'app-dir': (w, r) => w.appDir(r.path),
+  appimage: (w, r) => w.appImage(r.path),
+  external: w => w.external,
+  linux: w => w.linux,
+  mac: (w, r) => (r.bundle && r.folder ? w.mac(r.bundle, r.folder) : w.macDefault),
+  nix: w => w.nix,
+  windows: w => w.windows
+}
+
+/** The removal steps in the UI language; the main process's English text when it sent no kind. */
+function nativeRemovalText(words: NativeRemovalWords, summary: DesktopUninstallSummary): null | string {
+  const removal = summary.native_removal
+
+  if (!removal) {
+    return summary.native_removal_instructions
+  }
+
+  const render = NATIVE_REMOVAL_TEXT[removal.kind] as (w: NativeRemovalWords, r: DesktopNativeRemoval) => string
+
+  return render(words, removal)
 }
 
 export function UninstallSection(): ReactElement | null {
@@ -91,7 +119,9 @@ export function UninstallSection(): ReactElement | null {
 
   if (!summary.code_removal_allowed) {
     // The OS or package manager owns removal; show how, never a destructive fallback.
-    if (!summary.native_removal_instructions) {
+    const removalText: null | string = nativeRemovalText(u.nativeRemoval, summary)
+
+    if (!removalText) {
       return null
     }
 
@@ -100,7 +130,7 @@ export function UninstallSection(): ReactElement | null {
         <SectionHeading icon={AlertTriangle} page title={u.uninstallHermes} />
         <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-background/40 px-4 py-3">
           <p className="text-xs text-muted-foreground">{u.managedBody}</p>
-          <p className="text-sm font-medium">{summary.native_removal_instructions}</p>
+          <p className="text-sm font-medium">{removalText}</p>
           <p className="text-xs text-muted-foreground">{u.dataKept(summary.hermes_home)}</p>
           {summary.platform === 'win32' && (
             <div className="mt-1">

@@ -21,6 +21,7 @@ function summary(allowed: boolean): DesktopUninstallSummary {
     native_removal_instructions: allowed
       ? null
       : 'Quit the app and drag Oxee Hermes.app from /Applications to the Trash.',
+    native_removal: allowed ? null : { kind: 'mac', bundle: 'Oxee Hermes.app', folder: '/Applications' },
     hermes_home: '/test/home',
     agent_installed: true,
     gui_installed: true,
@@ -120,7 +121,8 @@ it('shows native removal steps, data location, and Apps settings on a managed Wi
       summary: async (): Promise<DesktopUninstallSummary> => ({
         ...summary(false),
         platform: 'win32',
-        native_removal_instructions: 'To uninstall, go to Windows Settings → Apps → Installed apps.'
+        native_removal_instructions: 'To uninstall, go to Windows Settings → Apps → Installed apps.',
+        native_removal: { kind: 'windows' }
       }),
       run,
       openAppsSettings
@@ -133,4 +135,43 @@ it('shows native removal steps, data location, and Apps settings on a managed Wi
   expect(openAppsSettings).toHaveBeenCalledOnce()
   expect(run).not.toHaveBeenCalled()
   expect(screen.queryByRole('button', { name: /Uninstall/ })).toBeNull()
+})
+
+it('words a managed Windows install in the UI language, labels included', async (): Promise<void> => {
+  vi.stubGlobal('hermesDesktop', {
+    uninstall: {
+      summary: async (): Promise<DesktopUninstallSummary> => ({
+        ...summary(false),
+        platform: 'win32',
+        native_removal_instructions: 'To uninstall, go to Windows Settings → Apps → Installed apps.',
+        native_removal: { kind: 'windows' }
+      }),
+      run: vi.fn(),
+      openAppsSettings: vi.fn()
+    }
+  })
+  render(
+    <I18nProvider configClient={null} initialLocale="fr">
+      <Surface />
+    </I18nProvider>
+  )
+
+  const fr: (typeof TRANSLATIONS)['fr']['settings']['uninstallSection'] = TRANSLATIONS.fr.settings.uninstallSection
+
+  expect(await screen.findByText(fr.nativeRemoval.windows)).toBeTruthy()
+  expect(screen.getByText(fr.managedBody)).toBeTruthy()
+  expect(screen.getByText(fr.dataKept('/test/home'))).toBeTruthy()
+  expect(screen.getByRole('button', { name: fr.openAppsSettings })).toBeTruthy()
+  expect(screen.queryByText(/Installed apps|managed by your system|Open Apps settings/)).toBeNull()
+})
+
+it('falls back to the English steps from an older main process that sends no kind', async (): Promise<void> => {
+  vi.stubGlobal('hermesDesktop', {
+    uninstall: {
+      summary: async (): Promise<DesktopUninstallSummary> => ({ ...summary(false), native_removal: null }),
+      run: vi.fn()
+    }
+  })
+  render(<UninstallSection />)
+  expect(await screen.findByText('Quit the app and drag Oxee Hermes.app from /Applications to the Trash.')).toBeTruthy()
 })

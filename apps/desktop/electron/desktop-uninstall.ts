@@ -42,10 +42,22 @@ export interface UninstallSummaryDetails {
   probe?: string
 }
 
+/** Which native removal path applies, so the renderer can word it in the UI language. */
+export type NativeRemoval =
+  | { kind: 'nix' }
+  | { kind: 'external' }
+  | { kind: 'windows' }
+  | { kind: 'mac'; bundle: string | null; folder: string | null }
+  | { kind: 'appimage'; path: string }
+  | { kind: 'app-dir'; path: string }
+  | { kind: 'linux' }
+
 export interface DesktopUninstallSummary extends UninstallSummaryDetails {
   code_removal_allowed: boolean
-  /** Set only when the OS or package manager owns removal; the renderer shows it verbatim. */
+  /** Set only when the OS or package manager owns removal: the English steps, kept as a fallback. */
   native_removal_instructions: string | null
+  /** The same steps as data, for a translated rendering. */
+  native_removal: NativeRemoval | null
 }
 
 export interface DesktopUninstallResult {
@@ -84,15 +96,18 @@ export function registerDesktopUninstallIpc({
   ipcMain.handle('hermes:uninstall:summary', async (): Promise<DesktopUninstallSummary> => {
     const summary: UninstallSummaryDetails = codeRemovalAllowed ? await probeSummary() : fallbackSummary()
 
+    const removal: NativeRemoval | null = codeRemovalAllowed
+      ? null
+      : nativeRemoval(kind, summary.platform, removableAppPath())
+
     // The local artifact owns this decision, not the Python summary. When
     // removal belongs to the OS, the main process also supplies the canonical
     // instructions so the renderer never guesses platform or install kind.
     return {
       ...summary,
       code_removal_allowed: codeRemovalAllowed,
-      native_removal_instructions: codeRemovalAllowed
-        ? null
-        : nativeRemovalInstructions(kind, summary.platform, removableAppPath())
+      native_removal_instructions: removal ? englishNativeRemoval(removal) : null,
+      native_removal: removal
     }
   })
   ipcMain.handle('hermes:uninstall:openAppsSettings', async (): Promise<void> => {
@@ -193,43 +208,63 @@ function allowedUninstallModes(kind: InstallKind): string[] {
  * result (the .app bundle on macOS, the AppImage path on Linux), used only to
  * name the exact bundle or file.
  */
-function nativeRemovalInstructions(kind, platform, appPath = null) {
-  if (kind === 'nix') {
-    return (
-      'This Oxee Hermes app was installed by Nix. Uninstall it the same way you installed it: ' +
-      'remove hermes-agent from your flake or profile, then rebuild.'
-    )
-  }
-
-  if (kind === 'external') {
+function nativeRemoval(kind: InstallKind, platform: string, appPath: string | null = null): NativeRemoval {
+  if (kind === 'nix' || kind === 'external') {
     // Deleting a package manager's files by hand leaves the package registered with missing files.
-    return (
-      'Another package manager installed this Oxee Hermes app. ' +
-      'Uninstall it with that package manager, the same way you installed it.'
-    )
+    return { kind }
   }
 
   if (platform === 'win32') {
-    return 'To uninstall, go to Windows Settings → Apps → Installed apps.'
+    return { kind: 'windows' }
   }
 
   if (platform === 'darwin') {
     // Name the running bundle: channel builds ship under different .app names.
-    const bundle = appPath ? path.posix.basename(String(appPath)) : 'the Oxee Hermes app'
-    const folder = appPath ? path.posix.dirname(String(appPath)) : 'Applications'
-
-    return `Quit the app and drag ${bundle} from ${folder} to the Trash.`
-  }
-
-  if (appPath && /\.appimage$/i.test(String(appPath))) {
-    return `Delete the AppImage file at ${appPath}.`
+    return appPath
+      ? { kind: 'mac', bundle: path.posix.basename(String(appPath)), folder: path.posix.dirname(String(appPath)) }
+      : { kind: 'mac', bundle: null, folder: null }
   }
 
   if (appPath) {
-    return `Delete the app directory at ${appPath}.`
+    return /\.appimage$/i.test(String(appPath)) ? { kind: 'appimage', path: appPath } : { kind: 'app-dir', path: appPath }
   }
 
-  return 'Delete the Oxee Hermes AppImage (or app directory) from wherever you saved it.'
+  return { kind: 'linux' }
+}
+
+function englishNativeRemoval(removal: NativeRemoval): string {
+  switch (removal.kind) {
+    case 'nix':
+      return (
+        'This Oxee Hermes app was installed by Nix. Uninstall it the same way you installed it: ' +
+        'remove hermes-agent from your flake or profile, then rebuild.'
+      )
+
+    case 'external':
+      return (
+        'Another package manager installed this Oxee Hermes app. ' +
+        'Uninstall it with that package manager, the same way you installed it.'
+      )
+
+    case 'windows':
+      return 'To uninstall, go to Windows Settings → Apps → Installed apps.'
+
+    case 'mac':
+      return `Quit the app and drag ${removal.bundle ?? 'the Oxee Hermes app'} from ${removal.folder ?? 'Applications'} to the Trash.`
+
+    case 'appimage':
+      return `Delete the AppImage file at ${removal.path}.`
+
+    case 'app-dir':
+      return `Delete the app directory at ${removal.path}.`
+
+    case 'linux':
+      return 'Delete the Oxee Hermes AppImage (or app directory) from wherever you saved it.'
+  }
+}
+
+function nativeRemovalInstructions(kind: InstallKind, platform: string, appPath: string | null = null): string {
+  return englishNativeRemoval(nativeRemoval(kind, platform, appPath))
 }
 
 /**
@@ -466,6 +501,7 @@ export {
   installKindAllowsCodeRemoval,
   modeRemovesAgent,
   modeRemovesUserData,
+  nativeRemoval,
   nativeRemovalInstructions,
   resolveInstallKind,
   resolveRemovableAppPath,

@@ -6,6 +6,17 @@ export interface UninstallSectionTranslations {
   managedBody: string
   dataKept: (path: string) => string
   openAppsSettings: string
+  /** How the OS or a package manager removes the app, per `DesktopNativeRemoval` kind. */
+  nativeRemoval: {
+    nix: string
+    external: string
+    windows: string
+    mac: (bundle: string, folder: string) => string
+    macDefault: string
+    appImage: (path: string) => string
+    appDir: (path: string) => string
+    linux: string
+  }
   chooseHowMuch: string
   confirmUninstall: string
   confirmBody: (what: string) => string

@@ -25,6 +25,7 @@ import {
   installKindAllowsCodeRemoval,
   modeRemovesAgent,
   modeRemovesUserData,
+  nativeRemoval,
   nativeRemovalInstructions,
   resolveInstallKind,
   resolveRemovableAppPath,
@@ -92,6 +93,18 @@ test('nativeRemovalInstructions names the steward per kind and OS', () => {
     /app directory at \/opt\/hermes\/linux-unpacked/
   )
   assert.match(nativeRemovalInstructions('bundled', 'linux'), /wherever you saved it/)
+})
+
+test('nativeRemoval hands the renderer the same steps as data', () => {
+  assert.deepEqual(nativeRemoval('bundled', 'win32'), { kind: 'windows' })
+  assert.deepEqual(nativeRemoval('external', 'win32'), { kind: 'external' })
+  assert.deepEqual(nativeRemoval('bundled', 'darwin', '/Applications/Oxee Hermes.app'), {
+    kind: 'mac',
+    bundle: 'Oxee Hermes.app',
+    folder: '/Applications'
+  })
+  assert.deepEqual(nativeRemoval('bundled', 'linux', '/home/x/Oxee.AppImage'), { kind: 'appimage', path: '/home/x/Oxee.AppImage' })
+  assert.deepEqual(nativeRemoval('bundled', 'linux'), { kind: 'linux' })
 })
 
 // --- modeRemovesAgent / modeRemovesUserData ---

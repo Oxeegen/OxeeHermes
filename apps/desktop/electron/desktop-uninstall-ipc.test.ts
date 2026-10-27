@@ -90,7 +90,8 @@ test('excluded artifact owners block every uninstall IPC before a Python probe o
     expect(await ipc.invoke('hermes:uninstall:summary')).toMatchObject({
       ...fallbackSummary,
       code_removal_allowed: false,
-      native_removal_instructions: expect.any(String)
+      native_removal_instructions: expect.any(String),
+      native_removal: expect.objectContaining({ kind: expect.any(String) })
     })
     expect(ipc.probeSummary).not.toHaveBeenCalled()
 
@@ -121,7 +122,8 @@ test('self-managed installs retain summary and uninstall IPC behavior under Elec
       ...fallbackSummary,
       probe: 'python',
       code_removal_allowed: true,
-      native_removal_instructions: null
+      native_removal_instructions: null,
+      native_removal: null
     })
     expect(ipc.probeSummary).toHaveBeenCalledOnce()
     expect(ipc.localSummary).not.toHaveBeenCalled()

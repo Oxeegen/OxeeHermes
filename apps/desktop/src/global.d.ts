@@ -810,11 +810,22 @@ export type RuntimeSource =
 
 export type DesktopUninstallMode = 'full' | 'gui' | 'lite'
 
+export type DesktopNativeRemoval =
+  | { kind: 'app-dir'; path: string }
+  | { kind: 'appimage'; path: string }
+  | { kind: 'external' }
+  | { kind: 'linux' }
+  | { kind: 'mac'; bundle: null | string; folder: null | string }
+  | { kind: 'nix' }
+  | { kind: 'windows' }
+
 export interface DesktopUninstallSummary {
   /** Local package ownership, resolved by Electron before offering removal. */
   code_removal_allowed: boolean
-  /** Native removal steps when the OS or a package manager owns removal. */
+  /** Native removal steps when the OS or a package manager owns removal (English fallback). */
   native_removal_instructions: null | string
+  /** The same steps as data, worded by the renderer in the UI language. */
+  native_removal: DesktopNativeRemoval | null
   hermes_home: string
   agent_installed: boolean
   gui_installed: boolean
