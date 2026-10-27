@@ -1159,8 +1159,9 @@ DEFAULT_CONFIG = {
         "echo_transcripts": True,
         # No seeded "provider" (a stored value is an explicit pick; unset = autodetect): local | groq |
         # openai | mistral | elevenlabs | deepinfra | xai. Global language hint unless a per-provider one
-        # overrides it; "en" because Whisper auto-detect misreads short clips; "" = auto; "es", ...
-        "language": "en",
+        # overrides it; pinned because Whisper auto-detect misreads short clips. Oxee Hermes: "system"
+        # (the OS language, tools/transcription_tools.py) instead of "en"; "" = auto; "fr", "es", ...
+        "language": "system",
         "streaming": False,  # live partial text while speaking (openai/xai/elevenlabs); failure = file path
         # Pre-upload ffmpeg silence trim (local whisper uses VAD); failure = raw upload.
         "cloud_trim_silence": True,

@@ -72,13 +72,14 @@ def test_groq_stt_resolves_direct_with_config_key(voice_home):
 def test_groq_stt_resolves_direct_with_env_key(voice_home, monkeypatch):
     voice_home({"stt": {"provider": "groq"}})
     monkeypatch.setenv("GROQ_API_KEY", "gsk_env456")
+    monkeypatch.setattr("hermes_platform.host.summary.summary", lambda: {"locale": "fr-FR"})
     result = _resolve()
     stt = result["stt"]
     assert stt["mode"] == "direct"
     assert stt["api_key"] == "gsk_env456"
-    # DEFAULT_CONFIG pins stt.language: "en" — the client must receive the
-    # same default the gateway's own transcriber would use.
-    assert stt["language"] == "en"
+    # DEFAULT_CONFIG pins stt.language — Oxee Hermes: "system", the OS language — and the
+    # client must receive the same resolved default the gateway's own transcriber would use.
+    assert stt["language"] == "fr"
 
 
 def test_language_pin_propagates(voice_home, monkeypatch):

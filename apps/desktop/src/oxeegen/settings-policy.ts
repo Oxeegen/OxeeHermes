@@ -67,6 +67,16 @@ export function isVisibleConfigSubpage(section: string, page: string): boolean {
   return !HIDDEN_CONFIG_SUBPAGES.has(`${section}:${page}`)
 }
 
+/**
+ * Settings > Voice > Speech recognition > Transcription language. "system" is
+ * resolved to the OS language by the backend (tools/transcription_tools.py),
+ * which is also the default; the rest are ISO-639-1 codes. Labels: stt-language.ts.
+ */
+export const STT_LANGUAGES = ['system', 'fr', 'en', 'de', 'es', 'it', 'nl', 'pt', 'pl', 'ar', 'zh', 'ja']
+
+/** The "set the shortcut in Keyboard shortcuts" banner on every Voice page (it also names a CLI-only key). */
+export const OXEEGEN_VOICE_SHORTCUT_HINT = false
+
 /** Rows the managed scope sets: shown as their value, from oxeegen.json, with no editor. */
 export const OXEEGEN_PINNED_SETTING_FIELDS: ReadonlyMap<string, { label: 'sttModel'; value: string }> = new Map([
   ['stt.openai.model', { label: 'sttModel', value: OXEEGEN.sttModel }]

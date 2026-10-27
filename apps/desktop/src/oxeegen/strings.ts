@@ -25,6 +25,7 @@ const EN = {
   saved: 'Oxeegen settings saved.',
   saving: 'Saving…',
   sttModel: 'Speech-to-text model',
+  systemLanguage: 'System language',
   title: 'Connect to Oxeegen'
 }
 
@@ -50,6 +51,7 @@ const FR: OxeegenStrings = {
   saved: 'Réglages Oxeegen enregistrés.',
   saving: 'Enregistrement…',
   sttModel: 'Modèle de reconnaissance vocale',
+  systemLanguage: 'Langue du système',
   title: 'Connexion à Oxeegen'
 }
 

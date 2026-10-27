@@ -103,7 +103,7 @@ def _resolve_stt_language(
 ) -> Optional[str]:
     """Language hint for an STT provider, first non-empty wins (never ""): ``stt.<provider>.language``
     (plus *extra_keys* aliases, e.g. ``language_code``) > ``stt.language`` > ``HERMES_LOCAL_STT_LANGUAGE``
-    env > None (provider auto-detects)."""
+    env > None (provider auto-detects). ``"system"`` stands for the OS language (None when the OS has none)."""
     if stt_config is None:
         stt_config = _load_stt_config()
     provider_cfg = _get_stt_section(stt_config, provider_key)
@@ -111,7 +111,19 @@ def _resolve_stt_language(
     if isinstance(stt_config, dict):
         candidates.append(stt_config.get("language"))
     candidates.append(os.getenv(LOCAL_STT_LANGUAGE_ENV))
-    return next((c.strip() for c in candidates if isinstance(c, str) and c.strip()), None)
+    chosen = next((c.strip() for c in candidates if isinstance(c, str) and c.strip()), None)
+    return _system_stt_language() if chosen == SYSTEM_STT_LANGUAGE else chosen
+
+
+SYSTEM_STT_LANGUAGE = "system"
+
+
+def _system_stt_language() -> Optional[str]:
+    """The OS language as an ISO-639-1 code (``fr-FR`` -> ``fr``), or None when the OS gives none."""
+    from hermes_platform.host.summary import summary
+
+    code = (summary().get("locale") or "").replace("_", "-").split("-", 1)[0].strip().lower()
+    return code if len(code) in (2, 3) and code.isalpha() else None
 
 
 def _openai_audio_unavailable_reason() -> Optional[str]:

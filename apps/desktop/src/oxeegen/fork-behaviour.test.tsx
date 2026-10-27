@@ -191,13 +191,37 @@ describe('voice', () => {
     expect(settingsSubpages('config:voice').map(page => page.id)).toEqual(['transcription', 'speech'])
   })
 
-  it('keeps only the transcript echo and the pinned model on Speech recognition', () => {
+  it('keeps the transcript echo, the language and the pinned model on Speech recognition', () => {
     const config = { stt: { enabled: true, provider: 'openai', openai: { model: 'voxee-stt' } } }
 
-    const visible = ['stt.enabled', 'stt.echo_transcripts', 'stt.provider', 'stt.streaming', 'stt.openai.model', 'stt.openai.streaming_model']
-      .filter(key => voiceFieldVisible(key, config))
+    const visible = [
+      'stt.enabled',
+      'stt.echo_transcripts',
+      'stt.language',
+      'stt.provider',
+      'stt.streaming',
+      'stt.openai.model',
+      'stt.openai.streaming_model'
+    ].filter(key => voiceFieldVisible(key, config))
 
-    expect(visible).toEqual(['stt.echo_transcripts', 'stt.openai.model'])
+    expect(visible).toEqual(['stt.echo_transcripts', 'stt.language', 'stt.openai.model'])
+  })
+
+  it('offers the system language first, then languages by their names in the UI language', async () => {
+    const { useSttLanguageLabels } = await import('./stt-language')
+    let labels: Record<string, string> = {}
+
+    function Probe() {
+      labels = useSttLanguageLabels()
+
+      return null
+    }
+
+    render(<Probe />)
+
+    expect(enumOptionsFor('stt.language', 'system', {})?.[0]).toBe('system')
+    expect(labels.system).toBe('System language')
+    expect(labels.fr).toBe('French')
   })
 
   it('shows the speech-to-text model from oxeegen.json, with no editor', async () => {

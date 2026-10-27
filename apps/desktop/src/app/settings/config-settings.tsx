@@ -12,7 +12,8 @@ import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { isSubmitEnter } from '@/lib/ime'
 import { OxeegenPinnedField } from '@/oxeegen/pinned-field'
-import { OXEEGEN_PINNED_SETTING_FIELDS } from '@/oxeegen/settings-policy'
+import { OXEEGEN_PINNED_SETTING_FIELDS, OXEEGEN_VOICE_SHORTCUT_HINT } from '@/oxeegen/settings-policy'
+import { useSttLanguageLabels } from '@/oxeegen/stt-language'
 import { confirm } from '@/store/confirm'
 import {
   $dataUrlReadMaxMb,
@@ -105,6 +106,7 @@ function ConfigSettingsInner({
 }: ConfigSettingsProps & { scopeProfile: string | undefined }) {
   const { t } = useI18n()
   const c = t.settings.config
+  const sttLanguageLabels = useSttLanguageLabels()
   const keepAwakeMode = useStore($keepAwakeMode)
 
   const keepAwakeOptions = [
@@ -497,7 +499,7 @@ function ConfigSettingsInner({
       {/* Shared metrics are two coupled opt-ins with a consent side effect, so they
           go through their own RPC rather than the generic field autosave. */}
       {showSharedMetrics ? <SharedMetricsSettings /> : null}
-      {activeSectionId === 'voice' ? (
+      {OXEEGEN_VOICE_SHORTCUT_HINT && activeSectionId === 'voice' ? (
         <ListRow description={c.voiceShortcutHintDesc} title={c.voiceShortcutHintTitle} />
       ) : null}
       {showEmptyState ? (
@@ -521,7 +523,13 @@ function ConfigSettingsInner({
                     : enumOptionsFor(key, getNested(config, key), config)
                 }
                 onChange={value => updateConfig(setNested(config, key, value))}
-                optionLabels={key === 'tts.elevenlabs.voice_id' ? elevenLabsVoiceLabels : undefined}
+                optionLabels={
+                  key === 'tts.elevenlabs.voice_id'
+                    ? elevenLabsVoiceLabels
+                    : key === 'stt.language'
+                      ? sttLanguageLabels
+                      : undefined
+                }
                 schema={field}
                 schemaKey={key}
                 value={getNested(config, key)}

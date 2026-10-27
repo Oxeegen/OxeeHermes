@@ -14,6 +14,7 @@ import {
   Sun,
   Wrench
 } from '@/lib/icons'
+import { STT_LANGUAGES } from '@/oxeegen/settings-policy'
 import type { ThemeMode } from '@/themes/context'
 
 // Single source of truth for built-in personality names lives in
@@ -253,6 +254,8 @@ export const ENUM_OPTIONS: Record<string, string[]> = {
   // tools/transcription_common.py (local_command is auto-detected, not picked).
   // Oxeegen: voice runs on Oxeegen's OpenAI-compatible audio API (pinned by the managed scope).
   'stt.provider': ['openai'],
+  // Oxeegen: "system" follows this computer's language (tools/transcription_tools.py); labels in src/oxeegen/stt-language.ts.
+  'stt.language': STT_LANGUAGES,
   // How the desktop voice conversation is wired — tools/voice_live.py owns the
   // gpt-live branch (one full-duplex voice model delegating to Hermes).
   'voice.voice_chat_mode': ['chained'],
@@ -480,6 +483,7 @@ export const FIELD_LABELS: Record<string, string> = defineFieldCopy({
   stt: {
     enabled: 'Speech To Text',
     echoTranscripts: 'Echo Transcripts',
+    language: 'Transcription Language',
     provider: 'Speech-To-Text Provider',
     streaming: 'Live Transcription',
     local: {
@@ -685,6 +689,7 @@ export const FIELD_DESCRIPTIONS: Record<string, string> = defineFieldCopy({
   stt: {
     enabled: 'Enable local or provider-backed speech transcription.',
     echoTranscripts: 'Post the raw 🎙️ transcript of voice messages back to the chat.',
+    language: "The language you speak in. System follows this computer's language.",
     streaming: 'Show text while you speak (OpenAI, xAI, ElevenLabs). Falls back to the recording on any failure.',
     elevenlabs: {
       languageCode: 'Optional ISO-639-3 language code. Blank lets ElevenLabs auto-detect.'
@@ -781,6 +786,7 @@ export const SECTIONS: DesktopConfigSection[] = [
       'tts.provider',
       'stt.enabled',
       'stt.echo_transcripts',
+      'stt.language',
       'stt.provider',
       'stt.streaming',
       'voice.auto_tts',

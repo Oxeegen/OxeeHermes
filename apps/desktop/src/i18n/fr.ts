@@ -1253,6 +1253,7 @@ export const frOverrides = {
       stt: {
         enabled: 'Reconnaissance vocale',
         echoTranscripts: 'Réémettre les transcriptions',
+        language: 'Langue de transcription',
         provider: 'Fournisseur de reconnaissance vocale',
         local: {
           model: 'Modèle de transcription local',
@@ -1450,6 +1451,7 @@ export const frOverrides = {
       stt: {
         enabled: 'Activer la transcription vocale locale ou via fournisseur.',
         echoTranscripts: 'Publier la transcription brute 🎙️ des messages vocaux dans la conversation.',
+        language: 'La langue dans laquelle vous parlez. « Langue du système » suit la langue de cet ordinateur.',
         elevenlabs: {
           languageCode: 'Code de langue ISO-639-3 facultatif. Vide = détection automatique par ElevenLabs.'
         }
