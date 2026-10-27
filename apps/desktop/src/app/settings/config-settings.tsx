@@ -11,6 +11,8 @@ import { getElevenLabsVoices, getHermesConfigSchema, saveHermesConfig } from '@/
 import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { isSubmitEnter } from '@/lib/ime'
+import { OxeegenPinnedField } from '@/oxeegen/pinned-field'
+import { OXEEGEN_PINNED_SETTING_FIELDS } from '@/oxeegen/settings-policy'
 import { confirm } from '@/store/confirm'
 import {
   $dataUrlReadMaxMb,
@@ -504,6 +506,9 @@ function ConfigSettingsInner({
         <div className="grid gap-1">
           {visibleFields.map(([key, field]) => (
             <div className="scroll-mt-6 rounded-lg" id={`setting-field-${key}`} key={key}>
+              {OXEEGEN_PINNED_SETTING_FIELDS.has(key) ? (
+                <OxeegenPinnedField schemaKey={key} />
+              ) : (
               <ConfigField
                 descriptionExtra={
                   key === 'memory.provider' && isExternalMemoryProvider(getNested(config, key)) ? (
@@ -521,6 +526,7 @@ function ConfigSettingsInner({
                 schemaKey={key}
                 value={getNested(config, key)}
               />
+              )}
               {key === 'memory.provider' && isExternalMemoryProvider(getNested(config, key)) ? (
                 <ProviderConfigPanel
                   key={String(getNested(config, key))}

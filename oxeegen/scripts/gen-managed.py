@@ -38,8 +38,13 @@ model_catalog:
   enabled: false
   allowed_providers: [{provider}]
 
-# Voice goes to Oxeegen's OpenAI-compatible audio API with the same key and region.
+# Voice is chained: Oxeegen STT -> Hermes turn -> Oxeegen TTS, on Oxeegen's OpenAI-compatible
+# audio API with the same key and region. Settings > Voice hides these choices (settings-policy.ts).
+voice:
+  voice_chat_mode: chained
 stt:
+  enabled: true
+  streaming: false
   provider: openai
   openai:
     api_key: "{key}"

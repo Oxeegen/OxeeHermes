@@ -24,6 +24,7 @@ const EN = {
   saveFailed: 'Could not save the Oxeegen settings.',
   saved: 'Oxeegen settings saved.',
   saving: 'Saving…',
+  sttModel: 'Speech-to-text model',
   title: 'Connect to Oxeegen'
 }
 
@@ -48,6 +49,7 @@ const FR: OxeegenStrings = {
   saveFailed: "Impossible d'enregistrer les réglages Oxeegen.",
   saved: 'Réglages Oxeegen enregistrés.',
   saving: 'Enregistrement…',
+  sttModel: 'Modèle de reconnaissance vocale',
   title: 'Connexion à Oxeegen'
 }
 

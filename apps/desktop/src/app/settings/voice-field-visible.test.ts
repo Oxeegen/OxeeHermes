@@ -15,8 +15,13 @@ describe('voiceFieldVisible', () => {
   it('always shows top-level + non-provider keys', () => {
     const config = cfg()
 
-    for (const key of ['tts.provider', 'stt.enabled', 'stt.provider', 'voice.auto_tts']) {
+    for (const key of ['tts.provider', 'stt.echo_transcripts', 'voice.auto_tts']) {
       expect(voiceFieldVisible(key, config)).toBe(true)
+    }
+
+    // Oxee Hermes: recognition is always on and pinned to Oxeegen (settings-policy.ts).
+    for (const key of ['stt.enabled', 'stt.provider', 'stt.streaming']) {
+      expect(voiceFieldVisible(key, config)).toBe(false)
     }
   })
 
@@ -44,8 +49,8 @@ describe('voiceFieldVisible', () => {
   it('hides every STT provider sub-field when STT is disabled', () => {
     const config = cfg({ stt: { enabled: false, provider: 'local', local: {} } })
     expect(voiceFieldVisible('stt.local.model', config)).toBe(false)
-    // ...but the enable/provider toggles themselves stay visible.
-    expect(voiceFieldVisible('stt.enabled', config)).toBe(true)
-    expect(voiceFieldVisible('stt.provider', config)).toBe(true)
+    // Oxee Hermes: the enable/provider toggles are hidden too; the managed scope keeps STT on.
+    expect(voiceFieldVisible('stt.enabled', config)).toBe(false)
+    expect(voiceFieldVisible('stt.provider', config)).toBe(false)
   })
 })

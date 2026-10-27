@@ -13,6 +13,8 @@
  * how other Hermes on the network are added (remote URL + token, SSH), with
  * Hermes Cloud — a Nous service — removed (OXEEGEN_HERMES_CLOUD).
  */
+import { OXEEGEN } from './config'
+
 export const OXEEGEN_SETTINGS_VIEW = 'oxeegen'
 
 const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set([
@@ -36,3 +38,36 @@ export const OXEEGEN_MODEL_MENU_EXTRAS = false
 
 /** Hermes Cloud is Nous's hosted gateway service: never offered as a connection. */
 export const OXEEGEN_HERMES_CLOUD = false
+
+/**
+ * Voice is chained: Oxeegen STT → Hermes → Oxeegen TTS, pinned by the managed
+ * scope (gen-managed.py). The Voice conversation page and these rows would
+ * only offer choices that cannot apply: another wiring (GPT-Live), another
+ * provider, live transcription, turning recognition off.
+ */
+const HIDDEN_SETTING_FIELDS: ReadonlySet<string> = new Set([
+  'stt.enabled',
+  'stt.openai.streaming_model',
+  'stt.provider',
+  'stt.streaming',
+  'voice.client_direct',
+  'voice.gpt_live.instructions',
+  'voice.gpt_live.voice',
+  'voice.max_recording_seconds',
+  'voice.voice_chat_mode'
+])
+
+const HIDDEN_CONFIG_SUBPAGES: ReadonlySet<string> = new Set(['voice:conversation'])
+
+export function isVisibleSettingField(key: string): boolean {
+  return !HIDDEN_SETTING_FIELDS.has(key)
+}
+
+export function isVisibleConfigSubpage(section: string, page: string): boolean {
+  return !HIDDEN_CONFIG_SUBPAGES.has(`${section}:${page}`)
+}
+
+/** Rows the managed scope sets: shown as their value, from oxeegen.json, with no editor. */
+export const OXEEGEN_PINNED_SETTING_FIELDS: ReadonlyMap<string, { label: 'sttModel'; value: string }> = new Map([
+  ['stt.openai.model', { label: 'sttModel', value: OXEEGEN.sttModel }]
+])

@@ -50,6 +50,23 @@ def test_voice_uses_the_oxeegen_key_and_region(oxeegen_managed):
         assert cfg[section]["openai"]["base_url"] == "https://us.api.oxeegen.com/v1"
 
 
+def test_voice_stays_chained_with_recognition_on(oxeegen_managed):
+    """Settings > Voice hides these switches, so a stale user value must not survive."""
+    from hermes_cli.config import load_config
+
+    _write_user_config(
+        "voice:\n  voice_chat_mode: gpt-live\n"
+        "stt:\n  enabled: false\n  streaming: true\n"
+    )
+
+    cfg = load_config()
+
+    assert cfg["voice"]["voice_chat_mode"] == "chained"
+    assert cfg["stt"]["enabled"] is True
+    assert cfg["stt"]["streaming"] is False
+    assert cfg["stt"]["openai"]["model"] == "voxee-stt"
+
+
 def test_shipped_managed_scope_is_generated_from_oxeegen_json():
     """Editing oxeegen.json without re-running oxeegen/scripts/gen-managed.py leaves the app on stale values."""
     import importlib.util

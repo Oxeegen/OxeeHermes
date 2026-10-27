@@ -6,7 +6,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { enumOptionsFor } from '@/app/settings/helpers'
+import { enumOptionsFor, voiceFieldVisible } from '@/app/settings/helpers'
+import { settingsSubpages } from '@/app/settings/subpages'
 import { BrandMark } from '@/components/brand-mark'
 import { Intro } from '@/components/chat/intro'
 import { DesktopOnboardingOverlay } from '@/components/onboarding'
@@ -184,6 +185,30 @@ describe('voice', () => {
 
   it('offers no direct-to-OpenAI live voice mode', () => {
     expect(enumOptionsFor('voice.voice_chat_mode', 'chained', {})).toEqual(['chained'])
+  })
+
+  it('has no Voice conversation page: the wiring is chained, nothing to choose', () => {
+    expect(settingsSubpages('config:voice').map(page => page.id)).toEqual(['transcription', 'speech'])
+  })
+
+  it('keeps only the transcript echo and the pinned model on Speech recognition', () => {
+    const config = { stt: { enabled: true, provider: 'openai', openai: { model: 'voxee-stt' } } }
+
+    const visible = ['stt.enabled', 'stt.echo_transcripts', 'stt.provider', 'stt.streaming', 'stt.openai.model', 'stt.openai.streaming_model']
+      .filter(key => voiceFieldVisible(key, config))
+
+    expect(visible).toEqual(['stt.echo_transcripts', 'stt.openai.model'])
+  })
+
+  it('shows the speech-to-text model from oxeegen.json, with no editor', async () => {
+    const { OxeegenPinnedField } = await import('./pinned-field')
+
+    render(<OxeegenPinnedField schemaKey="stt.openai.model" />)
+
+    expect(screen.getByText('Speech-to-text model')).toBeTruthy()
+    expect(screen.getByText(OXEEGEN.sttModel)).toBeTruthy()
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(screen.queryByRole('combobox')).toBeNull()
   })
 })
 

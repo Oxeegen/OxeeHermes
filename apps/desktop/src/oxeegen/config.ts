@@ -23,6 +23,7 @@ export const OXEEGEN = {
   defaultRegion: raw.default_region as OxeegenRegionId,
   mainModel: raw.models.main,
   provider: raw.provider,
+  sttModel: raw.voice.stt_model,
   signupUrl: raw.signup_url
 } as const
 

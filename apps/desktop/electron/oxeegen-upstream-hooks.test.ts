@@ -47,6 +47,9 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/shell/model-catalog-menu.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model menu: no custom model / catalog editing' },
   { file: 'apps/desktop/src/components/model-picker.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model picker: no "add provider" / custom model' },
   { file: 'apps/desktop/src/app/settings/constants.ts', needs: ["'stt.provider': ['openai']", "'tts.provider': ['openai']", "'voice.voice_chat_mode': ['chained']"], why: 'voice routed to Oxeegen only' },
+  { file: 'apps/desktop/src/app/settings/helpers.ts', needs: ['if (!isVisibleSettingField(key)) {'], why: 'Voice: pinned STT / conversation rows hidden (page and search)' },
+  { file: 'apps/desktop/src/app/settings/subpages.ts', needs: ['.filter(page => isVisibleConfigSubpage(section, page.id))'], why: 'Voice: no Voice conversation page' },
+  { file: 'apps/desktop/src/app/settings/config-settings.tsx', needs: ['OXEEGEN_PINNED_SETTING_FIELDS.has(key) ? (', '<OxeegenPinnedField schemaKey={key} />'], why: 'Voice: STT model shown as its oxeegen.json value' },
   { file: 'apps/desktop/src/store/shared-metrics.ts', needs: ['export function sharedMetricsOfferPending(_consent'], why: 'no metrics offer to Nous' },
   { file: 'apps/desktop/src/app/settings/config-settings.tsx', needs: ['const showSharedMetrics = false'], why: 'no Nous sharing panel' },
   // New browser tab

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { TRANSLATIONS } from '@/i18n'
+import { isVisibleConfigSubpage } from '@/oxeegen/settings-policy'
 
 import { CONFIG_SUBPAGES, configSubpageForField } from './config-subpages'
 import { SECTIONS } from './constants'
@@ -77,6 +78,12 @@ describe('settings subpage routing', () => {
       for (const field of section.keys) {
         const owner = configSubpageForField(section.id, field)
         expect(CONFIG_SUBPAGES[section.id].some(page => page.id === owner)).toBe(true)
+
+        // Oxee Hermes: a page the fork hides (Voice conversation) routes nowhere.
+        if (!owner || !isVisibleConfigSubpage(section.id, owner)) {
+          continue
+        }
+
         const view = `config:${section.id}` as SettingsView
         const params = new URLSearchParams(settingsSearchTargetQuery({ view, field }))
         expect(params.get('page')).toBe(owner)

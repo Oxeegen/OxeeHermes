@@ -28,6 +28,7 @@ import {
   Volume2,
   Wrench
 } from '@/lib/icons'
+import { isVisibleConfigSubpage } from '@/oxeegen/settings-policy'
 
 import { APPEARANCE_SUBPAGES } from './appearance-subpages'
 import { CONFIG_SUBPAGES, configSubpageForField } from './config-subpages'
@@ -98,7 +99,9 @@ export function settingsSubpages(view: SettingsView): readonly SettingsSubpage[]
   }
 
   if (view.startsWith('config:')) {
-    return CONFIG_SUBPAGES[view.slice('config:'.length)] ?? []
+    const section = view.slice('config:'.length)
+
+    return (CONFIG_SUBPAGES[section] ?? []).filter(page => isVisibleConfigSubpage(section, page.id))
   }
 
   return (OTHER_SUBPAGES[view] ?? []).filter(page => page.available?.() ?? true)

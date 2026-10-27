@@ -1,5 +1,6 @@
 import { foldPersonalityName } from '@/lib/personalities'
 import { asText, normalize } from '@/lib/text'
+import { isVisibleSettingField } from '@/oxeegen/settings-policy'
 import type { ConfigFieldSchema, HermesConfigRecord, ToolsetInfo } from '@/types/hermes'
 
 import { BUILTIN_PERSONALITIES, ENUM_OPTIONS, PROVIDER_GROUPS, SECTIONS } from './constants'
@@ -176,6 +177,10 @@ export function clearsEnabledToolsets(prev: HermesConfigRecord, next: HermesConf
 // Voice renders only fields for the selected TTS/STT provider. Search and the
 // page share this rule so every indexed field can actually mount when opened.
 export function voiceFieldVisible(key: string, config: HermesConfigRecord): boolean {
+  if (!isVisibleSettingField(key)) {
+    return false
+  }
+
   const match = /^(tts|stt)\.([^.]+)\./.exec(key)
 
   if (!match) {
