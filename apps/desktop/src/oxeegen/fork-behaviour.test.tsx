@@ -90,7 +90,8 @@ describe('brand', () => {
     expect(container.querySelector('img')?.getAttribute('src')).toMatch(/oxeegen-icon(-dark)?\.svg$/)
   })
 
-  it('shows the wordmark over an open sidebar and the icon alone once collapsed', () => {
+  it('shows the wordmark over an open sidebar, and moves it upright into the collapsed rail', async () => {
+    const { OxeeRailWordmark } = await import('./brand')
     const open = render(<OxeeTitlebarBrand sidebarOpen />)
 
     expect(open.container.querySelector('img')?.getAttribute('src')).toMatch(/oxee-hermes-wordmark(-dark)?\.svg$/)
@@ -98,7 +99,14 @@ describe('brand', () => {
 
     const collapsed = render(<OxeeTitlebarBrand sidebarOpen={false} />)
 
-    expect(collapsed.container.querySelector('img')?.getAttribute('src')).toMatch(/oxeegen-icon(-dark)?\.svg$/)
+    expect(collapsed.container.innerHTML).toBe('')
+    collapsed.unmount()
+
+    const rail = render(<OxeeRailWordmark />)
+    const img = rail.container.querySelector('[data-oxee-brand="rail"] img')
+
+    expect(img?.getAttribute('src')).toMatch(/oxee-hermes-wordmark(-dark)?\.svg$/)
+    expect(img?.className).toContain('rotate-90')
   })
 
   it('heads About > Version and updates with the wordmark, the name kept for screen readers', async () => {

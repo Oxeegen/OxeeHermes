@@ -32,6 +32,7 @@ import { useContributions } from '@/contrib/react/use-contributions'
 import { useI18n } from '@/i18n'
 import { useKeybindHint } from '@/lib/keybinds/use-keybind-hint'
 import { cn } from '@/lib/utils'
+import { OxeeRailWordmark } from '@/oxeegen/brand'
 import { closeAllOpenSessionTiles, setZoneParkedTiles } from '@/store/session-states'
 
 import { $layoutEditMode, $layoutEditRevealsHidden } from '../../edit-mode'
@@ -527,6 +528,8 @@ export function TreeGroup({
             onClick={() => restoreTreePane(activeId)}
             title={t.zones.restore}
           >
+            {/* Oxee Hermes: the collapsed left drawer carries the wordmark, upright like its tabs. */}
+            {topEdge && railSide === 'left' ? <OxeeRailWordmark /> : null}
             <div
               className="flex min-h-0 flex-col overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               role="tablist"
