@@ -332,10 +332,11 @@ export function TitlebarControls({ leftTools = [], tools = [], onOpenSettings }:
   return (
     <>
       <div aria-label={t.shell.windowControls} className={leftClusterClass} data-titlebar-cluster="left">
+        {/* Oxee Hermes: the wordmark leads, the sidebar toggle sits to its right. */}
+        <OxeeTitlebarBrand sidebarOpen={leftEdge.open} />
         {visibleLeftTools.map(tool => (
           <TitlebarToolButton key={tool.id} navigate={navigate} tool={tool} />
         ))}
-        <OxeeTitlebarBrand sidebarOpen={leftEdge.open} />
         <Slot area="titleBar.left" />
         <Slot area="titleBar.center" />
       </div>
