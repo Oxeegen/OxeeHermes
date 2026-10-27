@@ -1,7 +1,6 @@
 import { useStore } from '@nanostores/react'
 import { type ReactElement, type ReactNode, useState } from 'react'
 
-import { BrandMark } from '@/components/brand-mark'
 import { Button } from '@/components/ui/button'
 import { Codicon } from '@/components/ui/codicon'
 import type { DesktopUpdateStatus, DesktopVersionInfo } from '@/global'
@@ -10,6 +9,7 @@ import { AlertTriangle, CheckCircle2, ExternalLink, Loader2, RefreshCw } from '@
 import { rollbackRelease } from '@/lib/update-copy'
 import { cn } from '@/lib/utils'
 import { shortVersion } from '@/lib/version-label'
+import { OxeeVersionWordmark } from '@/oxeegen/brand'
 import {
   $backendUpdateApply,
   $backendUpdateChecking,
@@ -214,13 +214,16 @@ export function VersionHero({
 
   return (
     <div className="flex flex-col items-center gap-3 pt-6 pb-2 text-center">
-      <BrandMark className="size-16" />
+      <OxeeVersionWordmark />
       <div>
-        {renderHeading ? (
-          renderHeading(u.appName)
-        ) : (
-          <h2 className="text-lg font-semibold tracking-tight">{u.appName}</h2>
-        )}
+        {/* Oxee Hermes: the wordmark carries the name; the heading stays for screen readers and dialog titles. */}
+        <div className="sr-only">
+          {renderHeading ? (
+            renderHeading(u.appName)
+          ) : (
+            <h2 className="text-lg font-semibold tracking-tight">{u.appName}</h2>
+          )}
+        </div>
         <p className="mt-1 text-xs text-muted-foreground">
           {version?.appVersion ? u.version(shortVersion(version.appVersion)) : u.versionUnavailable}
           {version?.channel

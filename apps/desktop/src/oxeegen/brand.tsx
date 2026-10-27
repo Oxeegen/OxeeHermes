@@ -40,3 +40,18 @@ export function OxeeIntroWordmark() {
     />
   )
 }
+
+/** The wordmark atop About > Version and updates and the update dialog, in place of the icon + name. */
+export function OxeeVersionWordmark() {
+  const dark = useTheme().renderedMode === 'dark'
+
+  return (
+    <img
+      alt="Oxee Hermes"
+      className="h-auto w-[min(16rem,70%)] select-none"
+      data-oxee-brand="version"
+      draggable={false}
+      src={wordmark(dark)}
+    />
+  )
+}

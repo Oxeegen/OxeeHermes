@@ -33,6 +33,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/themes/presets.ts', needs: ['createOxeegenTheme(', 'DEFAULT_SKIN_NAME = OXEEGEN_THEME_NAME'], why: 'Oxeegen theme is the default' },
   { file: 'apps/desktop/src/themes/use-skin-command.ts', needs: ["default: 'oxeegen'"], why: '/skin default lands on the Oxeegen theme' },
   { file: 'apps/desktop/src/styles.css', needs: ["@import './oxeegen/oxeegen.css'"], why: 'Geist font face' },
+  { file: 'apps/desktop/src/components/update-status.tsx', needs: ['<OxeeVersionWordmark />', '<div className="sr-only">'], why: 'About / update dialog headed by the wordmark' },
   { file: 'apps/desktop/src/components/brand-mark.tsx', needs: ['oxeegen-icon-dark.svg', 'oxeegen-icon.svg'], why: 'in-app logo' },
   { file: 'apps/desktop/src/themes/presets.ts', needs: ['createOxeegenTheme(monoTheme,'], why: "Oxeegen theme is Fred's Mono retint" },
   { file: 'apps/desktop/src/app/right-sidebar/files/tree.tsx', needs: ["from '@/oxeegen/file-icons/file-icon'", '<FileIcon kind="folder"', '<FileIcon kind="file"'], why: 'files tree shows Material icons' },

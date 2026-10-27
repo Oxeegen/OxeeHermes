@@ -101,6 +101,15 @@ describe('brand', () => {
     expect(collapsed.container.querySelector('img')?.getAttribute('src')).toMatch(/oxeegen-icon(-dark)?\.svg$/)
   })
 
+  it('heads About > Version and updates with the wordmark, the name kept for screen readers', async () => {
+    const { VersionHero } = await import('@/components/update-status')
+
+    const { container } = render(<VersionHero version={null} />)
+
+    expect(container.querySelector('img[data-oxee-brand="version"]')?.getAttribute('alt')).toBe('Oxee Hermes')
+    expect(screen.getByRole('heading', { name: 'Oxee Hermes' }).closest('.sr-only')).toBeTruthy()
+  })
+
   it('greets an empty chat with the wordmark', () => {
     const { container } = render(<Intro />)
 
