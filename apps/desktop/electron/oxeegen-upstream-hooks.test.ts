@@ -53,6 +53,8 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/settings/config-settings.tsx', needs: ["{OXEEGEN_VOICE_SHORTCUT_HINT && activeSectionId === 'voice'", "key === 'stt.language'", 'useSttLanguageLabels()'], why: 'Voice: no shortcut banner; transcription language labels' },
   { file: 'apps/desktop/src/app/settings/constants.ts', needs: ["'stt.language': STT_LANGUAGES", "'stt.language',"], why: 'Voice: transcription language row and its options' },
   { file: 'hermes_cli/config_defaults.py', needs: ['"language": "system",'], why: 'STT language defaults to the OS language' },
+  { file: 'hermes_cli/config_defaults.py', needs: ['"voice": "fr_chloe",'], why: 'TTS voice defaults to the oxeegen.json voxee voice' },
+  { file: 'apps/desktop/src/app/settings/config-settings.tsx', needs: ['key === OXEEGEN_VOICE_SETTING_FIELD ? (', '<OxeegenVoiceField'], why: 'Voice: voxee voice picker grouped by gender' },
   { file: 'tools/transcription_tools.py', needs: ['return _system_stt_language() if chosen == SYSTEM_STT_LANGUAGE else chosen'], why: 'STT "system" resolves to the OS language' },
   { file: 'apps/desktop/src/store/shared-metrics.ts', needs: ['export function sharedMetricsOfferPending(_consent'], why: 'no metrics offer to Nous' },
   { file: 'apps/desktop/src/app/settings/config-settings.tsx', needs: ['const showSharedMetrics = false'], why: 'no Nous sharing panel' },

@@ -50,6 +50,7 @@ const HIDDEN_SETTING_FIELDS: ReadonlySet<string> = new Set([
   'stt.openai.streaming_model',
   'stt.provider',
   'stt.streaming',
+  'tts.provider',
   'voice.client_direct',
   'voice.gpt_live.instructions',
   'voice.gpt_live.voice',
@@ -78,6 +79,10 @@ export const STT_LANGUAGES = ['system', 'fr', 'en', 'de', 'es', 'it', 'nl', 'pt'
 export const OXEEGEN_VOICE_SHORTCUT_HINT = false
 
 /** Rows the managed scope sets: shown as their value, from oxeegen.json, with no editor. */
-export const OXEEGEN_PINNED_SETTING_FIELDS: ReadonlyMap<string, { label: 'sttModel'; value: string }> = new Map([
-  ['stt.openai.model', { label: 'sttModel', value: OXEEGEN.sttModel }]
+export const OXEEGEN_PINNED_SETTING_FIELDS: ReadonlyMap<string, { label: 'sttModel' | 'ttsModel'; value: string }> = new Map([
+  ['stt.openai.model', { label: 'sttModel', value: OXEEGEN.sttModel }],
+  ['tts.openai.model', { label: 'ttsModel', value: OXEEGEN.ttsModel }]
 ])
+
+/** The TTS voice row: the voxee voices from oxeegen.json, grouped by gender (voice-field.tsx). */
+export const OXEEGEN_VOICE_SETTING_FIELD = 'tts.openai.voice'

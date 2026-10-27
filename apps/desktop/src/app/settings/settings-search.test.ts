@@ -42,11 +42,8 @@ describe('settings search index', () => {
 
     const entries = buildConfigSearchEntries(schema, config, searchCopy)
 
-    expect(entries.map(entry => entry.id)).toEqual([
-      'config-field:display.personality',
-      'config-field:tts.provider',
-      'config-field:tts.edge.voice'
-    ])
+    // Oxee Hermes: tts.provider is pinned to Oxeegen and hidden (settings-policy.ts).
+    expect(entries.map(entry => entry.id)).toEqual(['config-field:display.personality', 'config-field:tts.edge.voice'])
     expect(entries[0]).toMatchObject({
       context: 'Chat',
       description: 'Choose how Oxee Hermes sounds in conversation.',

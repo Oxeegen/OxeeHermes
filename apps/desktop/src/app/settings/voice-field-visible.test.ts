@@ -15,12 +15,12 @@ describe('voiceFieldVisible', () => {
   it('always shows top-level + non-provider keys', () => {
     const config = cfg()
 
-    for (const key of ['tts.provider', 'stt.echo_transcripts', 'voice.auto_tts']) {
+    for (const key of ['stt.echo_transcripts', 'voice.auto_tts']) {
       expect(voiceFieldVisible(key, config)).toBe(true)
     }
 
-    // Oxee Hermes: recognition is always on and pinned to Oxeegen (settings-policy.ts).
-    for (const key of ['stt.enabled', 'stt.provider', 'stt.streaming']) {
+    // Oxee Hermes: recognition is always on and both providers are pinned to Oxeegen (settings-policy.ts).
+    for (const key of ['stt.enabled', 'stt.provider', 'stt.streaming', 'tts.provider']) {
       expect(voiceFieldVisible(key, config)).toBe(false)
     }
   })

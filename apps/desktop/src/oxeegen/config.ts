@@ -24,8 +24,19 @@ export const OXEEGEN = {
   mainModel: raw.models.main,
   provider: raw.provider,
   sttModel: raw.voice.stt_model,
+  ttsModel: raw.voice.tts_model,
+  ttsVoice: raw.voice.tts_voice,
   signupUrl: raw.signup_url
 } as const
+
+export interface OxeegenVoice {
+  id: string
+  name: string
+  gender: 'female' | 'male'
+}
+
+/** The voxee voices Settings > Voice > Speech offers, in oxeegen.json order. */
+export const OXEEGEN_VOICES: readonly OxeegenVoice[] = raw.voice.tts_voices as OxeegenVoice[]
 
 export const OXEEGEN_REGIONS: readonly OxeegenRegion[] = (Object.keys(raw.regions) as OxeegenRegionId[]).map(id => ({
   apiKeyEnv: raw.regions[id].api_key_env,

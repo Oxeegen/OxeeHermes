@@ -224,12 +224,39 @@ describe('voice', () => {
     expect(labels.fr).toBe('French')
   })
 
+  it('keeps read-aloud, the pinned TTS model and the voice on Speech', () => {
+    const config = { tts: { provider: 'openai', openai: { model: 'voxee-tts-pro', voice: 'fr_chloe' } } }
+
+    const visible = ['tts.provider', 'voice.auto_tts', 'tts.openai.model', 'tts.openai.voice', 'tts.edge.voice'].filter(key =>
+      voiceFieldVisible(key, config)
+    )
+
+    expect(visible).toEqual(['voice.auto_tts', 'tts.openai.model', 'tts.openai.voice'])
+  })
+
+  it('offers the voxee voices from oxeegen.json, women then men, defaulting to its tts_voice', async () => {
+    const { OxeegenVoiceField } = await import('./voice-field')
+    const { OXEEGEN_VOICES } = await import('./config')
+
+    expect(OXEEGEN_VOICES.filter(voice => voice.gender === 'female')).toHaveLength(18)
+    expect(OXEEGEN_VOICES.filter(voice => voice.gender === 'male')).toHaveLength(17)
+    expect(new Set(OXEEGEN_VOICES.map(voice => voice.id)).size).toBe(OXEEGEN_VOICES.length)
+    expect(OXEEGEN.ttsVoice).toBe('fr_chloe')
+
+    render(<OxeegenVoiceField onChange={vi.fn()} value="" />)
+    expect(screen.getByRole('combobox', { name: 'Voice' }).textContent).toContain('Chloé')
+    cleanup()
+
+    render(<OxeegenVoiceField onChange={vi.fn()} value="fr_theo" />)
+    expect(screen.getByRole('combobox', { name: 'Voice' }).textContent).toContain('Théo')
+  })
+
   it('shows the speech-to-text model from oxeegen.json, with no editor', async () => {
     const { OxeegenPinnedField } = await import('./pinned-field')
 
     render(<OxeegenPinnedField schemaKey="stt.openai.model" />)
 
-    expect(screen.getByText('Speech-to-text model')).toBeTruthy()
+    expect(screen.getByText('Oxeegen STT model')).toBeTruthy()
     expect(screen.getByText(OXEEGEN.sttModel)).toBeTruthy()
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(screen.queryByRole('combobox')).toBeNull()

@@ -40,6 +40,7 @@ model_catalog:
 
 # Voice is chained: Oxeegen STT -> Hermes turn -> Oxeegen TTS, on Oxeegen's OpenAI-compatible
 # audio API with the same key and region. Settings > Voice hides these choices (settings-policy.ts).
+# The TTS voice is the user's pick (default tts.openai.voice in hermes_cli/config_defaults.py).
 voice:
   voice_chat_mode: chained
 stt:
@@ -56,7 +57,6 @@ tts:
     api_key: "{key}"
     base_url: "{url}"
     model: {voice["tts_model"]}
-    voice: {voice["tts_voice"]}
 
 # Nothing is reported to Nous.
 telemetry:

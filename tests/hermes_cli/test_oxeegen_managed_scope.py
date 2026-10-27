@@ -67,6 +67,25 @@ def test_voice_stays_chained_with_recognition_on(oxeegen_managed):
     assert cfg["stt"]["openai"]["model"] == "voxee-stt"
 
 
+def test_the_tts_voice_is_the_users_pick_defaulting_to_oxeegen_json(oxeegen_managed):
+    """The managed scope pins the TTS model, not the voice: Settings > Voice > Speech offers the voxee voices."""
+    import json
+
+    from hermes_cli.config import load_config
+    from hermes_cli.config_defaults import DEFAULT_CONFIG
+
+    voice = json.loads((MANAGED_DIR.parents[1] / "plugins/model-providers/oxeegen/oxeegen.json").read_text("utf-8"))["voice"]
+    assert DEFAULT_CONFIG["tts"]["openai"]["voice"] == voice["tts_voice"]
+    assert voice["tts_voice"] in {v["id"] for v in voice["tts_voices"]}
+
+    _write_user_config("tts:\n  openai:\n    voice: fr_theo\n    model: tts-1\n")
+
+    cfg = load_config()
+
+    assert cfg["tts"]["openai"]["voice"] == "fr_theo"
+    assert cfg["tts"]["openai"]["model"] == voice["tts_model"]
+
+
 def test_shipped_managed_scope_is_generated_from_oxeegen_json():
     """Editing oxeegen.json without re-running oxeegen/scripts/gen-managed.py leaves the app on stale values."""
     import importlib.util

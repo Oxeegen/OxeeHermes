@@ -48,7 +48,185 @@
   "voice": {
     "stt_model": "voxee-stt",
     "tts_model": "voxee-tts-pro",
-    "tts_voice": "alloy"
+    "tts_voice": "fr_chloe",
+    "_tts_voices_comment": "Voices offered in Settings > Voice > Speech (voxee French voices, CML-TTS speakers). tts_voice is the default; the user picks another, nothing pins it.",
+    "tts_voices": [
+      {
+        "id": "fr_amelie",
+        "name": "Amélie",
+        "gender": "female"
+      },
+      {
+        "id": "fr_beatrice",
+        "name": "Béatrice",
+        "gender": "female"
+      },
+      {
+        "id": "fr_chloe",
+        "name": "Chloé",
+        "gender": "female"
+      },
+      {
+        "id": "fr_delphine",
+        "name": "Delphine",
+        "gender": "female"
+      },
+      {
+        "id": "fr_elodie",
+        "name": "Élodie",
+        "gender": "female"
+      },
+      {
+        "id": "fr_fanny",
+        "name": "Fanny",
+        "gender": "female"
+      },
+      {
+        "id": "fr_gabrielle",
+        "name": "Gabrielle",
+        "gender": "female"
+      },
+      {
+        "id": "fr_helene",
+        "name": "Hélène",
+        "gender": "female"
+      },
+      {
+        "id": "fr_ines",
+        "name": "Inès",
+        "gender": "female"
+      },
+      {
+        "id": "fr_juliette",
+        "name": "Juliette",
+        "gender": "female"
+      },
+      {
+        "id": "fr_laure",
+        "name": "Laure",
+        "gender": "female"
+      },
+      {
+        "id": "fr_manon",
+        "name": "Manon",
+        "gender": "female"
+      },
+      {
+        "id": "fr_nathalie",
+        "name": "Nathalie",
+        "gender": "female"
+      },
+      {
+        "id": "fr_ophelie",
+        "name": "Ophélie",
+        "gender": "female"
+      },
+      {
+        "id": "fr_pauline",
+        "name": "Pauline",
+        "gender": "female"
+      },
+      {
+        "id": "fr_roxane",
+        "name": "Roxane",
+        "gender": "female"
+      },
+      {
+        "id": "fr_sylvie",
+        "name": "Sylvie",
+        "gender": "female"
+      },
+      {
+        "id": "fr_zoe",
+        "name": "Zoé",
+        "gender": "female"
+      },
+      {
+        "id": "fr_antoine",
+        "name": "Antoine",
+        "gender": "male"
+      },
+      {
+        "id": "fr_baptiste",
+        "name": "Baptiste",
+        "gender": "male"
+      },
+      {
+        "id": "fr_cedric",
+        "name": "Cédric",
+        "gender": "male"
+      },
+      {
+        "id": "fr_damien",
+        "name": "Damien",
+        "gender": "male"
+      },
+      {
+        "id": "fr_etienne",
+        "name": "Étienne",
+        "gender": "male"
+      },
+      {
+        "id": "fr_fabien",
+        "name": "Fabien",
+        "gender": "male"
+      },
+      {
+        "id": "fr_gaspard",
+        "name": "Gaspard",
+        "gender": "male"
+      },
+      {
+        "id": "fr_hugo",
+        "name": "Hugo",
+        "gender": "male"
+      },
+      {
+        "id": "fr_lucas",
+        "name": "Lucas",
+        "gender": "male"
+      },
+      {
+        "id": "fr_nicolas",
+        "name": "Nicolas",
+        "gender": "male"
+      },
+      {
+        "id": "fr_quentin",
+        "name": "Quentin",
+        "gender": "male"
+      },
+      {
+        "id": "fr_raphael",
+        "name": "Raphaël",
+        "gender": "male"
+      },
+      {
+        "id": "fr_sebastien",
+        "name": "Sébastien",
+        "gender": "male"
+      },
+      {
+        "id": "fr_theo",
+        "name": "Théo",
+        "gender": "male"
+      },
+      {
+        "id": "fr_victor",
+        "name": "Victor",
+        "gender": "male"
+      },
+      {
+        "id": "fr_xavier",
+        "name": "Xavier",
+        "gender": "male"
+      },
+      {
+        "id": "fr_yannick",
+        "name": "Yannick",
+        "gender": "male"
+      }
+    ]
   },
   "signup_url": ""
 }

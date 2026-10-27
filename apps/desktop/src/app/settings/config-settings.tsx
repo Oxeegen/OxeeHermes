@@ -12,8 +12,13 @@ import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { isSubmitEnter } from '@/lib/ime'
 import { OxeegenPinnedField } from '@/oxeegen/pinned-field'
-import { OXEEGEN_PINNED_SETTING_FIELDS, OXEEGEN_VOICE_SHORTCUT_HINT } from '@/oxeegen/settings-policy'
+import {
+  OXEEGEN_PINNED_SETTING_FIELDS,
+  OXEEGEN_VOICE_SETTING_FIELD,
+  OXEEGEN_VOICE_SHORTCUT_HINT
+} from '@/oxeegen/settings-policy'
 import { useSttLanguageLabels } from '@/oxeegen/stt-language'
+import { OxeegenVoiceField } from '@/oxeegen/voice-field'
 import { confirm } from '@/store/confirm'
 import {
   $dataUrlReadMaxMb,
@@ -510,6 +515,11 @@ function ConfigSettingsInner({
             <div className="scroll-mt-6 rounded-lg" id={`setting-field-${key}`} key={key}>
               {OXEEGEN_PINNED_SETTING_FIELDS.has(key) ? (
                 <OxeegenPinnedField schemaKey={key} />
+              ) : key === OXEEGEN_VOICE_SETTING_FIELD ? (
+                <OxeegenVoiceField
+                  onChange={value => updateConfig(setNested(config, key, value))}
+                  value={getNested(config, key)}
+                />
               ) : (
               <ConfigField
                 descriptionExtra={

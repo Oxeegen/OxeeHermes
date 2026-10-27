@@ -1097,8 +1097,9 @@ DEFAULT_CONFIG = {
         "openai": {
             "model": "gpt-4o-mini-tts",
             # gpt-4o-mini-tts voices: alloy, ash, ballad, cedar, coral, echo, fable, marin, nova,
-            # onyx, sage, shimmer, verse
-            "voice": "alloy",
+            # onyx, sage, shimmer, verse. Oxee Hermes: tts.openai is Oxeegen's voxee audio API, so the
+            # default is a voxee voice, the voice.tts_voice of plugins/model-providers/oxeegen/oxeegen.json.
+            "voice": "fr_chloe",
             # Forwarded verbatim in the request body for OpenAI-compatible servers whose cloned
             # voices demand it (400 consent_required otherwise); "" sends nothing.
             "consent_attestation": "",
