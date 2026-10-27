@@ -544,7 +544,7 @@ function GroupChatSettingsDialog({
             variant="secondary"
           >
             <Codicon name="organization" />
-            {`Manage members (${(members || []).length})…`}
+            {botsText().ui.manageMembersCount((members || []).length)}
           </Button>
         ) : null}
         <DialogFooter>
@@ -620,7 +620,7 @@ function GroupExecutionGate(props: GroupChatWorkspaceProps) {
 
   return <div className="grid gap-3 p-3">
     <h2>{props.group}</h2>
-    <p>{mode === 'canonical' ? 'This is a legacy Desktop room. Start a gateway-owned group with these members; the old history stays here and is not replayed.' : mode === 'unavailable' ? b.canonical.driverUnavailable : 'Checking group driver…'}</p>
+    <p>{mode === 'canonical' ? botsText().ui.legacyRoom : mode === 'unavailable' ? b.canonical.driverUnavailable : 'Checking group driver…'}</p>
     {error && <p role="alert">{error}</p>}
     <Button disabled={mode !== 'canonical' || busy} onClick={() => {
       const route = { connectionId: connectionId ?? '', profile }
@@ -639,7 +639,7 @@ function GroupExecutionGate(props: GroupChatWorkspaceProps) {
           if (sourceCurrent()) {openGroupChat(registerCanonicalGroup(route, room))}
         })
         .catch(e => { if (sourceCurrent()) {setError(String(e))} }).finally(() => setBusy(false))
-    }}>Start gateway group</Button>
+    }}>{botsText().ui.startGatewayGroup}</Button>
   </div>
 }
 
@@ -992,9 +992,9 @@ function LegacyGroupChatWorkspace({ group, members, onBack, visible = true }: Gr
           <Codicon name="gear" />
         </Button>
       </Tip>
-      <Tip label="Manage members">
+      <Tip label={botsText().ui.manageMembers}>
         <Button
-          aria-label="Manage group members"
+          aria-label={botsText().ui.manageMembersLabel}
           className="shrink-0 text-(--ui-text-tertiary) hover:text-foreground"
           onClick={() => setMemberPickerOpen(true)}
           size="sm"
@@ -1362,7 +1362,7 @@ function LegacyGroupChatWorkspace({ group, members, onBack, visible = true }: Gr
             {isUser ? (
               <span className="text-[0.7rem] font-semibold text-foreground">{label}</span>
             ) : (
-              <Tip label={revealed ? 'Hide full handle' : 'Show full handle'}>
+              <Tip label={revealed ? botsText().ui.hideHandle : botsText().ui.showHandle}>
                 <Button
                   className="text-left text-[0.7rem] font-semibold text-(--ui-accent)"
                   onClick={() => setRevealedSpeaker(revealed ? null : entryKey)}
@@ -1377,9 +1377,9 @@ function LegacyGroupChatWorkspace({ group, members, onBack, visible = true }: Gr
             {entry.text.trim() || !isUser ? (
               <div className="ml-auto flex shrink-0 items-center gap-0.5 opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
                 {isUser ? null : (
-                  <Tip label={`Reply to @${replyMentionTag(entry, member)}`}>
+                  <Tip label={botsText().ui.replyTo(`@${replyMentionTag(entry, member)}`)}>
                     <Button
-                      aria-label={`Reply to ${display}`}
+                      aria-label={botsText().ui.replyTo(display)}
                       className="text-(--ui-text-tertiary) hover:text-foreground"
                       onClick={() => replyToMember(entry, member)}
                       size="icon"
@@ -1701,7 +1701,7 @@ export function openGroupChat(group: string): void {
     [group]: false
   })
   const ownerKey = groupWorkspaceOwnerKey(group)
-  setBotsWorkspaceOwner(ownerKey, null, 'New group conversations start in the group composer.')
+  setBotsWorkspaceOwner(ownerKey, null, botsText().ui.groupComposerOwner)
   // #93813: what reached the members' room sessions while nobody drove them
   // (a Bot posting reports into its own session, a CLI resume) is posted as
   // the room opens, not only once the room next drives that member.

@@ -17,7 +17,7 @@ import { $botMeta, botHandle, botMentionTag } from './data'
 import { appendGroupChatEntry } from './group-chat'
 import { groupMemberKey } from './group-membership'
 import { answerGroupClarify } from './group-turns'
-import { useBots } from './i18n'
+import { botsText, useBots } from './i18n'
 import { displayName } from './labels'
 import { botRosterMeta } from './routing'
 import type { BotMeta, GroupMember, GroupPrompt } from './types'
@@ -568,7 +568,7 @@ export function GroupClarifyCard({ entry, members }: GroupClarifyCardProps) {
                   void submit()
                 }
               }}
-              placeholder={q.choices.length ? 'Or type your own answer…' : 'Type your answer…'}
+              placeholder={q.choices.length ? botsText().ui.answerOrChoosePlaceholder : botsText().ui.answerPlaceholder}
               value={drafts[q.qid] || ''}
             />
           )}
@@ -578,7 +578,7 @@ export function GroupClarifyCard({ entry, members }: GroupClarifyCardProps) {
       {isApproval ? null : (
         <div className="flex justify-end">
           <Button disabled={sending || !anyAnswered || !member} onClick={() => void submit()} size="sm">
-            {sending ? 'Sending…' : 'Answer'}
+            {sending ? botsText().ui.sending : botsText().ui.answer}
           </Button>
         </div>
       )}

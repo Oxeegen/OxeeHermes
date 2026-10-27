@@ -35,6 +35,7 @@ import {
   groupSessionMemberKey
 } from './group-membership'
 import { harvestStrandedGroupReply } from './group-turns'
+import { botsText } from './i18n'
 import { displayName } from './labels'
 import { botRosterMeta } from './routing'
 import type { BotMeta, RosterRow } from './types'
@@ -179,8 +180,8 @@ export function GroupMemberPicker({ group, members, open, onClose }: GroupMember
     <Dialog onOpenChange={value => !value && onClose()} open={open}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Manage members</DialogTitle>
-          <DialogDescription>{`Pick 2–${GROUP_CHAT_MAX_MEMBERS} bots for “${group}”. The room, its history and its member sessions stay as they are.`}</DialogDescription>
+          <DialogTitle>{botsText().ui.manageMembers}</DialogTitle>
+          <DialogDescription>{botsText().ui.manageMembersDesc(GROUP_CHAT_MAX_MEMBERS, group)}</DialogDescription>
         </DialogHeader>
         <div className="grid max-h-80 gap-0.5 overflow-y-auto" data-testid="group-member-picker">
           {roster.map(bot => {

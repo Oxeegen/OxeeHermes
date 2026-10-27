@@ -60,7 +60,7 @@ import {
   knownGroups,
   liveGroupChatNames
 } from './group-membership'
-import { useBots } from './i18n'
+import { botsText, useBots } from './i18n'
 import { botProfileIdentity, displayName } from './labels'
 import { McpSetupButton } from './mcp-setup'
 import { ModelPicker } from './model-picker'
@@ -259,10 +259,10 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
       .then(() =>
         host.notify({
           kind: 'success',
-          message: `Draft agent "${draft}" discarded`
+          message: botsText().ui.draftDiscarded(draft)
         })
       )
-      .catch(err => host.notifyError(err, `Could not clean up draft profile "${draft}"`))
+      .catch(err => host.notifyError(err, botsText().ui.draftCleanupFailed(draft)))
   }
 
   const reset = () => {
@@ -699,7 +699,7 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
           ) : null}
           {labeled(
             b.editor.title,
-            <Input onChange={event => setTitle(event.target.value)} placeholder="Inbox Triage" value={title} />
+            <Input onChange={event => setTitle(event.target.value)} placeholder={botsText().ui.titlePlaceholder} value={title} />
           )}
           {labeled(
             b.editor.description,
@@ -1105,7 +1105,7 @@ export function GroupDialog({ bot, onClose }: GroupDialogProps) {
           <Input
             autoFocus
             onChange={event => setName(event.target.value)}
-            placeholder={groups.length ? 'New group…' : 'Group name (e.g. Research)'}
+            placeholder={groups.length ? botsText().ui.newGroupPlaceholder : botsText().ui.groupNamePlaceholder}
             value={name}
           />
           <Button disabled={!name.trim()} size="sm" type="submit">
@@ -1272,7 +1272,7 @@ export function CreateGroupChatDialog({ open, roster, onClose, onCreated }: Crea
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{b.group.newTitle}</DialogTitle>
-          <DialogDescription>{`Pick 2–${GROUP_CHAT_MAX_MEMBERS} bots. Local memberships sync through each Bot profile; cross-machine members stay scoped to this room.`}</DialogDescription>
+          <DialogDescription>{botsText().ui.pickMembersDesc(GROUP_CHAT_MAX_MEMBERS)}</DialogDescription>
         </DialogHeader>
         {/* TODO(bot-mode-types): this search box never takes focus when the dialog
             opens — SearchField accepts no `autoFocus` prop and forwards no extra

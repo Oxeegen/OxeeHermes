@@ -39,7 +39,7 @@ import { groupChatMemberBots } from './group-membership'
 import { $groupMainTabsRev, shouldRenderGroupChatInPane } from './group-panes'
 import { $activeGroupMemberKeys } from './group-presence'
 import { $showHiddenBots, isBotHidden } from './hidden-bots'
-import { useBots } from './i18n'
+import { botsText, useBots } from './i18n'
 import { $activityToasts } from './roster-actions'
 import { renderRosterContent } from './roster-pane-content'
 import { deriveRosterPresentation, deriveRosterRows, sortRosterBots } from './roster-pane-derivation'
@@ -414,8 +414,7 @@ export function BotsPane() {
 
   const staleNotice =
     error && !live && roster.length
-      ? 'Roster refresh failed — showing the last good list.' +
-        (gatewayUp ? '' : ' Waiting for the gateway to reconnect…')
+      ? botsText().ui.rosterStale + (gatewayUp ? '' : botsText().ui.waitingReconnect)
       : null
 
   const groupChatMembers = groupChatName ? groupChatMemberBots(groupChatName, roster, allMeta) : []

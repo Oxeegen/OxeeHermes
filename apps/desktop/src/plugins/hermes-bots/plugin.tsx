@@ -67,7 +67,7 @@ import {
 } from './group-chat'
 import { groupWorkspaceOwnerKey } from './group-membership'
 import { annotateOrphanedGroupChatMembers } from './hygiene'
-import { BOTS_LOCALES } from './i18n'
+import { BOTS_LOCALES, botsText } from './i18n'
 import { displayName } from './labels'
 import { startBotRelay, stopBotRelay } from './relay'
 import { $activityToasts } from './roster-actions'
@@ -592,7 +592,7 @@ export default {
             setBotsWorkspaceOwner(
               groupWorkspaceOwnerKey(group),
               null,
-              'New group conversations start in the group composer.'
+              botsText().ui.groupComposerOwner
             )
           } else if (selected) {
             setBotsWorkspaceOwner(botWorkspaceOwnerKey(selected), selected)
@@ -737,7 +737,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: `${ID}.new-agent`,
-        label: 'New Bot…',
+        label: botsText().ui.newBotPalette,
         keywords: ['bot', 'agent', 'profile', 'teammate', 'create'],
         run: () => {
           host.notify({
@@ -787,10 +787,8 @@ export default {
             if (activeBot && isCanonicalChatOnScreen(row, host.state.focusedStoredSessionId.get())) {
               host.notify({
                 kind: 'info',
-                title: 'This chat never resets',
-                message:
-                  'Bot chats are one continuous conversation — compacting instead. ' +
-                  'For a throwaway session with this bot, use Sessions mode.'
+                title: botsText().ui.chatNeverResetsTitle,
+                message: botsText().ui.chatNeverResetsMessage
               })
 
               return {

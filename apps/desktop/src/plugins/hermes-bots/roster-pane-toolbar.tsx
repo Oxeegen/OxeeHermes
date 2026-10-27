@@ -13,6 +13,7 @@ import {
 
 import { botSourceStatus } from './data'
 import type { useBots } from './i18n'
+import { botsText } from './i18n'
 import { setActivityToasts } from './roster-actions'
 import { GatewayKindGlyph } from './roster-sections'
 import type { rosterGatewayOptions } from './roster-sections'
@@ -75,7 +76,7 @@ export function renderRosterToolbar({
         </span>
         <div className="flex items-center gap-0.5">
           <Tip
-            label={activityToasts ? 'Activity toasts on — click to silence' : 'Activity toasts off — click to enable'}
+            label={activityToasts ? botsText().ui.activityToastsOn : botsText().ui.activityToastsOff}
           >
             <Button
               className="rounded-md text-(--ui-text-tertiary) hover:text-foreground"
@@ -87,7 +88,7 @@ export function renderRosterToolbar({
             </Button>
           </Tip>
           <DropdownMenu>
-            <Tip label="New…">
+            <Tip label={botsText().ui.newMenu}>
               <DropdownMenuTrigger asChild>
                 <Button
                   aria-label={b.roster.newBotOrGroup}
@@ -139,10 +140,10 @@ export function renderRosterToolbar({
           )}
           {showRosterFilters ? (
             <DropdownMenu key={'roster-filters'}>
-              <Tip label={activeFilterCount ? `Filters (${activeFilterCount} active)` : 'Filter roster'}>
+              <Tip label={activeFilterCount ? botsText().ui.filtersActive(activeFilterCount) : botsText().ui.filterRoster}>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    aria-label={activeFilterCount ? `Filter roster, ${activeFilterCount} active` : 'Filter roster'}
+                    aria-label={activeFilterCount ? botsText().ui.filterRosterActive(activeFilterCount) : botsText().ui.filterRoster}
                     className={cn(
                       'size-7 shrink-0 rounded-md text-(--ui-text-tertiary) hover:text-foreground',
                       activeFilterCount && 'text-(--ui-accent)'
@@ -185,7 +186,7 @@ export function renderRosterToolbar({
                 {gatewayOptions.length > 1 ? (
                   <DropdownMenuItem onSelect={() => setGatewayFilter('all')}>
                     <Codicon className="mr-1.5" name="globe" />
-                    <span className="min-w-0 flex-1">All gateways</span>
+                    <span className="min-w-0 flex-1">{botsText().ui.allGateways}</span>
                     {gatewayFilter === 'all' ? <Codicon name="check" /> : null}
                   </DropdownMenuItem>
                 ) : null}

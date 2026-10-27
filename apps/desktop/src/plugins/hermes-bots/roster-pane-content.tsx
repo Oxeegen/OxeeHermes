@@ -4,6 +4,7 @@ import type { ReactNode, RefObject } from 'react'
 import type { useRoster } from './data'
 import { $showHiddenBots } from './hidden-bots'
 import type { useBots } from './i18n'
+import { botsText } from './i18n'
 import type { deriveRosterPresentation, deriveRosterRows } from './roster-pane-derivation'
 import type { rosterSectionRenderers } from './roster-pane-sections'
 import type { rosterGatewayOptions } from './roster-sections'
@@ -143,7 +144,7 @@ export function renderRosterContent({
                 {hasRosterConstraint ? (
                   <div className="flex w-full items-center gap-1 px-2 py-1.5 text-[0.6875rem] font-medium text-(--ui-text-tertiary)">
                     <Codicon name="eye-closed" />
-                    <span>Hidden</span>
+                    <span>{botsText().ui.hidden}</span>
                     <span className="text-(--ui-text-quaternary)">{matchingHiddenBots.length}</span>
                   </div>
                 ) : (
@@ -153,7 +154,7 @@ export function renderRosterContent({
                     onClick={() => $showHiddenBots.set(!hiddenExpanded)}
                   >
                     <DisclosureCaret open={hiddenExpanded} />
-                    <span>Hidden</span>
+                    <span>{botsText().ui.hidden}</span>
                     <span className="text-(--ui-text-quaternary)">{hiddenBots.length}</span>
                   </RowButton>
                 )}

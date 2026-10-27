@@ -34,11 +34,14 @@ import { useMemo } from 'react'
 
 import { CANONICAL_GROUP_LOCALES } from './canonical-group-locales'
 import { bind, type Bound } from './i18n-bind'
+import { fr } from './i18n-fr'
 import { type BotsMessages } from './i18n-messages'
+import { uiEn } from './i18n-ui'
 import { getPluginCtx } from './shared'
 
 const en: BotsMessages = {
   canonical: CANONICAL_GROUP_LOCALES.en,
+  ui: uiEn,
   editor: {
     fullConfigHint: 'Full configuration needs a newer gateway (restart it after updating Oxee Hermes).',
     liveCapabilities: 'Capabilities (applies immediately — skills, tools, MCP)',
@@ -479,6 +482,7 @@ const en: BotsMessages = {
 
 const ja: BotsMessages = {
   canonical: CANONICAL_GROUP_LOCALES.ja,
+  ui: uiEn,
   editor: {
     fullConfigHint: 'すべての設定を使うには新しいゲートウェイが必要です（Oxee Hermes 更新後に再起動してください）。',
     liveCapabilities: '機能（即時適用 — スキル、ツール、MCP）',
@@ -923,6 +927,7 @@ const ja: BotsMessages = {
 
 const zh: BotsMessages = {
   canonical: CANONICAL_GROUP_LOCALES.zh,
+  ui: uiEn,
   editor: {
     fullConfigHint: '完整配置需要更新网关（更新 Oxee Hermes 后请重启网关）。',
     liveCapabilities: '功能（立即生效 — 技能、工具、MCP）',
@@ -1350,6 +1355,7 @@ const zh: BotsMessages = {
 
 const zhHant: BotsMessages = {
   canonical: CANONICAL_GROUP_LOCALES['zh-hant'],
+  ui: uiEn,
   editor: {
     fullConfigHint: '完整設定需要更新閘道（更新 Oxee Hermes 後請重新啟動閘道）。',
     liveCapabilities: '功能（立即生效 — 技能、工具、MCP）',
@@ -1783,7 +1789,8 @@ export const BOTS_LOCALES: PluginLocaleBundles = {
   'zh-hant': zhHant,
   ar: { canonical: CANONICAL_GROUP_LOCALES.ar },
   ru: { canonical: CANONICAL_GROUP_LOCALES.ru },
-  fr: { canonical: CANONICAL_GROUP_LOCALES.fr },
+  // Oxee Hermes: the whole Bot Mode in French (i18n-fr.ts), not only the hosted group chats.
+  fr,
   de: { canonical: CANONICAL_GROUP_LOCALES.de },
   es: { canonical: CANONICAL_GROUP_LOCALES.es }
 }

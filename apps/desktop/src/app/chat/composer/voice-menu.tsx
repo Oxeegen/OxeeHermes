@@ -16,6 +16,7 @@ import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
 import { AudioLines, Ear, EarOff, iconSize, Loader2, Square, Volume2, VolumeX } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { OXEEGEN_VOICE_ENGINE_PICKER } from '@/oxeegen/settings-policy'
 import { $wakeWord, toggleWakeWord } from '@/store/wake-word'
 
 import { ACTIVE_ICON_BTN, GHOST_ICON_BTN } from './control-classes'
@@ -114,8 +115,12 @@ export function VoiceMenu({
           {c.startVoice}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <VoiceEngineRows disabled={disabled} />
-        <DropdownMenuSeparator />
+        {OXEEGEN_VOICE_ENGINE_PICKER ? (
+          <>
+            <VoiceEngineRows disabled={disabled} />
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
         {/* Checkbox items, because all three are toggles the user is reading
             the CURRENT state of — the reason they were pressed-state buttons
             before. A plain row would fold that state away with the menu. */}

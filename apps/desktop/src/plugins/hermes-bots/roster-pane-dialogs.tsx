@@ -6,6 +6,7 @@ import type { useRoster } from './data'
 import { EditProfileDialog } from './edit-profile-dialog'
 import { disbandGroupChat, openGroupChat } from './group-chat-view'
 import type { useBots } from './i18n'
+import { botsText } from './i18n'
 import { deleteBot } from './profile-ops'
 import type { GroupMember, RosterRow } from './types'
 import { createBotSection, moveGroupChatsToSection, renameBotSection, type SectionDialogState } from './user-sections'
@@ -103,20 +104,21 @@ export function renderRosterDialogs({
       />
       {grouping ? <GroupDialog bot={grouping} onClose={() => setGrouping(null)} /> : null}
       <ConfirmDialog
-        busyLabel="Deleting…"
+        busyLabel={botsText().ui.deleting}
         confirmLabel={t.common.delete}
         description={
           deleting ? (
             <span>
-              {'This will permanently delete the bot '}
+              {botsText().ui.deleteBotPrefix}
               <span className="font-medium text-foreground">{deleting.name}</span>
-              {' and its associated Oxee Hermes profile at '}
-              <span className="font-mono text-xs">{deleting.path}</span>. This cannot be undone.
+              {botsText().ui.deleteBotMiddle}
+              <span className="font-mono text-xs">{deleting.path}</span>
+              {botsText().ui.deleteBotSuffix}
             </span>
           ) : null
         }
         destructive
-        doneLabel="Deleted"
+        doneLabel={botsText().ui.deleted}
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
           if (!deleting) {
@@ -128,22 +130,22 @@ export function renderRosterDialogs({
           await refetch()
           host.notify({
             kind: 'success',
-            message: `Deleted profile ${name}`
+            message: botsText().ui.deletedProfile(name)
           })
         }}
         open={Boolean(deleting)}
         title={b.bot.deleteTitle}
       />
       <ConfirmDialog
-        busyLabel="Deleting…"
+        busyLabel={botsText().ui.deleting}
         confirmLabel={b.group.deleteAction}
         description={
           deletingGroup
-            ? `This removes “${deletingGroup.name}” from its bots and clears the shared room log. The bots and their individual chats are kept.`
+            ? botsText().ui.deleteGroupDesc(deletingGroup.name)
             : null
         }
         destructive
-        doneLabel="Deleted"
+        doneLabel={botsText().ui.deleted}
         onClose={() => setDeletingGroup(null)}
         onConfirm={async () => {
           if (!deletingGroup) {
@@ -153,7 +155,7 @@ export function renderRosterDialogs({
           await disbandGroupChat(deletingGroup.name, deletingGroup.members)
           host.notify({
             kind: 'success',
-            message: `Deleted group “${deletingGroup.name}”`
+            message: botsText().ui.deletedGroup(deletingGroup.name)
           })
         }}
         open={Boolean(deletingGroup)}

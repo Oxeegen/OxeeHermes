@@ -196,7 +196,7 @@ export function PetTab({ image, onImage }: PetTabProps) {
           setQuery(event.target.value)
           setLimit(24)
         }}
-        placeholder={`Search ${pets.length} pets…`}
+        placeholder={b.ui.searchPets(pets.length)}
         value={query}
       />
       {image && selectedSlug ? (
@@ -214,7 +214,7 @@ export function PetTab({ image, onImage }: PetTabProps) {
         </Button>
       ) : null}
       {filtered.length === 0 ? (
-        <div className="py-3 text-center text-xs text-(--ui-text-quaternary)">No pets match.</div>
+        <div className="py-3 text-center text-xs text-(--ui-text-quaternary)">{b.ui.noPets}</div>
       ) : (
         <div
           className="overflow-y-auto"
@@ -260,7 +260,7 @@ export function PetTab({ image, onImage }: PetTabProps) {
             ))}
           </div>
           {limit < ranked.length ? (
-            <div className="py-2 text-center text-[0.65rem] text-(--ui-text-quaternary)">{`Scroll for more (${limit} of ${ranked.length})`}</div>
+            <div className="py-2 text-center text-[0.65rem] text-(--ui-text-quaternary)">{b.ui.morePets(limit, ranked.length)}</div>
           ) : null}
         </div>
       )}

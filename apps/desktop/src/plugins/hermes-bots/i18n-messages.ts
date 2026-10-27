@@ -3,9 +3,12 @@
  */
 
 import { type CanonicalGroupMessages } from './canonical-group-locales'
+import { type BotsUiMessages } from './i18n-ui'
 
 export type BotsMessages = {
   canonical: { [K in keyof CanonicalGroupMessages]: string }
+  /** Oxee Hermes: chrome upstream hardcoded in English (i18n-ui.ts). */
+  ui: BotsUiMessages
   /** Left rail: the bot + group-chat roster. */
   editor: {
     fullConfigHint: string

@@ -75,6 +75,13 @@ export function isVisibleConfigSubpage(section: string, page: string): boolean {
  */
 export const STT_LANGUAGES = ['system', 'fr', 'en', 'de', 'es', 'it', 'nl', 'pt', 'pl', 'ar', 'zh', 'ja']
 
+/**
+ * The voice chat engine picker (chevron by the voice button, rows in the voice
+ * menu): voice is always chained Oxeegen STT -> Hermes -> Oxeegen TTS, so it
+ * would offer a choice that does not exist.
+ */
+export const OXEEGEN_VOICE_ENGINE_PICKER = false
+
 /** The "set the shortcut in Keyboard shortcuts" banner on every Voice page (it also names a CLI-only key). */
 export const OXEEGEN_VOICE_SHORTCUT_HINT = false
 

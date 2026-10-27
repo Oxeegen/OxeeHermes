@@ -14,6 +14,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Children, Fragment } from 'react'
 
 import { parseGroupChatMentions } from './group-rounds'
+import { botsText } from './i18n'
 import type { GroupMember } from './types'
 
 export type GroupMentionKind = 'agent' | 'broadcast' | 'human'
@@ -37,10 +38,11 @@ export function classifyGroupMention(token: string, members: GroupMember[]): Gro
   return parsed.mentioned.size ? 'agent' : null
 }
 
-const TITLES: Record<GroupMentionKind, string> = {
-  agent: 'Bot in this room',
-  broadcast: 'Everyone in the room',
-  human: 'You — the room is waiting on a human'
+// Read at render time, so the titles follow the UI language.
+function mentionTitle(kind: GroupMentionKind): string {
+  const ui = botsText().ui
+
+  return { agent: ui.mentionAgent, broadcast: ui.mentionEveryone, human: ui.mentionHuman }[kind]
 }
 
 /** Split one text node into prose and recognized mention spans. */
@@ -62,7 +64,7 @@ export function renderGroupMentionText(text: string, members: GroupMember[]): Re
     }
 
     parts.push(
-      <span className="ref font-medium" data-ref={kind} key={`${start}:${match[0]}`} title={TITLES[kind]}>
+      <span className="ref font-medium" data-ref={kind} key={`${start}:${match[0]}`} title={mentionTitle(kind)}>
         {match[0]}
       </span>
     )

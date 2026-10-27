@@ -24,6 +24,7 @@ import { $groupChats, $groupChatWorkspace } from './group-chat'
 import { openGroupChat } from './group-chat-view'
 import { liveGroupChatNames } from './group-membership'
 import { closeGroupChatMainTab } from './group-panes'
+import { botsText } from './i18n'
 import { displayName } from './labels'
 import { botRosterMeta, botWorkspaceOwnerKey, setBotsWorkspaceOwner } from './routing'
 import { botCanonicalSessionId } from './row-helpers'
@@ -124,8 +125,8 @@ export function trackInboundActivity(roster: RosterRow[]) {
       const inbound = /^Message from/i.test(preview)
       host.notify({
         kind: 'info',
-        title: inbound ? `\uD83E\uDD16 New message for ${label}` : `${label} has new activity`,
-        message: preview.slice(0, 140) || 'Open the chat to see it.'
+        title: inbound ? botsText().ui.newMessageFor(label) : botsText().ui.newActivity(label),
+        message: preview.slice(0, 140) || botsText().ui.openChatToSee
       })
     }
   }

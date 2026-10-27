@@ -196,6 +196,18 @@ describe('voice', () => {
     expect(enumOptionsFor('voice.voice_chat_mode', 'chained', {})).toEqual(['chained'])
   })
 
+  it('offers no voice chat engine picker by the voice button: voice is always chained', async () => {
+    const { StartVoiceButton } = await import('@/app/chat/composer/start-voice-button')
+    const { $voiceLiveStatus } = await import('@/store/voice-live')
+
+    $voiceLiveStatus.set({ mode: 'chained' } as never)
+    render(<StartVoiceButton disabled={false} label="Start voice conversation" onStart={vi.fn()} />)
+
+    expect(screen.getByRole('button', { name: 'Start voice conversation' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Voice chat engine' })).toBeNull()
+    $voiceLiveStatus.set(null)
+  })
+
   it('has no Voice conversation page: the wiring is chained, nothing to choose', () => {
     expect(settingsSubpages('config:voice').map(page => page.id)).toEqual(['transcription', 'speech'])
   })

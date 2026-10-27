@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
+import { OXEEGEN_VOICE_ENGINE_PICKER } from '@/oxeegen/settings-policy'
 import { notifyError } from '@/store/notifications'
 import { $voiceLiveStatus, selectedVoiceChatMode, setVoiceChatMode } from '@/store/voice-live'
 
@@ -70,7 +71,8 @@ export function useVoiceEngineName(): null | string {
   const { t } = useI18n()
   const status = useStore($voiceLiveStatus)
 
-  if (status === null) {
+  // Oxee Hermes: no engine to pick, so no chevron and no engine in the tooltip.
+  if (status === null || !OXEEGEN_VOICE_ENGINE_PICKER) {
     return null
   }
 

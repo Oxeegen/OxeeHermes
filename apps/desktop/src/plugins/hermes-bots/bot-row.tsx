@@ -62,7 +62,7 @@ import { botGroups, groupLastActivity } from './group-membership'
 import { toggleGroupChatPinned } from './group-pin'
 import { $activeGroupMemberKeys } from './group-presence'
 import { fallbackSelectionAfterHide, isBotHidden, isBotPinned } from './hidden-bots'
-import { useBots } from './i18n'
+import { botsText, useBots } from './i18n'
 import { displayName, stripPreviewMarkdown } from './labels'
 import { duplicateBot } from './profile-ops'
 import { botRecentSession, openBotRecentSession } from './recent-session'
@@ -195,7 +195,9 @@ export function BotRow({ bot, onDelete, onEdit, onGroup, onNewSection, showHandl
   )
 
   const handle = botHandle(bot.name, bot)
-  const gatewayLabel = bot.connectionLabel || (bot.connectionId === 'local' ? b.bot.thisDevice : '')
+  // Oxee Hermes: the local connection's default registry label is English ("This device").
+  const localDefault = bot.connectionId === 'local' && (!bot.connectionLabel || bot.connectionLabel === 'This device')
+  const gatewayLabel = localDefault ? b.bot.thisDevice : bot.connectionLabel || ''
   const showDetailsRow = Boolean(showHandle || displayPreview || fromBot)
 
   const rowTooltip = [displayName(bot, meta), `@${handle}`, gatewayLabel, sourceStatus.label]
@@ -420,7 +422,7 @@ export function BotRow({ bot, onDelete, onEdit, onGroup, onNewSection, showHandl
           onSelect={() => {
             host.notify({
               kind: 'info',
-              message: `Duplicating ${displayName(bot, meta)}…`
+              message: botsText().ui.duplicating(displayName(bot, meta))
             })
             duplicateBot(bot, $lastRoster.get())
               .then(name => {
@@ -429,7 +431,7 @@ export function BotRow({ bot, onDelete, onEdit, onGroup, onNewSection, showHandl
                 })
                 host.notify({
                   kind: 'success',
-                  message: `Created ${name} — full copy of ${bot.name}`
+                  message: botsText().ui.duplicated(name, bot.name)
                 })
               })
               .catch(err => host.notifyError(err, b.bot.duplicateFailed))
@@ -632,11 +634,11 @@ export function GroupRow({ active, group, members, needsYou, onOpen, onDisband, 
             const pinned = toggleGroupChatPinned(group)
 
             if (pinned !== null) {
-              host.notify({ kind: 'info', message: `${group} ${pinned ? 'pinned to top' : 'unpinned'}` })
+              host.notify({ kind: 'info', message: pinned ? botsText().ui.groupPinned(group) : botsText().ui.groupUnpinned(group) })
             }
           }}
         >
-          {room.pinned ? 'Unpin' : 'Pin to top'}
+          {room.pinned ? b.bot.unpin : b.bot.pinToTop}
         </ContextMenuItem>
         {/* Filing — the same submenu a bot row gets, driving the room-record
             assignment instead of profile meta. */}
