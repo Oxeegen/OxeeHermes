@@ -6,7 +6,8 @@
  *
  * Model and Providers are replaced by the Oxeegen page; the rest would let a
  * user route inference elsewhere (plugins), belong to Nous services (billing)
- * or were dropped from the product (advanced, vault). Gateways stays: it is
+ * or were dropped from the product (advanced). Passwords and credentials (vault)
+ * stays: it keeps the user's own logins (local, Bitwarden, 1Password). Gateways stays: it is
  * how other Hermes on the network are added (remote URL + token, SSH), with
  * Hermes Cloud — a Nous service — removed (OXEEGEN_HERMES_CLOUD).
  */
@@ -17,8 +18,7 @@ const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set([
   'config:advanced',
   'config:model',
   'plugins',
-  'providers',
-  'vault'
+  'providers'
 ])
 
 /** `view` may carry query tails (`providers&pview=keys`); only the tab counts. */
