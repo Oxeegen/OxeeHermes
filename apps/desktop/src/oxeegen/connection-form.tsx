@@ -117,10 +117,16 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
           value={apiKey}
         />
         <span className="text-xs text-(--ui-text-tertiary)">
-          {regionKey?.set ? `${s.apiKeySaved} ${s.apiKeyKeep}` : s.apiKeyHint}{' '}
-          <a className="underline" href={OXEEGEN.signupUrl} rel="noreferrer" target="_blank">
-            {s.getKey}
-          </a>
+          {regionKey?.set ? `${s.apiKeySaved} ${s.apiKeyKeep}` : s.apiKeyHint}
+          {/* signup_url in oxeegen.json: the link shows once Oxeegen publishes a page to get a key. */}
+          {OXEEGEN.signupUrl ? (
+            <>
+              {' '}
+              <a className="underline" href={OXEEGEN.signupUrl} rel="noreferrer" target="_blank">
+                {s.getKey}
+              </a>
+            </>
+          ) : null}
         </span>
       </label>
 

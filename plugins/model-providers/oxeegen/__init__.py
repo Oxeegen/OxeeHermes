@@ -107,7 +107,7 @@ def _register_region_env_vars() -> None:
     entries[_CONFIG["region_env"]] = ("Oxeegen server region", False)
     for var, (label, secret) in entries.items():
         OPTIONAL_ENV_VARS.setdefault(var, {
-            "description": label, "prompt": label, "url": _CONFIG["signup_url"],
+            "description": label, "prompt": label, "url": _CONFIG["signup_url"] or None,
             "password": secret, "category": "provider", "advanced": True})
 
 

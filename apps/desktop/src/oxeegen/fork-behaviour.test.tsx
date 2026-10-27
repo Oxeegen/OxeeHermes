@@ -221,4 +221,27 @@ describe('onboarding form', () => {
     fireEvent.change(screen.getByPlaceholderText('sk-…'), { target: { value: 'sk-test' } })
     expect((connect as HTMLButtonElement).disabled).toBe(false)
   })
+
+  it('links to the API key page only when oxeegen.json names one', async () => {
+    const { OxeegenConnectionForm } = await import('./connection-form')
+    const config = OXEEGEN as { signupUrl: string }
+    const saved = config.signupUrl
+    const requestGateway = vi.fn() as unknown as OnboardingContext['requestGateway']
+
+    hermesApi.env = {}
+
+    try {
+      config.signupUrl = ''
+      render(<OxeegenConnectionForm requestGateway={requestGateway} />)
+      await screen.findByRole('button', { name: 'Save' })
+      expect(screen.queryByText('Get an API key')).toBeNull()
+      cleanup()
+
+      config.signupUrl = 'https://keys.example.test'
+      render(<OxeegenConnectionForm requestGateway={requestGateway} />)
+      expect((await screen.findByRole('link', { name: 'Get an API key' })).getAttribute('href')).toBe('https://keys.example.test')
+    } finally {
+      config.signupUrl = saved
+    }
+  })
 })

@@ -219,7 +219,8 @@ contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","
 
 ## Reste à faire
 
-- URL d'inscription réelle (`signup_url`) dans `oxeegen.json`.
+- URL de la page « Obtenir une clé API » : `signup_url` dans `oxeegen.json`, vide pour l'instant. Le lien
+  n'apparaît dans Paramètres → Oxeegen et dans l'onboarding que lorsqu'elle est renseignée.
 - Liens Nous restants : docs, Discord, Skills Hub et catalogue de plugins (hébergés par Nous), portail.
 - Retour OAuth des connecteurs (`hermes://connections/done` côté passerelle Nous) et boutons « Send to App » du web, qui émettent encore `hermes://`.
 - `hermes_cli/install_state.py` lit (sans écrire) les dossiers `~/.hermes*` pour l'offre d'essai ; le marqueur machine `Nous Research/.machine` reste partagé.
