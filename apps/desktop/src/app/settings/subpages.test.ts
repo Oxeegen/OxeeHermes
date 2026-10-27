@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { TRANSLATIONS } from '@/i18n'
 
@@ -21,6 +21,20 @@ const views: SettingsView[] = [
   ...SECTIONS.map(section => `config:${section.id}` as SettingsView),
   ...(Object.keys(OTHER_SUBPAGES) as SettingsView[])
 ]
+
+describe('platform-only subpages', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('lists Screen capture only where the macOS capture API exists', () => {
+    vi.stubGlobal('hermesDesktop', {})
+    expect(settingsSubpages('keybinds').map(page => page.id)).not.toContain('screen-capture')
+    expect(resolveSettingsSubpage('keybinds', new URLSearchParams({ page: 'screen-capture' }))).toBe('shortcuts')
+
+    vi.stubGlobal('hermesDesktop', { screenshot: {} })
+    expect(settingsSubpages('keybinds').map(page => page.id)).toContain('screen-capture')
+    expect(resolveSettingsSubpage('keybinds', new URLSearchParams({ page: 'screen-capture' }))).toBe('screen-capture')
+  })
+})
 
 describe('settings subpage routing', () => {
   it('opens the first ordered child for parents and keeps explicit child destinations', () => {
@@ -100,7 +114,10 @@ describe('settings subpage routing', () => {
         expect(settingDefinition(view, id)).toBe(setting)
         expect(setting.keywords.length).toBeGreaterThan(0)
 
-        if (setting.subpage) {
+        // A platform-gated row routes only where its page exists (the platform test above).
+        const onThisPlatform = !('available' in setting) || setting.available()
+
+        if (setting.subpage && onThisPlatform) {
           expect(subpages).toContain(setting.subpage)
           expect(
             resolveSettingsSubpage(view, new URLSearchParams(settingsSearchTargetQuery({ view, setting: id })))
