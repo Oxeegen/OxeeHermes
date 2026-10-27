@@ -49,7 +49,13 @@ export function createMacStrategy(deps: MacClientDeps): MacStrategy {
   updater.autoDownload = false
   updater.autoInstallOnAppQuit = false
   updater.autoRunAppAfterInstall = true
-  updater.channel = channel
+
+  // Oxee Hermes: with no feed override the packaged app-update.yml decides, channel
+  // included (GitHub Releases publish latest-mac.yml, electron-builder.config.cjs).
+  if (deps.feed || deps.feedBaseUrl) {
+    updater.channel = channel
+  }
+
   updater.allowPrerelease = deps.feed ? Boolean(deps.expectedVersion?.includes('-')) : legacy.allowPrerelease
   // Setting channel enables downgrades in electron-updater. This app never does.
   updater.allowDowngrade = false

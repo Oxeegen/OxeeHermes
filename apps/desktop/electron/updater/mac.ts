@@ -12,6 +12,8 @@ export interface MacStrategyDeps {
   appVersion: string
   /** Squirrel verifies the signed app before any backend is stopped. */
   prepareInstall: () => Promise<void>
+  /** Progress line while prepareInstall runs; null skips it (the NSIS arm has nothing to verify). */
+  prepareMessage?: null | string
   beforeInstall: () => Promise<void>
   onInstallFailure: () => Promise<void>
   emitProgress: (payload: { stage: string; message: string; percent: number | null }) => void
@@ -82,7 +84,12 @@ export class MacStrategy implements UpdaterStrategy {
 
           const files = await this.deps.updater.downloadUpdate()
           await this.deps.verifyDownload?.(files)
-          this.deps.emitProgress({ stage: 'prepare', message: 'Verifying the signed macOS update.', percent: null })
+          const prepareMessage = this.deps.prepareMessage === undefined ? 'Verifying the signed macOS update.' : this.deps.prepareMessage
+
+          if (prepareMessage) {
+            this.deps.emitProgress({ stage: 'prepare', message: prepareMessage, percent: null })
+          }
+
           await this.deps.prepareInstall()
           await stop()
           this.deps.emitProgress({

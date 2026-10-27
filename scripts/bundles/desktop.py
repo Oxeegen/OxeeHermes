@@ -112,9 +112,11 @@ def _build_prepared(prepared, builder_args: list[str], variant: str | None) -> N
     desktop = repo / "apps/desktop"
     targets = {"win32": ["--win", "msix"], "darwin": ["--mac", "dmg", "zip"], "linux": ["--linux", "AppImage"]}[sys.platform]
     if sys.platform == "win32" and "nsis" in builder_args:
-        # A setup.exe has no update owner: the stamp only says 'external' for commit builds.
-        if request.tag is not None or request.channel_request is not None:
-            raise ValueError("NSIS setup.exe packages are commit builds only (no update feed serves them)")
+        # A tagged setup.exe updates itself from GitHub Releases (latest.yml, electron-updater); a
+        # commit build stays 'external'. Channel builds keep the App Installer feed.
+        if request.channel_request is not None:
+            raise ValueError("NSIS setup.exe packages are commit or release builds, not channel builds")
+        env["HERMES_DESKTOP_PACKAGE"] = "nsis"
         # electron-builder reads formats only right after the platform flag.
         targets = ["--win", "nsis"]
         builder_args = [arg for arg in builder_args if arg != "nsis"]

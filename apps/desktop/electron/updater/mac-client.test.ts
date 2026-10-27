@@ -59,7 +59,8 @@ describe('macOS client wiring', () => {
     expect(client.autoInstallOnAppQuit).toBe(false)
     expect(client.autoRunAppAfterInstall).toBe(true)
     expect(client.allowDowngrade).toBe(false)
-    expect(client.channel).toBe('stable')
+    // Oxee Hermes: the packaged app-update.yml (GitHub Releases) names its own channel.
+    expect(client.channel).toBe('')
     expect(client.allowPrerelease).toBe(false)
   })
 

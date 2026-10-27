@@ -84,6 +84,25 @@ describe('product identity', () => {
     assert.doesNotMatch(config.msix.publisher + config.msix.publisherDisplayName, /Nous/)
   })
 
+  test('a release publishes to GitHub Releases of the Oxeegen repo, with the setup.exe blockmap; a commit build publishes nothing', () => {
+    delete process.env.CLOUDFLARE_R2_PUBLIC_URL
+    delete process.env.GITHUB_REPOSITORY
+    process.env.HERMES_DESKTOP_VARIANT = 'bundled'
+    delete process.env.HERMES_BUILD_COMMIT
+    const release = freshCjs<Record<string, any>>('electron-builder.config.cjs')
+
+    assert.deepEqual(release.publish, [{ provider: 'github', owner: 'oxeegen', repo: 'oxee-hermes', channel: 'latest' }])
+    assert.deepEqual(release.mac.publish, [{ provider: 'github', owner: 'oxeegen', repo: 'oxee-hermes', channel: 'latest' }])
+    assert.equal(release.nsis.differentialPackage, true)
+
+    process.env.HERMES_BUILD_COMMIT = 'a'.repeat(40)
+    const commit = freshCjs<Record<string, any>>('electron-builder.config.cjs')
+
+    assert.equal(commit.publish, null)
+    assert.equal(commit.mac.publish, null)
+    assert.equal(commit.nsis.differentialPackage, false)
+  })
+
   test('the setup.exe offers per-user or per-machine install and ships the oxee-hermes command shims', () => {
     process.env.HERMES_DESKTOP_VARIANT = 'bundled'
     const config = freshCjs<Record<string, any>>('electron-builder.config.cjs')

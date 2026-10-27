@@ -649,6 +649,7 @@ import { readSourceUpdate, sourceChannelName, type SourceUpdate } from './update
 import { ExternalStrategy } from './updater/external'
 import { readUpdatesFeedBaseFromConfig, resolveFeedBaseUrl } from './updater/feed-config'
 import { createChannelMacStrategy, createMacStrategy } from './updater/mac-client'
+import { createNsisStrategy } from './updater/nsis-client'
 import { UpdateOperation } from './updater/operation'
 import {
   type ConsumedRelaunch,
@@ -3620,7 +3621,12 @@ function createNativePackagedStrategy(
       onInstallFailure: restoreBundledBackend
     }
 
-    return target ? createChannelMacStrategy(deps, target) : createMacStrategy(deps)
+    if (target) {
+      return createChannelMacStrategy(deps, target)
+    }
+
+    // Oxee Hermes: on Windows only the NSIS setup.exe is stamped electron-updater.
+    return process.platform === 'win32' ? createNsisStrategy(deps) : createMacStrategy(deps)
   }
 
   if (mechanism === 'app-installer') {

@@ -5,6 +5,7 @@ import { UpdateStatusCard, VersionHero } from '@/components/update-status'
 import { VersionDetails } from '@/components/version-details'
 import { useI18n } from '@/i18n'
 import { RefreshCw } from '@/lib/icons'
+import { InstalledReleaseNotes } from '@/oxeegen/installed-release-notes'
 import { $connection } from '@/store/session'
 import { $desktopVersion, checkBackendUpdates, refreshDesktopVersion } from '@/store/updates'
 
@@ -62,6 +63,7 @@ function AppUpdatesSettings({ includeUninstall }: AppUpdatesSettingsProps): Reac
           {/* Client and remote backend updates are independent. Only the client has release notes. */}
           {remote && <UpdateStatusCard showReleaseNotes={false} target="backend" />}
         </div>
+        <InstalledReleaseNotes appVersion={version?.appVersion} />
         {version && <VersionDetails version={version} />}
         {includeUninstall && <UninstallSection />}
       </div>

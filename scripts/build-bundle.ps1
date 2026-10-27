@@ -7,6 +7,10 @@
   scripts\build-bundle.ps1 -Store      Microsoft Store MSIX (Store identity).
   scripts\build-bundle.ps1 -Nsis       Setup .exe (NSIS) instead of the sideload MSIX: no certificate to
                                        trust, per-user or per-machine install, oxee-hermes* commands on PATH.
+  scripts\build-bundle.ps1 -Nsis -Version 1.2.0
+                                       Release setup .exe "Oxee Hermes" 1.2.0 (no commit suffix) with the
+                                       latest.yml + .blockmap electron-updater reads from GitHub Releases.
+                                       Publish with oxeegen\scripts\publish-github-release.ps1.
 
   The commit does not need to be pushed. The checkout must be clean: the build
   packages HEAD. Output goes to apps\desktop\release\. The script removes the
@@ -32,6 +36,10 @@
 .PARAMETER Nsis
   Build the NSIS setup .exe instead of the sideload MSIX. Not with -Store.
 
+.PARAMETER Version
+  With -Nsis: build release X.Y.Z instead of a commit build. A local claim tag
+  (rc.<N>-vX.Y.Z) stands in for the release workflow's and is deleted afterwards.
+
 .PARAMETER Python
   Python 3.11+ to run the driver. Default: the first suitable python on PATH.
 
@@ -42,6 +50,7 @@
 param(
   [switch]$Store,
   [switch]$Nsis,
+  [string]$Version = '',
   [string]$Python = '',
   [string]$Remote = 'origin'
 )
@@ -105,6 +114,8 @@ function Get-ClaimAttempt([string]$Version) {
 
 Set-Location $Repo
 if ($Store -and $Nsis) { Fail '-Store and -Nsis are exclusive.' }
+if ($Version -and -not $Nsis) { Fail '-Version builds the release setup .exe: use it with -Nsis.' }
+if ($Version -and $Version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') { Fail "-Version '$Version' is not X.Y.Z." }
 $py = Find-Python
 
 if (git status --porcelain --untracked-files=all) {
@@ -154,6 +165,19 @@ try {
     if ($LASTEXITCODE) { Fail "preparation failed (exit $LASTEXITCODE)" }
     & $py scripts/bundles/desktop.py --prepared (Join-Path $work 'prepared.json') --variant store
     if ($LASTEXITCODE) { Fail "Store packaging failed (exit $LASTEXITCODE)" }
+  } elseif ($Version) {
+    $claim = "rc.$(Get-ClaimAttempt $Version)-v$Version"
+    & git -c user.name=hermes-local-build -c user.email=local-build@invalid -c tag.gpgSign=false `
+      tag -a $claim -m 'local build claim' $sha
+    if ($LASTEXITCODE) { Fail "could not create claim tag $claim" }
+    $env:RELEASE_CLAIM_TAG = $claim
+    $env:RELEASE_CLAIM_OBJECT = @(Git-Lines rev-parse "refs/tags/$claim")[0]
+    $env:HERMES_PAYLOAD_TAG = "v$Version"
+    $env:HERMES_PAYLOAD_VERSION = $Version
+    $env:HERMES_DESKTOP_VARIANT = 'bundled'
+    Write-Host "build-bundle: building $sha as release setup.exe v$Version (local claim $claim)"
+    & $py scripts/bundles/desktop.py --tag "v$Version" --release-commit $sha --variant bundled --clean nsis
+    if ($LASTEXITCODE) { Fail "release build failed (exit $LASTEXITCODE)" }
   } else {
     $format = if ($Nsis) { 'nsis' } else { 'msix' }
     Write-Host "build-bundle: building $sha (sideload $format)"
@@ -175,5 +199,5 @@ if ($Store) {
   Write-Host "build-bundle: claim timestamp for combining architectures: HERMES_RELEASE_EPOCH=$claimEpoch (version v$version)"
 }
 Get-ChildItem (Join-Path $Repo 'apps\desktop\release') -File |
-  Where-Object { $_.Name -like '*.msix*' -or ($_.Extension -eq '.exe' -and $_.Name -notlike '*__uninstaller*') } |
+  Where-Object { $_.Name -like '*.msix*' -or $_.Name -like '*.blockmap' -or $_.Name -eq 'latest.yml' -or ($_.Extension -eq '.exe' -and $_.Name -notlike '*__uninstaller*') } |
   ForEach-Object { '  {0}  {1:N0} MB' -f $_.Name, ($_.Length / 1MB) }

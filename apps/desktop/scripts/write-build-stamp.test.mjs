@@ -139,3 +139,11 @@ test('commit builds retain exact provenance without entering an update channel',
   }
 })
 
+
+test('Oxee Hermes: a release setup.exe (NSIS) updates through electron-updater, a commit one does not', () => {
+  const release = { HERMES_DESKTOP_VARIANT: 'bundled', HERMES_DESKTOP_PACKAGE: 'nsis', HERMES_PAYLOAD_TAG: 'v1.2.0' }
+  assert.equal(buildStampPayload(baseStamp, release, 'win32', { runtime }).updateMechanism, 'electron-updater')
+  assert.equal(buildStampPayload(baseStamp, { HERMES_DESKTOP_VARIANT: 'bundled' }, 'win32', { runtime }).updateMechanism, 'app-installer')
+  const commit = { HERMES_DESKTOP_VARIANT: 'bundled', HERMES_DESKTOP_PACKAGE: 'nsis', HERMES_BUILD_COMMIT: baseStamp.commit }
+  assert.equal(buildStampPayload(baseStamp, commit, 'win32', { runtime }).updateMechanism, 'external')
+})

@@ -184,8 +184,20 @@ les deux partagent le même dossier de données.
   et ajoute ce dossier au PATH utilisateur ou machine. Le `hermes.exe` du payload reste hors du PATH.
   Cette étape passe par PowerShell ; si une stratégie de groupe le bloque, l'app fonctionne sans les
   commandes.
-- **Mises à jour** : aucune. Le format est réservé aux builds de commit, dont le stamp dit `external` ;
-  `desktop.py` refuse `nsis` pour une version taguée.
+- **Build de commit** (`-Nsis`) : « Oxee Hermes <sha> », sans mise à jour (stamp `external`).
+- **Build de version** (`-Nsis -Version X.Y.Z`) : « Oxee Hermes » X.Y.Z, stamp `electron-updater`. Le
+  build produit aussi `latest.yml` et le `.blockmap` (téléchargement différentiel). L'app lit les
+  releases GitHub de `oxeegen/oxee-hermes` (`app-update.yml` embarqué) ; « Mettre à jour » télécharge le
+  setup, arrête le backend, relance le setup en silencieux puis l'app. `updates.desktop_feed_base_url`
+  (config.yaml) remplace GitHub par un flux générique `<url>/releases/win32/nsis/` (tests en local).
+- **Publication** : `oxeegen\scripts\publish-github-release.ps1 -Version X.Y.Z -NotesFile notes.md`
+  (`-DryRun` pour vérifier). Le tag `vX.Y.Z` doit déjà exister sur GitHub. Le dépôt doit être public :
+  l'app lit les releases sans jeton.
+- **macOS** : sans bucket R2, une build de version publie aussi vers GitHub (`latest-mac.yml`) et l'app lit
+  ce flux par défaut. Les fichiers Mac se publient avec le même script.
+- **À propos → Version et mises à jour** : « Nouveautés de la version X.Y.Z » affiche le texte de la release
+  GitHub de la version installée (`src/oxeegen/installed-release-notes.tsx`) ; les liens « Notes de
+  version » et installeur pointent vers les releases Oxeegen.
 - **Désinstallation** : par « Applications installées ». Les données (`%LOCALAPPDATA%\hermes-oxeegen`)
   sont conservées.
 
@@ -195,7 +207,10 @@ les deux partagent le même dossier de données.
 | `apps/desktop/packaging/oxeegen-installer.nsh`, `oxeegen-cli.ps1` | Commandes et PATH à l'installation et à la désinstallation |
 | `apps/desktop/scripts/prepare-packaging-tools.mjs`, `run-electron-builder.mjs`, `prepared-packaging.mjs` | Outils NSIS préparés et format autorisé |
 | `apps/desktop/scripts/batch-sign-binaries.mjs` | En release, signature du setup, de son désinstalleur et d'`elevate.exe` |
-| `scripts/bundles/desktop.py`, `scripts/build-bundle.ps1` | Option `-Nsis`, builds de commit seulement |
+| `scripts/bundles/desktop.py`, `scripts/build-bundle.ps1` | Options `-Nsis` et `-Version` (build de version : claim tag local, `HERMES_DESKTOP_PACKAGE=nsis` vers le stamp) |
+| `apps/desktop/electron/updater/nsis-client.ts`, hook dans `main.ts` ; `mac-client.ts` | Mise à jour du setup.exe par electron-updater ; canal du flux GitHub embarqué sur Mac |
+| `apps/desktop/electron-builder.config.cjs`, `scripts/write-build-stamp.mjs` | Publication GitHub (setup.exe + Mac), blockmap, stamp `electron-updater` |
+| `oxeegen/scripts/publish-github-release.ps1` | Publication de la release GitHub |
 
 ## Isolation vis-à-vis d'un Hermes officiel installé
 

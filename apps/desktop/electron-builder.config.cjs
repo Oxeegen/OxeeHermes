@@ -158,6 +158,9 @@ module.exports = {
       ? [{ provider: 'generic', url: `${channelRequest.publicBase}/releases/channel-builds/${channelRequest.buildId}/darwin/`, channel: 'latest' }]
       : publicUrl && channel && macFeed
       ? [{ provider: 'generic', url: `${publicUrl}/${macFeed.directory}/`, channel: macFeed.channel }]
+      : channel
+      // Oxee Hermes: no R2 bucket, so GitHub Releases of the Oxeegen repo (latest-mac.yml).
+      ? [{ provider: 'github', owner, repo, channel }]
       : null,
     category: 'public.app-category.developer-tools',
     extendInfo: {
@@ -254,8 +257,9 @@ module.exports = {
     uninstallDisplayName: displayName,
     // Data lives in %LOCALAPPDATA%\hermes-oxeegen, never under the install dir.
     deleteAppDataOnUninstall: false,
-    // No electron-updater feed serves these builds: the blockmap would be dead weight.
-    differentialPackage: false,
+    // Release builds (a channel) publish latest.yml beside the setup.exe; the blockmap
+    // lets electron-updater download only the changed blocks. Commit builds have no feed.
+    differentialPackage: Boolean(channel),
     // The oxee-hermes* commands that the MSIX declares as execution aliases.
     include: 'packaging/oxeegen-installer.nsh'
   },
