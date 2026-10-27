@@ -56,7 +56,7 @@ chaîne intacte (données de test qui imitent le backend ou un chemin).
 | `apps/desktop/src/themes/use-skin-command.ts` | alias `default` → `oxeegen` |
 | `apps/desktop/src/styles.css` | `@import './oxeegen/oxeegen.css'` |
 | `apps/desktop/src/components/brand-mark.tsx` | images `oxeegen-icon*.svg` |
-| `apps/desktop/src/app/shell/titlebar-controls.tsx` | `<OxeeTitlebarBrand>` tout à gauche, le bouton de barre latérale à sa droite (logo texte, icône seule si réduite) |
+| `apps/desktop/src/app/shell/titlebar-controls.tsx` | `<OxeeTitlebarBrand>` tout à gauche ; panneau ouvert, le bouton de barre latérale se cale sur son bord droit (`src/oxeegen/titlebar-drawer.ts` suit ce bord, redimensionnement compris) ; réduit, icône seule suivie du bouton |
 | `apps/desktop/src/components/chat/intro.tsx` | `<OxeeIntroWordmark />` à la place du lettrage `HERMES AGENT` d'une conversation vide |
 | `apps/desktop/src/app/right-sidebar/files/tree.tsx` | `<FileIcon>` (icônes Material, `src/oxeegen/file-icons/`) à la place des codicons dossier/fichier |
 | `apps/desktop/product-identity.cjs`, `electron-builder.config.cjs`, `scripts/set-exe-identity.mjs` | identité, éditeur, dépôt de mise à jour |

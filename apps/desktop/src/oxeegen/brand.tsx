@@ -7,8 +7,9 @@ const asset = (name: string) => `${import.meta.env.BASE_URL}${name}`
 const wordmark = (dark: boolean) => asset(dark ? 'oxee-hermes-wordmark-dark.svg' : 'oxee-hermes-wordmark.svg')
 
 /**
- * Oxee Hermes wordmark at the far left of the titlebar, the sidebar toggle to its
- * right: the full wordmark over an open sidebar, the icon alone once it is collapsed.
+ * Oxee Hermes wordmark at the far left of the titlebar, the sidebar toggle on the
+ * open drawer's right edge (titlebar-drawer.ts): the full wordmark over an open
+ * sidebar, the icon alone, followed by the toggle, once it is collapsed.
  */
 export function OxeeTitlebarBrand({ sidebarOpen }: { sidebarOpen: boolean }) {
   const dark = useTheme().renderedMode === 'dark'
