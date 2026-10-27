@@ -4,10 +4,12 @@
  * Providers", billing recovery, gateway pills — falls back to the Oxeegen
  * page), the settings search and the command palette.
  *
- * Model and Providers are replaced by the Oxeegen page; the rest would let a
- * user route inference elsewhere (plugins), belong to Nous services (billing)
- * or were dropped from the product (advanced). Passwords and credentials (vault)
- * stays: it keeps the user's own logins (local, Bitwarden, 1Password). Gateways stays: it is
+ * Model and Providers are replaced by the Oxeegen page; the rest belong to Nous
+ * services (billing) or were dropped from the product (advanced). Plugins stays:
+ * a model-provider plugin cannot route inference elsewhere, the provider
+ * allowlist of the managed scope refuses any provider but Oxeegen. Passwords and
+ * credentials (vault) stays: it keeps the user's own logins (local, Bitwarden,
+ * 1Password). Gateways stays: it is
  * how other Hermes on the network are added (remote URL + token, SSH), with
  * Hermes Cloud — a Nous service — removed (OXEEGEN_HERMES_CLOUD).
  */
@@ -17,7 +19,6 @@ const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set([
   'billing',
   'config:advanced',
   'config:model',
-  'plugins',
   'providers'
 ])
 
