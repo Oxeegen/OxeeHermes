@@ -90,6 +90,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/scripts/bundle-electron-main.mjs', needs: ['oxeegenBundleEnvironment('], why: 'launch banner applies the isolation env' },
   { file: 'apps/desktop/scripts/before-build.mjs', needs: ['oxee-hermes://copilot-key/'], why: 'MSIX Copilot key uses our scheme' },
   { file: 'apps/desktop/scripts/set-exe-identity.mjs', needs: ["ProductName: 'Oxee Hermes'", 'Portions Copyright (c) 2025 Nous Research (MIT)'], why: 'Windows exe identity, MIT notice kept' },
+  { file: 'apps/desktop/src/app/chat/session-draft-title.tsx', needs: ['t.commandCenter.nav.newChat.title'], why: 'a draft tab reads in the UI language' },
   { file: 'apps/desktop/src/lib/update-notes.ts', needs: ["'Oxeegen/OxeeHermes'"], why: 'release notes from the Oxeegen repo' },
   { file: 'scripts/build/launcher_wrapper.py', needs: ['apply_bundle_environment(repo_entry, environ)'], why: 'CLI lands in the isolated data home' },
   { file: 'hermes_cli/_launchers.py', needs: ['link_dir / f"oxee-hermes{name.removeprefix(\'hermes\')}"'], why: 'macOS CLI links never shadow `hermes`' },
