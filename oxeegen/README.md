@@ -15,7 +15,7 @@ petit et régénérable par rapport à l'upstream, pour que les mises à jour re
   GitHub de l'upstream. Sa branche `main` est la branche de travail locale `oxeegen`
   (`git push origin oxeegen:main`). Issues et Actions désactivées.
 - Page d'accueil GitHub : `.github/README.md` (prioritaire sur le `README.md` upstream, laissé intact),
-  captures dans `oxeegen/assets/screenshots/` (régénérées depuis l'app de dev sur un home de démo).
+  captures dans `oxeegen/assets/screenshots/`, en anglais (interface et contenu de démo anglais, comme le README).
   Politique de sécurité : `.github/SECURITY.md`. `CONTRIBUTING*.md` retirés (pas d'onglet
   Contributing : le fork ne prend pas de contributions extérieures).
 - Remote `upstream` en lecture seule (le push est désactivé). Le `main` local suit l'upstream.
