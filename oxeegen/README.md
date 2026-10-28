@@ -11,9 +11,14 @@ petit et régénérable par rapport à l'upstream, pour que les mises à jour re
 
 ## Dépôt
 
-- Branche de travail : `oxeegen`. `main` suit l'upstream.
-- Remote `upstream` en lecture seule (le push est désactivé). Aucune remote Oxeegen pour l'instant :
-  tout reste en local.
+- Dépôt public : [Oxeegen/OxeeHermes](https://github.com/Oxeegen/OxeeHermes) (remote `origin`), fork
+  GitHub de l'upstream. Sa branche `main` est la branche de travail locale `oxeegen`
+  (`git push origin oxeegen:main`). Issues et Actions désactivées.
+- Page d'accueil GitHub : `.github/README.md` (prioritaire sur le `README.md` upstream, laissé intact),
+  captures dans `oxeegen/assets/screenshots/` (régénérées depuis l'app de dev sur un home de démo).
+  Politique de sécurité : `.github/SECURITY.md`. `CONTRIBUTING*.md` retirés (pas d'onglet
+  Contributing : le fork ne prend pas de contributions extérieures).
+- Remote `upstream` en lecture seule (le push est désactivé). Le `main` local suit l'upstream.
 - `upstream/` (anciens clones d'analyse) est ignoré via `.git/info/exclude`.
 
 ## Ce que fait le branding
