@@ -2,23 +2,27 @@ import { useEffect, useState } from 'react'
 
 /** The column physically at the window's left, under the titlebar: sessions, bots, browser… */
 const LEFT_COLUMN = '[data-tree-group][data-window-top="true"]'
+const TOGGLE = '[data-titlebar-cluster="left"] button'
+
+export interface LeftDrawerGeometry {
+  /** Open drawer: its right edge (px), where the sidebar toggle sits. */
+  right: null | number
+  /** Collapsed drawer: the left (px) that centres the toggle on the rail's tabs and wordmark. */
+  toggleLeft: null | number
+}
+
+const NONE: LeftDrawerGeometry = { right: null, toggleLeft: null }
 
 /**
- * Oxee Hermes: the right edge (px) of the open left drawer, so the titlebar can put
- * the sidebar toggle on it with the wordmark at the far left. Null while the drawer
- * is closed or not laid out. Follows drags of the drawer's edge and layout changes.
+ * Oxee Hermes: where the titlebar's sidebar toggle goes. Open, on the drawer's right
+ * edge with the wordmark at the far left; collapsed, centred on the rail under it.
+ * Follows drags of the drawer's edge and layout changes.
  */
-export function useLeftDrawerRight(open: boolean): null | number {
-  const [right, setRight] = useState<null | number>(null)
+export function useLeftDrawerGeometry(open: boolean): LeftDrawerGeometry {
+  const [geometry, setGeometry] = useState<LeftDrawerGeometry>(NONE)
 
    
   useEffect(() => {
-    if (!open) {
-      setRight(null)
-
-      return
-    }
-
     let frame = 0
     let observed: Element | null = null
 
@@ -40,7 +44,30 @@ export function useLeftDrawerRight(open: boolean): null | number {
       }
 
       const rect = column?.getBoundingClientRect()
-      setRight(rect && rect.width > 0 ? Math.round(rect.right) : null)
+
+      if (!rect || rect.width <= 0) {
+        setGeometry(NONE)
+
+        return
+      }
+
+      if (open) {
+        setGeometry({ right: Math.round(rect.right), toggleLeft: null })
+
+        return
+      }
+
+      // macOS keeps its traffic lights in that corner: the toggle stays where the platform puts it.
+      if (navigator.userAgent.includes('Mac OS')) {
+        setGeometry(NONE)
+
+        return
+      }
+
+      const toggle = document.querySelector(TOGGLE)?.getBoundingClientRect().width ?? 0
+      const left = Math.round(rect.left + rect.width / 2 - toggle / 2)
+
+      setGeometry(toggle > 0 ? { right: null, toggleLeft: Math.max(0, left) } : NONE)
     }
 
     const schedule = (): void => {
@@ -60,5 +87,5 @@ export function useLeftDrawerRight(open: boolean): null | number {
     }
   }, [open])
 
-  return right
+  return geometry
 }

@@ -17,7 +17,7 @@ import { formatModifierToken } from '@/lib/keybinds/combo'
 import { cn } from '@/lib/utils'
 import { OxeeTitlebarBrand } from '@/oxeegen/brand'
 import { NEW_BROWSER_TAB_ACTION, newBrowserTab } from '@/oxeegen/browser'
-import { useLeftDrawerRight } from '@/oxeegen/titlebar-drawer'
+import { useLeftDrawerGeometry } from '@/oxeegen/titlebar-drawer'
 import { recordAction } from '@/store/desktop-metrics'
 import { toggleHud } from '@/store/hud'
 import { $interfaceMode, shownInMode, type Tiered } from '@/store/interface-mode'
@@ -168,7 +168,7 @@ export function TitlebarControls({ leftTools = [], tools = [], onOpenSettings }:
   // column, the sessions column, whatever is physically left / right. Never an
   // active highlight — plain show/hide affordances.
   const leftEdge = { open: leftSideOpen, toggle: toggleLeftSide }
-  const drawerRight = useLeftDrawerRight(leftEdge.open)
+  const { right: drawerRight, toggleLeft } = useLeftDrawerGeometry(leftEdge.open)
   const rightEdge = { open: fileBrowserOpen, toggle: toggleRightSide }
   const leftLabel = leftEdge.open ? t.titlebar.hideSidebar : t.titlebar.showSidebar
   const rightLabel = rightEdge.open ? t.titlebar.hideRightSidebar : t.titlebar.showRightSidebar
@@ -337,8 +337,15 @@ export function TitlebarControls({ leftTools = [], tools = [], onOpenSettings }:
         aria-label={t.shell.windowControls}
         className={cn(leftClusterClass, drawerRight !== null && 'justify-between [-webkit-app-region:drag]')}
         data-titlebar-cluster="left"
-        // Oxee Hermes: over an open drawer the cluster spans it, so the toggle sits on its right edge.
-        style={drawerRight !== null ? { width: `calc(${drawerRight}px - var(--titlebar-controls-left) - 0.375rem)` } : undefined}
+        // Oxee Hermes: over an open drawer the cluster spans it, so the toggle sits on its right
+        // edge; over the collapsed rail the toggle is centred on the rail's tabs and wordmark.
+        style={
+          drawerRight !== null
+            ? { width: `calc(${drawerRight}px - var(--titlebar-controls-left) - 0.375rem)` }
+            : toggleLeft !== null
+              ? { left: toggleLeft }
+              : undefined
+        }
       >
         {/* Oxee Hermes: the wordmark at the far left, the sidebar toggle at the drawer's right edge. */}
         <OxeeTitlebarBrand sidebarOpen={leftEdge.open} />

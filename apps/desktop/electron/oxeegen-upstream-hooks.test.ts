@@ -78,7 +78,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/lib/keybinds/actions.ts', needs: ["{ id: 'view.newBrowserTab'"], why: 'new browser tab shortcut' },
   { file: 'apps/desktop/src/app/hooks/use-keybinds.ts', needs: ["'view.newBrowserTab': newBrowserTab"], why: 'new browser tab shortcut handler' },
   { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ["TITLEBAR_FIXED_TOOLS['new-browser']", 'newBrowserTab()'], why: 'new browser tab titlebar button' },
-  { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ['<OxeeTitlebarBrand sidebarOpen={leftEdge.open} />', 'const drawerRight = useLeftDrawerRight(leftEdge.open)', "drawerRight !== null && 'justify-between [-webkit-app-region:drag]'"], why: 'wordmark at the far left, sidebar toggle on the open drawer right edge' },
+  { file: 'apps/desktop/src/app/shell/titlebar-controls.tsx', needs: ['<OxeeTitlebarBrand sidebarOpen={leftEdge.open} />', 'const { right: drawerRight, toggleLeft } = useLeftDrawerGeometry(leftEdge.open)', '? { left: toggleLeft }', "drawerRight !== null && 'justify-between [-webkit-app-region:drag]'"], why: 'wordmark at the far left, sidebar toggle on the open drawer right edge' },
   { file: 'apps/desktop/src/components/chat/intro.tsx', needs: ['<OxeeIntroWordmark />'], why: 'Oxee Hermes wordmark over an empty chat' },
   { file: 'apps/desktop/src/store/titlebar-app-actions.ts', needs: ["'new-browser': {}", "['new-browser', 'settings', 'layout', 'hud']"], why: 'titlebar width reserves the button' },
   { file: 'apps/desktop/src/i18n/en.ts', needs: ["'view.newBrowserTab': 'New browser tab'"], why: 'shortcut label' },
