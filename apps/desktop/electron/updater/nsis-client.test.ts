@@ -89,7 +89,7 @@ describe('Windows setup.exe updater', () => {
   })
 
   it('turns a GitHub 404 into a short "no release" status and keeps the raw error for the log', async () => {
-    const raw = Object.assign(new Error('404 "method: GET url: https://github.com/oxeegen/oxee-hermes/releases.atom" Headers: { "set-cookie": "_gh_sess=secret" }'), {
+    const raw = Object.assign(new Error('404 "method: GET url: https://github.com/Oxeegen/OxeeHermes/releases.atom" Headers: { "set-cookie": "_gh_sess=secret" }'), {
       statusCode: 404
     })
     client.checkForUpdates.mockRejectedValueOnce(raw)

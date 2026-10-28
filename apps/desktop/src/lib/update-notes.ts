@@ -7,7 +7,7 @@
  */
 
 // Oxeegen: release notes come from the Oxeegen repository, never the official changelog.
-const REPOSITORY = 'oxeegen/oxee-hermes'
+const REPOSITORY = 'Oxeegen/OxeeHermes'
 const API = `https://api.github.com/repos/${REPOSITORY}`
 const SITE = `https://github.com/${REPOSITORY}`
 const MAX_ITEMS = 5

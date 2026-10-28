@@ -22,7 +22,7 @@
 param(
   [Parameter(Mandatory = $true)][string]$Version,
   [Parameter(Mandatory = $true)][string]$NotesFile,
-  [string]$Repo = 'oxeegen/oxee-hermes',
+  [string]$Repo = 'Oxeegen/OxeeHermes',
   [string]$ReleaseDir = (Join-Path $PSScriptRoot '..\..\apps\desktop\release'),
   [switch]$DryRun
 )

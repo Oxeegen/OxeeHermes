@@ -189,7 +189,7 @@ les deux partagent le même dossier de données.
 - **Build de commit** (`-Nsis`) : « Oxee Hermes <sha> », sans mise à jour (stamp `external`).
 - **Build de version** (`-Nsis -Version X.Y.Z`) : « Oxee Hermes » X.Y.Z, stamp `electron-updater`. Le
   build produit aussi `latest.yml` et le `.blockmap` (téléchargement différentiel). L'app lit les
-  releases GitHub de `oxeegen/oxee-hermes` (`app-update.yml` embarqué) ; « Mettre à jour » télécharge le
+  releases GitHub de `Oxeegen/OxeeHermes` (`app-update.yml` embarqué) ; « Mettre à jour » télécharge le
   setup, arrête le backend, relance le setup en silencieux puis l'app. `updates.desktop_feed_base_url`
   (config.yaml) remplace GitHub par un flux générique `<url>/releases/win32/nsis/` (tests en local).
 - **Publication** : `oxeegen\scripts\publish-github-release.ps1 -Version X.Y.Z -NotesFile notes.md`
@@ -228,7 +228,7 @@ les deux partagent le même dossier de données.
 | Services gateway `hermes-gateway` / `ai.hermes.gateway` / `Hermes_Gateway` | Suffixe `-oxeegen` dérivé de `HERMES_DATA_DIR_SUFFIX` (`gateway.py` `tagged_service_suffix`, `gateway_runtime_service.py`) |
 | Schéma `hermes://` | `oxee-hermes://` (`electron-builder.config.cjs`, `main.ts`, `before-build.mjs`) |
 | `/etc/hermes` (scope managé système d'un Hermes officiel) | Ignoré : `HERMES_MANAGED_DIR` pointe toujours vers le scope Oxeegen |
-| Notes de version, flux de mise à jour | Dépôt `oxeegen/oxee-hermes` |
+| Notes de version, flux de mise à jour | Dépôt `Oxeegen/OxeeHermes` |
 
 Le produit s'appelle « Oxee Hermes » (anciennement « Oxeegen Hermes », puis « Oxee Desktop »). Les identifiants techniques
 invisibles gardent `oxeegen` : dossier de données `hermes-oxeegen`, suffixe `-oxeegen` des services,

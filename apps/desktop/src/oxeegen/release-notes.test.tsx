@@ -22,7 +22,7 @@ describe('release notes of the installed version', () => {
     const fetch = vi.fn(async () =>
       Response.json({
         body: '## Highlights\n\n- Chloé reads answers aloud',
-        html_url: 'https://github.com/oxeegen/oxee-hermes/releases/tag/v1.2.0',
+        html_url: 'https://github.com/Oxeegen/OxeeHermes/releases/tag/v1.2.0',
         name: 'Oxee Hermes 1.2.0'
       })
     )
@@ -33,10 +33,10 @@ describe('release notes of the installed version', () => {
     expect(await screen.findByText("What's new in 1.2.0")).toBeTruthy()
     expect(await screen.findByText(/Chloé reads answers aloud/)).toBeTruthy()
     expect(screen.getByRole('link', { name: 'View on GitHub' }).getAttribute('href')).toBe(
-      'https://github.com/oxeegen/oxee-hermes/releases/tag/v1.2.0'
+      'https://github.com/Oxeegen/OxeeHermes/releases/tag/v1.2.0'
     )
     expect(fetch).toHaveBeenCalledWith(
-      'https://api.github.com/repos/oxeegen/oxee-hermes/releases/tags/v1.2.0',
+      'https://api.github.com/repos/Oxeegen/OxeeHermes/releases/tags/v1.2.0',
       expect.anything()
     )
   })

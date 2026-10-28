@@ -69,7 +69,7 @@ describe('product identity', () => {
     assert.deepEqual(config.protocols[0].schemes, ['oxee-hermes'])
     assert.equal(config.linux.maintainer, 'Oxeegen')
     assert.ok(
-      config.publish.some((target: Record<string, string>) => target.owner === 'oxeegen' || target.provider === 'generic'),
+      config.publish.some((target: Record<string, string>) => target.owner === 'Oxeegen' || target.provider === 'generic'),
       'updates must never come from NousResearch'
     )
     assert.ok(!JSON.stringify(config.publish).includes('NousResearch'))
@@ -91,8 +91,8 @@ describe('product identity', () => {
     delete process.env.HERMES_BUILD_COMMIT
     const release = freshCjs<Record<string, any>>('electron-builder.config.cjs')
 
-    assert.deepEqual(release.publish, [{ provider: 'github', owner: 'oxeegen', repo: 'oxee-hermes', channel: 'latest' }])
-    assert.deepEqual(release.mac.publish, [{ provider: 'github', owner: 'oxeegen', repo: 'oxee-hermes', channel: 'latest' }])
+    assert.deepEqual(release.publish, [{ provider: 'github', owner: 'Oxeegen', repo: 'OxeeHermes', channel: 'latest' }])
+    assert.deepEqual(release.mac.publish, [{ provider: 'github', owner: 'Oxeegen', repo: 'OxeeHermes', channel: 'latest' }])
     assert.equal(release.nsis.differentialPackage, true)
 
     process.env.HERMES_BUILD_COMMIT = 'a'.repeat(40)

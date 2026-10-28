@@ -3,7 +3,7 @@
  * (electron-builder.config.cjs publish), its release pages, and the notes of one
  * release for Settings > About.
  */
-export const OXEEGEN_REPOSITORY = 'oxeegen/oxee-hermes'
+export const OXEEGEN_REPOSITORY = 'Oxeegen/OxeeHermes'
 export const OXEEGEN_RELEASES_URL = `https://github.com/${OXEEGEN_REPOSITORY}/releases`
 
 export interface OxeegenReleaseNotes {
