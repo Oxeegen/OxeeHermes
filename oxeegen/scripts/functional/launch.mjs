@@ -1,8 +1,10 @@
 // Launch the built Oxee Hermes desktop of this checkout against an isolated demo home and run a
 // Playwright steps module on its window:
 //
-//   node oxeegen/scripts/functional/launch.mjs <home> <out-dir> <steps.mjs> [--lang en|fr]
+//   node oxeegen/scripts/functional/launch.mjs <home> <out-dir> <steps.mjs> [--lang en|fr] [--first-run]
 //
+// --first-run hands the window to the steps as soon as it opens, before any setup, for a home
+// with nothing configured yet.
 // The steps module exports `default async ({ page, shot, settle, home }) => {}`. The app sees the
 // demo home's fake user folder as HOME and working directory, so nothing of the real account
 // (or of this repository) shows up. Build the app first: `cd apps/desktop && npm run build`.
@@ -17,6 +19,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.
 const DESKTOP = path.join(ROOT, 'apps/desktop')
 const [homeArg, outArg, stepsArg] = process.argv.slice(2)
 const lang = process.argv.includes('--lang') ? process.argv[process.argv.indexOf('--lang') + 1] : 'en'
+const firstRun = process.argv.includes('--first-run')
 
 if (!homeArg || !outArg || !stepsArg) {
   console.error('usage: launch.mjs <home> <out-dir> <steps.mjs> [--lang en|fr]')
@@ -27,6 +30,7 @@ const HOME = path.resolve(homeArg)
 const USER = path.join(HOME, 'user/Oxeegen')
 const OUT = path.resolve(outArg)
 fs.mkdirSync(OUT, { recursive: true })
+fs.mkdirSync(USER, { recursive: true })
 
 // npm workspaces hoist electron to the root on some upstream versions.
 const executablePath = [path.join(DESKTOP, 'node_modules/electron/dist/electron'), path.join(ROOT, 'node_modules/electron/dist/electron')]
@@ -62,13 +66,15 @@ let failed = false
 
 try {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.waitForSelector('[data-slot="composer-root"]', { timeout: 240_000 })
-  await page.waitForFunction(
-    () => !document.querySelector('[class*="z-(--z-onboarding)"], [class*="z-(--z-connecting)"]'),
-    undefined,
-    { timeout: 240_000 }
-  )
-  await settle(4000)
+  if (!firstRun) {
+    await page.waitForSelector('[data-slot="composer-root"]', { timeout: 240_000 })
+    await page.waitForFunction(
+      () => !document.querySelector('[class*="z-(--z-onboarding)"], [class*="z-(--z-connecting)"]'),
+      undefined,
+      { timeout: 240_000 }
+    )
+    await settle(4000)
+  }
   const steps = await import(path.resolve(stepsArg))
   failed = (await steps.default({ page, shot, settle, home: HOME })) === false
 } catch (error) {

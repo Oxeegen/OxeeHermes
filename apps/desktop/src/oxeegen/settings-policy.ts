@@ -85,6 +85,11 @@ export const OXEEGEN_VOICE_ENGINE_PICKER = false
 /** The "set the shortcut in Keyboard shortcuts" banner on every Voice page (it also names a CLI-only key). */
 export const OXEEGEN_VOICE_SHORTCUT_HINT = false
 
+/** Upstream's first-run onboarding is a chat with the model, opened before anything is configured: in
+ *  Oxee Hermes nothing can answer it until the Oxeegen region and key form is filled, so the launch
+ *  shows that form instead. Settings > Onboarding can still run the chat once a key is saved. */
+export const OXEEGEN_FIRST_RUN_CHAT = false
+
 /** Rows the managed scope sets: shown as their value, from oxeegen.json, with no editor. */
 export const OXEEGEN_PINNED_SETTING_FIELDS: ReadonlyMap<string, { label: 'sttModel' | 'ttsModel'; value: string }> = new Map([
   ['stt.openai.model', { label: 'sttModel', value: OXEEGEN.sttModel }],

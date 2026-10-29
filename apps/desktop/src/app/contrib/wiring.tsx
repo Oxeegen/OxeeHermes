@@ -44,6 +44,7 @@ import { type ChatMessage, chatMessageText } from '@/lib/chat-messages'
 import { isMessagingSource } from '@/lib/session-source'
 import { activateWakeIndicator } from '@/lib/wake-indicator'
 import { playWakeSound } from '@/lib/wake-sound'
+import { OXEEGEN_FIRST_RUN_CHAT } from '@/oxeegen/settings-policy'
 import { $billingSettingsRequest } from '@/store/billing-block'
 import { $desktopBoot } from '@/store/boot'
 import { requestVoiceConversationStart } from '@/store/composer'
@@ -223,7 +224,7 @@ function useRouteRequestNavigation(navigate: ReturnType<typeof useNavigate>): vo
 // Settings' Run onboarding again opens its chat through the same opener.
 function useFirstRunOnboarding(request: OnboardingRequest, open: OnboardingResume, gatewayOpen: boolean): void {
   useEffect(() => {
-    if (!isMainWindow()) {
+    if (!isMainWindow() || !OXEEGEN_FIRST_RUN_CHAT) {
       markOnboardingDecided()
     } else if (gatewayOpen) {
       void decideOnboarding(request, open, { intro: firstRunIntro() })

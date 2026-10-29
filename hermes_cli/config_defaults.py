@@ -73,6 +73,7 @@ DEFAULT_CONFIG = {
         "storage": "hermes-home",
     },
     "agent": {
+        "reasoning_effort": "max",  # Oxee Hermes: Max unless the user picks a level (upstream: "" = medium)
         # Turn cap. null = unlimited (default; caps caused silent mid-task truncation). Positive int
         # caps; "none"/"unlimited"/"inf"/0/-1 also mean unlimited (resolve_turn_limit).
         "max_turns": None,
@@ -1111,8 +1112,7 @@ DEFAULT_CONFIG = {
         "openai": {
             "model": "gpt-4o-mini-tts",
             # gpt-4o-mini-tts voices: alloy, ash, ballad, cedar, coral, echo, fable, marin, nova,
-            # onyx, sage, shimmer, verse. Oxee Hermes: tts.openai is Oxeegen's voxee audio API, so the
-            # default is a voxee voice, the voice.tts_voice of plugins/model-providers/oxeegen/oxeegen.json.
+            # onyx, sage, shimmer, verse. Oxee Hermes: a voxee voice, voice.tts_voice of oxeegen.json.
             "voice": "fr_chloe",
             # Forwarded verbatim in the request body for OpenAI-compatible servers whose cloned
             # voices demand it (400 consent_required otherwise); "" sends nothing.

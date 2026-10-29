@@ -76,6 +76,11 @@ export default async ({ page, shot, settle, home }) => {
     expect(/NEW SESSION|New session/.test(tabs), 'no New session tab')
   })
 
+  await test('a new session thinks at Max by default', async () => {
+    const label = await page.getByRole('button', { name: /^Effort:/ }).first().getAttribute('aria-label')
+    expect(label === 'Effort: Max', `effort button reads "${label}"`)
+  })
+
   await test('the model menu lists only Oxeegen models, and switching sticks', async () => {
     await page.getByRole('button', { name: /^Model · / }).first().click()
     await settle(1200)

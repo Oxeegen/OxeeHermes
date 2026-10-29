@@ -8,6 +8,8 @@
 #
 # The demo home (fake key, English demo sessions and jobs) lives outside the repository, in
 # $OXEE_FUNCTIONAL_HOME or ~/.cache/oxee-hermes-functional/home, and is restored after each run.
+# A second home, ~/.cache/oxee-hermes-functional/first-run, keeps only its Python environment and is
+# emptied before each run: the app's very first launch, with nothing configured.
 # Screenshots of failures go to ~/.cache/oxee-hermes-functional/out. No model is ever called.
 set -uo pipefail
 
@@ -15,6 +17,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$ROOT"
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/oxee-hermes-functional"
 DEMO="${OXEE_FUNCTIONAL_HOME:-$CACHE/home}"
+FIRST="$CACHE/first-run"
 OUT="$CACHE/out"
 HERE="$ROOT/oxeegen/scripts/functional"
 REBUILD=0 FRESH=0
@@ -26,11 +29,17 @@ for arg in "$@"; do
   esac
 done
 
-stop_gateway() { HERMES_HOME="$DEMO" ./.hermes/bin/hermes gateway stop >/dev/null 2>&1 || true; }
+stop_gateway() { HERMES_HOME="${1:-$DEMO}" ./.hermes/bin/hermes gateway stop >/dev/null 2>&1 || true; }
 
-if [[ $FRESH == 1 && -d "$DEMO" ]]; then
-  stop_gateway
-  rm -rf "${DEMO:?}"
+if [[ $FRESH == 1 ]]; then
+  [[ -d "$DEMO" ]] && { stop_gateway; rm -rf "${DEMO:?}"; }
+  [[ -d "$FIRST" ]] && { stop_gateway "$FIRST"; rm -rf "${FIRST:?}"; }
+fi
+
+if [[ ! -d "$FIRST/installs" ]]; then
+  echo "Installing the Python environment of the first-run home in $FIRST (first run only)…"
+  mkdir -p "$FIRST"
+  HERMES_HOME="$FIRST" ./.hermes/bin/hermes pm repair >/dev/null 2>&1 || { echo "✗ hermes pm repair failed"; exit 1; }
 fi
 
 if [[ ! -f "$DEMO/state.db" ]]; then
@@ -67,6 +76,13 @@ rm -rf "${OUT:?}" && mkdir -p "$OUT"
 stop_gateway
 node "$HERE/launch.mjs" "$DEMO" "$OUT" "$HERE/functional.mjs" --lang en 2>&1 | grep -vE '^\s*$'
 status=${PIPESTATUS[0]}
+
+# First launch: empty the first-run home down to its Python environment, then open the app on it.
+stop_gateway "$FIRST"
+find "$FIRST" -mindepth 1 -maxdepth 1 ! -name installs ! -name tools ! -name cache -exec rm -rf {} +
+node "$HERE/launch.mjs" "$FIRST" "$OUT" "$HERE/first-run.mjs" --lang en --first-run 2>&1 | grep -vE '^\s*$'
+[[ ${PIPESTATUS[0]} == 0 ]] || status=1
+stop_gateway "$FIRST"
 if [[ $status == 0 ]]; then
   echo "✓ Oxee Hermes functional tests passed"
 else

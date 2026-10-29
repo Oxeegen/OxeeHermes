@@ -98,3 +98,14 @@ def test_shipped_managed_scope_is_generated_from_oxeegen_json():
     source = json.loads((root / "plugins/model-providers/oxeegen/oxeegen.json").read_text(encoding="utf-8"))
 
     assert (MANAGED_DIR / "config.yaml").read_text(encoding="utf-8") == gen.render(source)
+
+
+def test_oxeegen_models_think_at_max_unless_the_user_picks_a_level(oxeegen_managed):
+    from hermes_cli.config import load_config
+    from hermes_constants import resolve_reasoning_config
+
+    _write_user_config("model:\n  provider: oxeegen\n  default: Oxee-max\n")
+    assert resolve_reasoning_config(load_config())["effort"] == "max"
+
+    _write_user_config("model:\n  provider: oxeegen\n  default: Oxee-max\nagent:\n  reasoning_effort: low\n")
+    assert resolve_reasoning_config(load_config())["effort"] == "low"
