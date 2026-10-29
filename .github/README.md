@@ -14,7 +14,7 @@
   <a href="https://github.com/Oxeegen/OxeeHermes/releases/latest"><img src="https://img.shields.io/github/v/release/Oxeegen/OxeeHermes?label=release&color=5E4AF5" alt="Latest release"></a>
   <a href="/LICENSE"><img src="https://img.shields.io/badge/license-MIT-5E4AF5" alt="MIT"></a>
   <img src="https://img.shields.io/badge/Windows-setup.exe-5E4AF5" alt="Windows setup.exe">
-  <img src="https://img.shields.io/badge/based%20on-Hermes%20Agent-5E4AF5" alt="Based on Hermes Agent">
+  <a href="https://github.com/NousResearch/hermes-agent"><img src="https://img.shields.io/badge/based%20on-Hermes%20Agent%200.22.2%2B-5E4AF5" alt="Based on Hermes Agent 0.22.2+"></a>
 </p>
 
 <p align="center">
@@ -116,7 +116,8 @@ official Hermes install.
 ## Based on Hermes Agent
 
 Oxee Hermes is a fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent) (MIT,
-© 2025 Nous Research) by [Oxeegen](https://github.com/Oxeegen). Everything Oxee Hermes changes lives in
+© 2025 Nous Research) by [Oxeegen](https://github.com/Oxeegen), based on the upstream main branch of 16 October 2026 (between
+Hermes Agent v0.22.2 and v0.22.3). Everything Oxee Hermes changes lives in
 a small, regenerable layer (`oxeegen/`, `apps/desktop/src/oxeegen/`, the Oxeegen model provider plugin
 and a few guarded hooks), so upstream releases can still be merged. Thanks to the Nous Research team
 for the agent this is built on.
