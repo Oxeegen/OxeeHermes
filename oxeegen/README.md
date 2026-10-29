@@ -76,6 +76,7 @@ git checkout oxeegen && git merge main            # résoudre les hooks ci-dessu
 node oxeegen/scripts/rebrand-source.mts           # nouvelles chaînes « Hermes »
 node oxeegen/scripts/apply-desktop-assets.cjs     # icônes écrasées par l'upstream
 oxeegen/scripts/test-fork.sh --full               # doit finir par « ✓ Oxeegen fork tests passed »
+oxeegen/scripts/functional/run.sh --rebuild       # doit finir par « ✓ Oxee Hermes functional tests passed »
 ```
 
 Pour refaire le codemod à partir de zéro (après avoir changé la règle) : sauvegarder le diff des
@@ -96,6 +97,20 @@ problème, erreurs de collecte Python comprises. `--full` ajoute toute la suite 
 | Politique | `apps/desktop/src/oxeegen/policy.test.ts` | Régions, sections masquées, aucune offre de métriques |
 | Packaging et isolation | `apps/desktop/electron/oxeegen-fork.test.ts` | Identité, `productName`, schéma, dépôt de mise à jour, environnement de bundle, scope managé, icônes, `rebrand-source --check` |
 | Python | `tests/hermes_cli/test_provider_allowlist.py`, `test_oxeegen_managed_scope.py`, `test_gateway_service_tag.py`, `test_oxeegen_launchers.py`, `tests/plugins/model_providers/test_oxeegen_profile.py`, `tests/scripts/test_launcher_bundle_env.py` | Allowlist, scope managé (et sa fraîcheur vs `oxeegen.json`), région et clés, services gateway, noms CLI, lanceur |
+
+**Tests fonctionnels** (`oxeegen/scripts/functional/`) : Playwright pilote la vraie app Electron du
+checkout sur un home de démo isolé (clé factice, sessions et tâches de démo en anglais, aucun appel de
+modèle), hors du dépôt dans `~/.cache/oxee-hermes-functional/home`. Une seule commande,
+`oxeegen/scripts/functional/run.sh` (`--rebuild` après un changement de code, `--fresh` pour recréer le
+home : quelques minutes, le temps de `hermes pm repair`). Seize vérifications : démarrage et nom du
+produit, sessions (ouverture, recherche, onglet « New session »), menu limité aux modèles Oxeegen,
+sections de paramètres visibles et masquées, région EU/US, voix STT et TTS (la voix choisie arrive
+dans `config.yaml`), passage de l'interface en français et retour, tâches planifiées (pause dans
+`cron/jobs.json`), Capabilities, Messaging, Bots, barre latérale réduite, palette Ctrl+K, À propos.
+Le home est remis en état après chaque passage ; les captures des échecs vont dans
+`~/.cache/oxee-hermes-functional/out`. `seed-demo-home.py --lang fr` prépare le même home en
+français (captures de la vidéo marketing), `launch.mjs` lance l'app sur n'importe quel module d'étapes
+(captures du README).
 
 Tests upstream adaptés au comportement Oxeegen (également lancés par le script) : `product-identity`,
 `commit-stamp-identity`, `titlebar-app-actions`, `classic-skin`, `persist-accent`, `backend-sync`,
