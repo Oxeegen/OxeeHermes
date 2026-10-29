@@ -13,7 +13,8 @@ const fallbackSummary: Omit<DesktopUninstallSummary, 'code_removal_allowed' | 'n
   userdata_dir: '/test/desktop',
   userdata_exists: true,
   platform: process.platform,
-  probe: 'fallback'
+  probe: 'fallback',
+  native_removal: null
 }
 
 interface CapturedIpc {

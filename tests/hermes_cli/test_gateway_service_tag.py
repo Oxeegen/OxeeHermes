@@ -7,8 +7,12 @@ import pytest
 
 @pytest.fixture
 def native_home(tmp_path, monkeypatch):
+    import hermes_constants
+
     monkeypatch.setenv("HOME", str(tmp_path))
     monkeypatch.setenv("HERMES_HOME", "")
+    # Service names follow the OS account's home, not $HOME (upstream #108674).
+    monkeypatch.setattr(hermes_constants, "_account_home", lambda: tmp_path)
     return tmp_path
 
 

@@ -20,6 +20,7 @@ import {
 import { useSttLanguageLabels } from '@/oxeegen/stt-language'
 import { OxeegenVoiceField } from '@/oxeegen/voice-field'
 import { confirm } from '@/store/confirm'
+import { $activeConnectionId } from '@/store/connections'
 import {
   $dataUrlReadMaxMb,
   clampDataUrlReadMaxMb,
@@ -45,14 +46,18 @@ import { PanelEmpty } from '../overlays/panel'
 
 import { ConfigField } from './config-field'
 import { configSubpageForField } from './config-subpages'
+import { DELEGATION_ROUTE_COMPANION_KEY, DelegationRouteRow } from './delegation-route-row'
+import { DelegationRoutingSlot } from './delegation/routing-section'
+import { SubagentModelGate } from './delegation/subagent-model-gate'
 import {
   clearsEnabledToolsets,
+  configFieldValue,
   diffConfig,
   enumOptionsFor,
   getNested,
   isExternalMemoryProvider,
   sectionFieldEntries,
-  setNested,
+  setConfigField,
   voiceFieldVisible
 } from './helpers'
 import { MemoryConnect } from './memory/connect'
@@ -78,12 +83,13 @@ export function ConfigSettings({
   // when the target profile changes — the same guarantee useOnProfileSwitch
   // provides for app-wide switches, without hand-clearing each piece.
   const scopeProfile = useStore($settingsRequestProfile)
+  const connectionId = useStore($activeConnectionId)
 
   return (
     <ConfigSettingsInner
       activeSectionId={activeSectionId}
       importInputRef={importInputRef}
-      key={scopeProfile ?? '__active__'}
+      key={JSON.stringify([connectionId, scopeProfile ?? '__active__'])}
       onConfigSaved={onConfigSaved}
       onMainModelChanged={onMainModelChanged}
       scopeProfile={scopeProfile}
@@ -337,7 +343,9 @@ function ConfigSettingsInner({
       return
     }
 
-    const element = document.getElementById(`setting-field-${targetField}`)
+    const element = document.getElementById(
+      `setting-field-${targetField === DELEGATION_ROUTE_COMPANION_KEY ? 'delegation.model' : targetField}`
+    )
 
     if (!element) {
       return
@@ -450,7 +458,9 @@ function ConfigSettingsInner({
     return <SettingsSkeleton sections={[{ rows: 6 }]} />
   }
 
-  const visibleFields = activeSectionId === 'voice' ? fields.filter(([key]) => voiceFieldVisible(key, config)) : fields
+  const visibleFields = (
+    activeSectionId === 'voice' ? fields.filter(([key]) => voiceFieldVisible(key, config)) : fields
+  ).filter(([key]) => key !== DELEGATION_ROUTE_COMPANION_KEY)
 
   const showEmptyState =
     visibleFields.length === 0 &&
@@ -504,6 +514,14 @@ function ConfigSettingsInner({
       {/* Shared metrics are two coupled opt-ins with a consent side effect, so they
           go through their own RPC rather than the generic field autosave. */}
       {showSharedMetrics ? <SharedMetricsSettings /> : null}
+      {/* Routing picks the strategy and owns its routes; the subagent model row below is the
+          Default strategy's route and goes inert while another strategy decides. */}
+      <DelegationRoutingSlot
+        readScope={scopeProfile}
+        sectionId={activeSectionId}
+        subpage={subpage}
+        writeScope={writeScope}
+      />
       {OXEEGEN_VOICE_SHORTCUT_HINT && activeSectionId === 'voice' ? (
         <ListRow description={c.voiceShortcutHintDesc} title={c.voiceShortcutHintTitle} />
       ) : null}
@@ -517,33 +535,37 @@ function ConfigSettingsInner({
                 <OxeegenPinnedField schemaKey={key} />
               ) : key === OXEEGEN_VOICE_SETTING_FIELD ? (
                 <OxeegenVoiceField
-                  onChange={value => updateConfig(setNested(config, key, value))}
+                  onChange={value => updateConfig(setConfigField(config, key, value))}
                   value={getNested(config, key)}
                 />
+              ) : key === 'delegation.model' ? (
+                <SubagentModelGate scope={writeScope ?? scopeProfile}>
+                  <DelegationRouteRow config={config} onConfigChange={updateConfig} scope={writeScope ?? scopeProfile} />
+                </SubagentModelGate>
               ) : (
-              <ConfigField
-                descriptionExtra={
-                  key === 'memory.provider' && isExternalMemoryProvider(getNested(config, key)) ? (
-                    <MemoryConnect profile={scopeProfile} provider={String(getNested(config, key))} />
-                  ) : undefined
-                }
-                enumOptions={
-                  key === 'tts.elevenlabs.voice_id'
-                    ? enumOptionsFor(key, getNested(config, key), config, elevenLabsVoiceOptions ?? undefined)
-                    : enumOptionsFor(key, getNested(config, key), config)
-                }
-                onChange={value => updateConfig(setNested(config, key, value))}
-                optionLabels={
-                  key === 'tts.elevenlabs.voice_id'
-                    ? elevenLabsVoiceLabels
-                    : key === 'stt.language'
-                      ? sttLanguageLabels
-                      : undefined
-                }
-                schema={field}
-                schemaKey={key}
-                value={getNested(config, key)}
-              />
+                <ConfigField
+                  descriptionExtra={
+                    key === 'memory.provider' && isExternalMemoryProvider(getNested(config, key)) ? (
+                      <MemoryConnect profile={scopeProfile} provider={String(getNested(config, key))} />
+                    ) : undefined
+                  }
+                  enumOptions={
+                    key === 'tts.elevenlabs.voice_id'
+                      ? enumOptionsFor(key, getNested(config, key), config, elevenLabsVoiceOptions ?? undefined)
+                      : enumOptionsFor(key, getNested(config, key), config)
+                  }
+                  onChange={value => updateConfig(setConfigField(config, key, value))}
+                  optionLabels={
+                    key === 'tts.elevenlabs.voice_id'
+                      ? elevenLabsVoiceLabels
+                      : key === 'stt.language'
+                        ? sttLanguageLabels
+                        : undefined
+                  }
+                  schema={field}
+                  schemaKey={key}
+                  value={configFieldValue(config, key)}
+                />
               )}
               {key === 'memory.provider' && isExternalMemoryProvider(getNested(config, key)) ? (
                 <ProviderConfigPanel
