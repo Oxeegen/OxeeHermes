@@ -22,7 +22,7 @@ from providers.base import ProviderProfile
 
 logger = logging.getLogger(__name__)
 
-_CONFIG = json.loads(Path(__file__).with_name("oxeegen.json").read_text(encoding="utf-8"))
+_CONFIG = json.loads(Path(__file__).with_name("oxeegen.json").read_text(encoding="utf-8-sig"))
 _REGIONS: dict = _CONFIG["regions"]
 
 

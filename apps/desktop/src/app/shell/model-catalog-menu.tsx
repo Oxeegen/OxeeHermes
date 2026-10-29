@@ -241,7 +241,7 @@ function useDownloadRows(owner: LocalModelsOwner, localModelsEnabled: boolean) {
  * plugin surfaces that pick a model without a session behind it — so the two
  * can never drift apart.
  */
-// health: allow CC -- usage-window plans: section headings and the limit line in the existing list render; this component was over target on main
+// health: allow CC FUNC_LINES -- usage-window plans: section headings and the limit line in the existing list render; this component was over target on main. Oxee Hermes gates the custom-model and Edit Models rows (OXEEGEN_MODEL_MENU_EXTRAS), two lines over
 export function ModelCatalogMenu({
   controller,
   footer,

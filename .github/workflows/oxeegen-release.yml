@@ -1,0 +1,147 @@
+# Oxee Hermes release: build the Windows setup.exe and the macOS app on GitHub-hosted runners and
+# attach them to a DRAFT GitHub release, from a version tag pushed on main (vX.Y.Z).
+#
+#   git tag -a v0.8.1 -m "Oxee Hermes 0.8.1" && git push origin v0.8.1
+#
+# The release body is oxeegen/release-notes/X.Y.Z.md plus its translations (X.Y.Z.<lang>.md),
+# assembled by oxeegen/scripts/release-notes-body.mjs. Publish the draft once checked: installed
+# apps only see published releases. The upstream workflows of this fork are disabled on GitHub
+# (oxeegen/scripts/github-workflows.sh); this one is the only one that runs.
+#
+# Unsigned for now: Windows SmartScreen warns, and the macOS app is not notarized (Gatekeeper
+# warns, and macOS refuses to install its updates in place until it is signed).
+name: Oxee Hermes release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (X.Y.Z); a build without a tag publishes nothing'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oxeegen-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  VERSION: ${{ inputs.version || github.ref_name }}
+
+jobs:
+  windows:
+    name: Windows setup.exe
+    runs-on: windows-latest
+    timeout-minutes: 240
+    steps:
+      - name: Keep Defender out of the build directories
+        shell: powershell
+        run: |
+          foreach ($p in @($env:GITHUB_WORKSPACE, $env:RUNNER_TEMP)) {
+            try { Add-MpPreference -ExclusionPath $p } catch { Write-Host "no Defender exclusion for $p" }
+          }
+
+      # Full history and tags: the build script checks the published release tags.
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Build the release setup.exe
+        shell: powershell
+        run: |
+          $version = $env:VERSION -replace '^v', ''
+          & scripts\build-bundle.ps1 -Nsis -Version $version
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows
+          if-no-files-found: error
+          path: |
+            apps/desktop/release/OxeeHermesBundled-Setup-*-x64.exe
+            apps/desktop/release/OxeeHermesBundled-Setup-*-x64.exe.blockmap
+            apps/desktop/release/latest.yml
+
+  macos:
+    name: macOS app
+    runs-on: macos-15
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      # Same release request as scripts/build-bundle.ps1 -Version: a local claim tag stands in
+      # for the upstream release workflow's admission, and is never pushed.
+      - name: Build the release app (unsigned)
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          HERMES_DESKTOP_VARIANT: bundled
+          PYTHONUTF8: '1'
+        run: |
+          version="${VERSION#v}"
+          sha="$(git rev-parse HEAD)"
+          claim="rc.900-v$version"
+          git -c user.name=oxee-release -c user.email=release@invalid -c tag.gpgSign=false \
+            tag -a "$claim" -m 'release build claim' "$sha"
+          export RELEASE_CLAIM_TAG="$claim" RELEASE_CLAIM_OBJECT="$(git rev-parse "refs/tags/$claim")"
+          export HERMES_PAYLOAD_TAG="v$version" HERMES_PAYLOAD_VERSION="$version"
+          ulimit -n 16384 2>/dev/null || true
+          python scripts/bundles/desktop.py --tag "v$version" --release-commit "$sha" --variant bundled --clean
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos
+          if-no-files-found: error
+          path: |
+            apps/desktop/release/*.dmg
+            apps/desktop/release/*.zip
+            apps/desktop/release/*.blockmap
+            apps/desktop/release/latest-mac.yml
+
+  release:
+    name: Draft GitHub release
+    needs: [windows, macos]
+    # A macOS failure must not hold back Windows: the draft says which platforms it carries.
+    if: ${{ !cancelled() && needs.windows.result == 'success' && startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: dist
+
+      - name: Create the draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MACOS_RESULT: ${{ needs.macos.result }}
+        run: |
+          version="${VERSION#v}"
+          notes="oxeegen/release-notes/$version.md"
+          if [ ! -f "$notes" ]; then
+            echo "::error::$notes is missing"
+            exit 1
+          fi
+          grep -q "^version: $version\$" dist/windows/latest.yml || { echo "::error::latest.yml is not for $version"; exit 1; }
+          node oxeegen/scripts/release-notes-body.mjs "$notes" > "$RUNNER_TEMP/body.md"
+          if [ "$MACOS_RESULT" != success ]; then
+            echo "::warning::the macOS build did not succeed: this release carries Windows only"
+          fi
+          gh release create "v$version" --draft --verify-tag --title "Oxee Hermes $version" \
+            --notes-file "$RUNNER_TEMP/body.md" dist/windows/* $(ls dist/macos/* 2>/dev/null)
