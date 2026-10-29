@@ -8,6 +8,10 @@
   latest.yml (Windows) / latest-mac.yml (macOS) and the files they name. Settings > About
   shows the release body as "What's new".
 
+  The release body is the English notes file plus every translation next to it
+  (X.Y.Z.fr.md...), assembled by oxeegen/scripts/release-notes-body.mjs: About shows the
+  one matching the UI language.
+
   This uploads, from apps\desktop\release:
     Windows  OxeeHermesBundled-Setup-<version>-x64.exe, its .blockmap, latest.yml
     macOS    *.zip, *.dmg, their .blockmap, latest-mac.yml (when present, e.g. copied from a Mac build)
@@ -56,6 +60,9 @@ if ($DryRun) {
   exit 0
 }
 
-& gh release create $tag --repo $Repo --verify-tag --title "Oxee Hermes $Version" --notes-file $NotesFile @assets
+$body = Join-Path ([IO.Path]::GetTempPath()) "oxee-hermes-$Version-notes.md"
+& node (Join-Path $PSScriptRoot 'release-notes-body.mjs') $NotesFile | Set-Content -Encoding utf8 $body
+if ($LASTEXITCODE) { throw "could not assemble the release notes ($LASTEXITCODE)" }
+& gh release create $tag --repo $Repo --verify-tag --title "Oxee Hermes $Version" --notes-file $body @assets
 if ($LASTEXITCODE) { throw "gh release create failed ($LASTEXITCODE)" }
 Write-Host "Published https://github.com/$Repo/releases/tag/$tag"

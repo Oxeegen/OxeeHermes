@@ -20,6 +20,28 @@ export function releaseTagFor(appVersion: null | string | undefined): null | str
   return /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version) && version !== '0.0.0' ? `v${version}` : null
 }
 
+// A release body carries its translations as HTML comments, hidden on github.com:
+//   <!-- oxee-notes:fr
+//   …French notes…
+//   -->
+// (written by oxeegen/scripts/release-notes-body.mjs from <version>.<lang>.md next to <version>.md).
+const TRANSLATION = /<!--\s*oxee-notes:([A-Za-z-]+)\s*\n([\s\S]*?)-->/g
+
+/** The notes in `locale` (exact, then its base language), else the body itself without its translations. */
+export function localizedNotesBody(body: string, locale: null | string | undefined): string {
+  const translations = new Map<string, string>()
+
+  for (const [, lang, text] of body.matchAll(TRANSLATION)) {
+    translations.set(lang.toLowerCase(), text.trim())
+  }
+
+  const wanted = (locale ?? '').toLowerCase()
+
+  return (
+    translations.get(wanted) ?? translations.get(wanted.split(/[-_]/)[0]) ?? body.replace(TRANSLATION, '').trim()
+  )
+}
+
 const notes = new Map<string, Promise<null | OxeegenReleaseNotes>>()
 
 /** The notes of release `tag`; null when GitHub has no such release or cannot be reached. */

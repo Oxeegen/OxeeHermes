@@ -2,16 +2,18 @@ import { type ReactElement, useEffect, useState } from 'react'
 
 import { SectionHeading } from '@/app/settings/primitives'
 import { MessageTextContent } from '@/components/assistant-ui/markdown-text'
+import { useI18n } from '@/i18n'
 import { ExternalLink, FileText } from '@/lib/icons'
 
-import { fetchReleaseNotes, type OxeegenReleaseNotes, releaseTagFor } from './release-notes'
+import { fetchReleaseNotes, localizedNotesBody, type OxeegenReleaseNotes, releaseTagFor } from './release-notes'
 import { useOxeegenStrings } from './strings'
 
 type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'ready'; notes: OxeegenReleaseNotes }
 
-/** Settings > About > Version and updates: the GitHub release notes of the version running now. */
+/** Settings > About > Version and updates: the GitHub release notes of the version running now, in the UI language when the release has them. */
 export function InstalledReleaseNotes({ appVersion }: { appVersion: null | string | undefined }): null | ReactElement {
   const s = useOxeegenStrings()
+  const { locale } = useI18n()
   const tag = releaseTagFor(appVersion)
   const [state, setState] = useState<State>({ kind: 'loading' })
 
@@ -38,6 +40,8 @@ export function InstalledReleaseNotes({ appVersion }: { appVersion: null | strin
     return null
   }
 
+  const body = state.kind === 'ready' ? localizedNotesBody(state.notes.body, locale) : ''
+
   return (
     <section className="mt-6" data-oxee-release-notes={tag}>
       <SectionHeading icon={FileText} title={s.releaseNotesTitle(tag.slice(1))} />
@@ -46,7 +50,7 @@ export function InstalledReleaseNotes({ appVersion }: { appVersion: null | strin
       ) : (
         <div className="grid gap-2">
           <div className="max-h-96 overflow-y-auto rounded-xl border border-border/60 bg-background/40 px-4 py-3 text-sm">
-            {state.notes.body ? <MessageTextContent media={false} text={state.notes.body} /> : s.releaseNotesEmpty}
+            {body ? <MessageTextContent media={false} text={body} /> : s.releaseNotesEmpty}
           </div>
           <a
             className="inline-flex items-center gap-1 self-start text-xs text-muted-foreground underline"

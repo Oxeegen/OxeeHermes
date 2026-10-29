@@ -1,8 +1,10 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { I18nProvider } from '@/i18n/context'
+
 import { InstalledReleaseNotes } from './installed-release-notes'
-import { releaseTagFor } from './release-notes'
+import { localizedNotesBody, releaseTagFor } from './release-notes'
 
 afterEach(() => {
   cleanup()
@@ -57,5 +59,44 @@ describe('release notes of the installed version', () => {
 
     expect(container.innerHTML).toBe('')
     expect(fetch).not.toHaveBeenCalled()
+  })
+
+  const translated = [
+    '- Release notes follow the app language',
+    '',
+    '<!-- oxee-notes:fr',
+    '- Les notes de version suivent la langue de l’app',
+    '-->'
+  ].join('\n')
+
+  it('picks the translation of the UI language, its base language, else the English body', () => {
+    expect(localizedNotesBody(translated, 'fr')).toBe('- Les notes de version suivent la langue de l’app')
+    expect(localizedNotesBody(translated, 'fr-CA')).toBe('- Les notes de version suivent la langue de l’app')
+    expect(localizedNotesBody(translated, 'de')).toBe('- Release notes follow the app language')
+    expect(localizedNotesBody(translated, 'en')).toBe('- Release notes follow the app language')
+  })
+
+  it('shows the French notes in a French UI, never the hidden blocks in an English one', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ body: translated, name: 'Oxee Hermes 1.5.0' })))
+
+    render(
+      <I18nProvider configClient={null} initialLocale="fr">
+        <InstalledReleaseNotes appVersion="1.5.0" />
+      </I18nProvider>
+    )
+
+    expect(await screen.findByText('Nouveautés de la version 1.5.0')).toBeTruthy()
+    expect(await screen.findByText(/Les notes de version suivent la langue/)).toBeTruthy()
+    expect(screen.queryByText(/Release notes follow/)).toBeNull()
+    cleanup()
+
+    render(
+      <I18nProvider configClient={null} initialLocale="en">
+        <InstalledReleaseNotes appVersion="1.5.0" />
+      </I18nProvider>
+    )
+
+    expect(await screen.findByText(/Release notes follow the app language/)).toBeTruthy()
+    expect(screen.queryByText(/oxee-notes|Les notes de version/)).toBeNull()
   })
 })
