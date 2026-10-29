@@ -212,9 +212,26 @@ les deux partagent le même dossier de données.
   releases GitHub de `Oxeegen/OxeeHermes` (`app-update.yml` embarqué) ; « Mettre à jour » télécharge le
   setup, arrête le backend, relance le setup en silencieux puis l'app. `updates.desktop_feed_base_url`
   (config.yaml) remplace GitHub par un flux générique `<url>/releases/win32/nsis/` (tests en local).
-- **Publication** : `oxeegen\scripts\publish-github-release.ps1 -Version X.Y.Z -NotesFile notes.md`
-  (`-DryRun` pour vérifier). Le tag `vX.Y.Z` doit déjà exister sur GitHub. Le dépôt doit être public :
-  l'app lit les releases sans jeton.
+- **Publication (GitHub Actions)** : écrire `oxeegen/release-notes/X.Y.Z.md` (anglais) et ses traductions
+  `X.Y.Z.<langue>.md` (`X.Y.Z.fr.md`…), pousser `main`, puis
+  `git tag -a vX.Y.Z -m "Oxee Hermes X.Y.Z" && git push origin vX.Y.Z`. Le workflow
+  `.github/workflows/oxeegen-release.yml` construit le setup.exe (`windows-latest`, même
+  `build-bundle.ps1 -Nsis -Version`) et l'app macOS non signée (`macos-15`), puis crée une release
+  **brouillon** avec les fichiers et les notes. La vérifier, puis la publier (`gh release edit vX.Y.Z
+  --draft=false --latest`) : les apps installées ne voient que les releases publiées. Un échec macOS
+  ne bloque pas Windows (le brouillon le signale). `workflow_dispatch` (version en entrée) construit sans
+  publier.
+- **Workflows upstream** : le dépôt garde les fichiers de `.github/workflows` (des tests upstream les
+  lisent, les supprimer créerait un conflit à chaque fusion) mais ne doit jamais les exécuter.
+  `oxeegen/scripts/github-workflows.sh` active Actions et désactive tout sauf `oxeegen-*.yml`. Après une
+  fusion upstream : pousser `main` **avant** d'activer quoi que ce soit, puis relancer ce script (un
+  nouveau workflow upstream est actif par défaut, mais activer Actions ne déclenche rien).
+- **Notes traduites** : le corps de la release porte chaque traduction dans un commentaire HTML
+  (`<!-- oxee-notes:fr … -->`), invisible sur github.com ; À propos affiche celle de la langue de
+  l'interface, sinon l'anglais. Assemblage : `oxeegen/scripts/release-notes-body.mjs`.
+- **Publication locale (secours)** : `oxeegen\scripts\publish-github-release.ps1 -Version X.Y.Z -NotesFile
+  oxeegen\release-notes\X.Y.Z.md` après un build sur la machine Windows (`-DryRun` pour vérifier). Le tag
+  `vX.Y.Z` doit déjà exister sur GitHub. Le dépôt doit être public : l'app lit les releases sans jeton.
 - **macOS** : sans bucket R2, une build de version publie aussi vers GitHub (`latest-mac.yml`) et l'app lit
   ce flux par défaut. Les fichiers Mac se publient avec le même script.
 - **À propos → Version et mises à jour** : « Nouveautés de la version X.Y.Z » affiche le texte de la release
