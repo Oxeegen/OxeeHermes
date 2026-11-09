@@ -120,7 +120,8 @@ export function CanonicalGroupList({ onOpen }: { onOpen: (key: string, origin: C
 
   return <div className="grid gap-1 px-2">
     <Button onClick={() => setRefresh(value => value + 1)} variant="ghost">{labels.refreshGroups}</Button>
-    {error && <p role="alert">{error}</p>}
+    {/* Oxee Hermes: the gateway client's own (English) disconnect error becomes the plugin's copy. */}
+    {error && <p role="alert">{/gateway is not connected/i.test(error) ? labels.gatewayNotConnected : error}</p>}
     {rooms.map(room => <Button key={room.key} onClick={() => onOpen(room.key, 'key')} variant="ghost">{room.name}</Button>)}
   </div>
 }

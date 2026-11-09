@@ -59,6 +59,7 @@ export type BotsUiMessages = {
   openChatToSee: string
   rosterStale: string
   waitingReconnect: string
+  gatewayNotConnected: string
   attachFailed: (file: string, member: string) => string
   titlePlaceholder: string
 }
@@ -122,6 +123,7 @@ export const uiEn: BotsUiMessages = {
   openChatToSee: 'Open the chat to see it.',
   rosterStale: 'Roster refresh failed — showing the last good list.',
   waitingReconnect: ' Waiting for the gateway to reconnect…',
+  gatewayNotConnected: 'The gateway is not connected yet.',
   attachFailed: (file, member) => `Could not attach ${file} for ${member}`,
   titlePlaceholder: 'Inbox Triage'
 }
@@ -185,6 +187,7 @@ export const uiFr: BotsUiMessages = {
   openChatToSee: 'Ouvrez la discussion pour le voir.',
   rosterStale: 'L’actualisation de la liste a échoué : voici la dernière liste valide.',
   waitingReconnect: ' En attente de la reconnexion à la passerelle…',
+  gatewayNotConnected: 'La passerelle n’est pas encore connectée.',
   attachFailed: (file, member) => `Impossible de joindre ${file} pour ${member}`,
   titlePlaceholder: 'Tri des e-mails'
 }
