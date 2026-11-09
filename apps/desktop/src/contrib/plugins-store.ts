@@ -10,6 +10,8 @@
 
 import { atom } from 'nanostores'
 
+import { oxeegenPluginDefault } from '@/oxeegen/settings-policy'
+
 export type PluginKind = 'bundled' | 'disk' | 'runtime'
 export type PluginStatus = 'disabled' | 'error' | 'loaded'
 
@@ -64,7 +66,7 @@ export const $pluginDecisions = atom<Record<string, boolean>>(loadDecisions())
 export function pluginActive(id: string, defaultEnabled = true): boolean {
   const decisions = $pluginDecisions.get()
 
-  return id in decisions ? decisions[id] : defaultEnabled
+  return id in decisions ? decisions[id] : oxeegenPluginDefault(id, defaultEnabled)
 }
 
 function saveDecisions(next: Record<string, boolean>) {

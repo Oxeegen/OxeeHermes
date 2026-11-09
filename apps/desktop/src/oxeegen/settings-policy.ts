@@ -36,6 +36,14 @@ export function isVisibleSettingsView(view: string): boolean {
  */
 export const OXEEGEN_MODEL_MENU_EXTRAS = false
 
+const DESKTOP_PLUGINS_ENABLED: ReadonlySet<string> = new Set(OXEEGEN.desktopPluginsEnabled)
+
+/** A bundled desktop plugin's default when the user never chose: on for the oxeegen.json
+ *  `desktop_plugins_enabled` list (Kanban), else upstream's own default. */
+export function oxeegenPluginDefault(id: string, upstreamDefault: boolean): boolean {
+  return DESKTOP_PLUGINS_ENABLED.has(id) || upstreamDefault
+}
+
 /** Hermes Cloud is Nous's hosted gateway service: never offered as a connection. */
 export const OXEEGEN_HERMES_CLOUD = false
 

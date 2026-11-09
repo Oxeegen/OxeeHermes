@@ -26,7 +26,8 @@ export const OXEEGEN = {
   sttModel: raw.voice.stt_model,
   ttsModel: raw.voice.tts_model,
   ttsVoice: raw.voice.tts_voice,
-  signupUrl: raw.signup_url
+  signupUrl: raw.signup_url,
+  desktopPluginsEnabled: raw.desktop_plugins_enabled
 } as const
 
 export interface OxeegenVoice {

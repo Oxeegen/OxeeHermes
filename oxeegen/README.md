@@ -102,8 +102,8 @@ problème, erreurs de collecte Python comprises. `--full` ajoute toute la suite 
 checkout sur un home de démo isolé (clé factice, sessions et tâches de démo en anglais, aucun appel de
 modèle), hors du dépôt dans `~/.cache/oxee-hermes-functional/home`. Une seule commande,
 `oxeegen/scripts/functional/run.sh` (`--rebuild` après un changement de code, `--fresh` pour recréer le
-home : quelques minutes, le temps de `hermes pm repair`). Dix-sept vérifications : démarrage et nom du
-produit, niveau de réflexion Max par défaut, sessions (ouverture, recherche, onglet « New session »), menu limité aux modèles Oxeegen,
+home : quelques minutes, le temps de `hermes pm repair`). Dix-huit vérifications : démarrage et nom du
+produit, niveau de réflexion Max par défaut, Kanban actif par défaut, sessions (ouverture, recherche, onglet « New session »), menu limité aux modèles Oxeegen,
 sections de paramètres visibles et masquées, région EU/US, voix STT et TTS (la voix choisie arrive
 dans `config.yaml`), passage de l'interface en français et retour, tâches planifiées (pause dans
 `cron/jobs.json`), Capabilities, Messaging, Bots, barre latérale réduite, palette Ctrl+K, À propos.
@@ -170,6 +170,7 @@ Aucune URL n'est dans un `config.yaml` : le scope managé ne fait que référenc
 | Paramètres → Oxeegen | Même formulaire. Masqués : Modèle, Avancé, Fournisseurs, Facturation. Plugins reste visible (un plugin de fournisseur de modèles reste bloqué par `allowed_providers`). Mots de passe et identifiants reste visible (identifiants locaux, Bitwarden, 1Password). Gateways reste visible (ajout d'autres Hermes du réseau par URL + token ou SSH), sans Hermes Cloud (`OXEEGEN_HERMES_CLOUD`). Tout lien vers une section masquée retombe sur Oxeegen | `src/oxeegen/oxeegen-settings.tsx`, `settings-policy.ts`, hooks dans `settings/index.tsx`, `use-settings-search.ts`, `command-palette/index.tsx` |
 | Bots (Bot Mode) | Entièrement en français : `src/plugins/hermes-bots/i18n-fr.ts` (catalogue du plugin) et `i18n-ui.ts` (infobulles, menus, dialogues et notifications que l'upstream écrivait en dur en anglais, branche `ui`). Restent en anglais : les consignes envoyées aux modèles et les erreurs internes rares | `i18n.ts` (enregistrement de `fr`), composants du plugin |
 | Premier lancement | L'onboarding conversationnel upstream (une discussion avec le modèle, ouverte avant toute configuration, arrivée avec v0.22.5) est coupé : sans clé il échouait (« The AI service rejected your sign-in »). Le formulaire région + clé s'ouvre à la place ; Paramètres › Onboarding peut relancer la discussion une fois la clé enregistrée | `OXEEGEN_FIRST_RUN_CHAT` dans `src/oxeegen/settings-policy.ts`, hook dans `app/contrib/wiring.tsx` |
+| Plugins de l'app actifs par défaut | Liste `desktop_plugins_enabled` de `oxeegen.json` (Kanban) : actifs tant que l'utilisateur ne les a pas coupés ; son choix est mémorisé et l'emporte | `src/oxeegen/settings-policy.ts` (`oxeegenPluginDefault`), hook dans `src/contrib/plugins-store.ts` |
 | Niveau de réflexion | `max` par défaut (`agent.reasoning_effort`) ; le choix de l'utilisateur (menu Effort ou config) l'emporte | hook dans `hermes_cli/config_defaults.py` |
 | Conversation vocale | Pas de sélecteur de moteur (chevron à côté du bouton vocal, lignes du menu vocal) : `OXEEGEN_VOICE_ENGINE_PICKER` | `src/oxeegen/settings-policy.ts`, hooks dans `voice-engine-rows.tsx` et `voice-menu.tsx` |
 | Sélecteur de modèle | Limité aux modèles de chat Oxeegen (`models.chat` de `oxeegen.json`). Pas d'ajout de fournisseur, de modèle personnalisé ni d'édition du catalogue | `src/oxeegen/settings-policy.ts` (`OXEEGEN_MODEL_MENU_EXTRAS`), hooks dans `model-catalog-menu.tsx` et `model-picker.tsx` |

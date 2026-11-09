@@ -183,6 +183,17 @@ export default async ({ page, shot, settle, home }) => {
     await settle(800)
   })
 
+  await test('Kanban is on by default: its sidebar entry opens the board', async () => {
+    await page.evaluate(() => { location.hash = '#/' })
+    await settle(1000)
+    await page.getByText('Kanban', { exact: true }).first().click()
+    await settle(3000)
+    expect((await page.evaluate(() => location.hash)) === '#/kanban', 'Kanban page did not open')
+    expect(await visible('New task'), 'no New task on the board')
+    await page.evaluate(() => { location.hash = '#/' })
+    await settle(1000)
+  })
+
   await test('capabilities and messaging pages open', async () => {
     await page.getByText('Capabilities', { exact: true }).first().click()
     await settle(2000)

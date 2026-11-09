@@ -45,3 +45,17 @@ describe('Oxeegen privacy', () => {
     expect(sharedMetricsOfferPending({ decided: false } as Parameters<typeof sharedMetricsOfferPending>[0])).toBe(false)
   })
 })
+
+describe('Oxeegen desktop plugins', () => {
+  it('Kanban is on until the user switches it off, and an explicit choice wins', async () => {
+    const { $pluginDecisions, pluginActive } = await import('@/contrib/plugins-store')
+
+    $pluginDecisions.set({})
+    expect(pluginActive('kanban', false)).toBe(true)
+    expect(pluginActive('radio', false)).toBe(false)
+
+    $pluginDecisions.set({ kanban: false })
+    expect(pluginActive('kanban', false)).toBe(false)
+    $pluginDecisions.set({})
+  })
+})
