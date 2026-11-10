@@ -90,8 +90,15 @@ Check-Installed 'update' $NewVersion
 
 # 3. Uninstall.
 $uninstaller = Join-Path $installDir 'Uninstall Oxee Hermes.exe'
-Run-Step 'uninstall' $uninstaller @('/S', '/currentuser') | Out-Null
-Start-Sleep -Seconds 10
+# An NSIS uninstaller copies itself to %TEMP% and returns at once: the step ends when the
+# Apps & features entry is gone (or the timeout), not when the first process exits.
+$watch = [Diagnostics.Stopwatch]::StartNew()
+Start-Process -FilePath $uninstaller -ArgumentList @('/S', '/currentuser') -Wait
+while ((Uninstall-Entry) -and $watch.Elapsed.TotalMinutes -lt $StepTimeoutMinutes) { Start-Sleep -Seconds 2 }
+while ((Get-Process | Where-Object { $_.ProcessName -like 'Un_*' -or $_.ProcessName -like 'Au_*' }) -and $watch.Elapsed.TotalMinutes -lt $StepTimeoutMinutes) { Start-Sleep -Seconds 2 }
+Start-Sleep -Seconds 3
+$timings['uninstall'] = [math]::Round($watch.Elapsed.TotalSeconds)
+Write-Host "----  uninstall took $($timings['uninstall']) s"
 Check 'uninstall: Apps & features entry removed' (-not (Uninstall-Entry))
 Check 'uninstall: Start menu entry removed' (-not (Test-Path $startMenuLink))
 Check 'uninstall: Desktop shortcut removed' (-not (Test-Path $desktopLink))
