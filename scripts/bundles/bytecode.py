@@ -12,6 +12,13 @@ stall on first launch. Baking turns that into a warm read:
   source validation and never rewritten, so staging-repack mtimes
   cannot invalidate it and a stale source cannot trigger a rewrite
   into the sealed tree;
+* ``-f``: uv's --compile-bytecode already left timestamp pycs in the
+  venv, which compileall would keep as up to date. Oxee Hermes: forced,
+  every pyc is the unchecked-hash one, identical from build to build
+  (a delta update then carries only the modules that really changed);
+* ``-s <payload> -p agent-payload``: the code objects record their file
+  relative to the payload, not the staging folder of this build (the
+  import system points them at the real file when it loads them);
 * the baked pycs are chmodded read-only BEFORE packaging, so no
   incidental write can touch them; the dirs stay writable because
   in-place rebuilds rmtree the tree, and asserted coverage means no
@@ -85,7 +92,8 @@ def bake_bytecode(root: Path, python: Path) -> dict:
     total = 0
     for source_root in _import_roots(root):
         subprocess.run(
-            [str(python), "-I", "-m", "compileall", "-q",
+            [str(python), "-I", "-m", "compileall", "-q", "-f",
+             "-s", str(root), "-p", "agent-payload",
              "--invalidation-mode", "unchecked-hash", str(source_root)],
             check=True, timeout=30 * 60, stdin=subprocess.DEVNULL)
         missing, _unparseable = _uncovered(source_root)
