@@ -17,14 +17,14 @@ describe('French Bot Mode', () => {
   it('words the roster menus, tooltips and hover texts in French', () => {
     const fr = BOTS_LOCALES.fr as unknown as {
       bot: { pinToTop: string }
-      roster: { newBotOrGroup: string }
-      ui: { newMenu: string; filterRoster: string; duplicating: (name: string) => string }
+      roster: { newBotOrGroup: string; newMenu: string; filter: string }
+      ui: { duplicating: (name: string) => string }
     }
 
     expect(fr.roster.newBotOrGroup).toBe('Nouveau bot ou discussion de groupe')
     expect(fr.bot.pinToTop).toBe('Épingler en haut')
-    expect(fr.ui.newMenu).toBe('Nouveau…')
-    expect(fr.ui.filterRoster).toBe('Filtrer la liste')
+    expect(fr.roster.newMenu).toBe('Nouveau…')
+    expect(fr.roster.filter).toBe('Filtrer la liste')
     expect(fr.ui.duplicating('Ada')).toBe('Duplication de Ada…')
   })
 })

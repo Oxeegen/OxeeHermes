@@ -3,10 +3,15 @@
  */
 
 import { type CanonicalGroupMessages } from './canonical-group-locales'
+import { type CrossGatewayGroupMessages } from './cross-gateway-locales'
+import { type GroupChatMessages } from './group-chat-locales'
 import { type BotsUiMessages } from './i18n-ui'
+import type { RosterChromeMessages } from './roster-chrome-locales'
 
 export type BotsMessages = {
   canonical: { [K in keyof CanonicalGroupMessages]: string }
+  /** Group chats seating bots from more than one connected machine. */
+  crossGateway: { [K in keyof CrossGatewayGroupMessages]: CrossGatewayGroupMessages[K] }
   /** Oxee Hermes: chrome upstream hardcoded in English (i18n-ui.ts). */
   ui: BotsUiMessages
   /** Left rail: the bot + group-chat roster. */
@@ -77,7 +82,7 @@ export type BotsMessages = {
     created: (name: string) => string
     createdOn: (name: string, target: string) => string
   }
-  roster: {
+  roster: { [K in keyof RosterChromeMessages]: RosterChromeMessages[K] } & {
     search: string
     searchPlaceholder: string
     newBotOrGroup: string
@@ -148,6 +153,7 @@ export type BotsMessages = {
     /** Re-opens the forever-chat on purpose. A plain row click only returns to
      *  the tabs already open, so a closed Bot Chat needs an explicit ask. */
     openBotChat: string
+    openBotChatInNewTab: string
     /** Screen-reader label for the row spinner while a cold bot chat opens. */
     openingChat: string
     /** Row context menu: pin/hide toggles, their toasts, and the groups entry. */
@@ -222,7 +228,7 @@ export type BotsMessages = {
     generating: string
   }
   /** Group chats: the room, its composer, threads and activity feed. */
-  group: {
+  group: { [K in keyof GroupChatMessages]: GroupChatMessages[K] } & {
     newTitle: string
     manageDesc: string
     manageTitle: string
@@ -259,18 +265,14 @@ export type BotsMessages = {
     hideActivity: string
     stop: string
     stopHint: string
-    allHeldStatus: (count: number) => string
     heldMembersStatus: (members: string) => string
     holdReleaseHint: string
     needsYourInput: string
     noMembersToSend: (group: string) => string
     pictureGenerationFailed: string
     nameTaken: (name: string) => string
-    memberCount: (count: number) => string
     /** The reader's own lines in a room: the transcript speaker and the roster preview. */
     you: string
-    /** How many of a room's members are reachable right now. */
-    availableCount: (available: number, total: number) => string
     settingsHint: (group: string) => string
     settingsLabel: (group: string) => string
     disbandHint: (group: string) => string
@@ -279,10 +281,6 @@ export type BotsMessages = {
     disbanding: string
     disbandDone: string
     disbanded: (group: string) => string
-    /** Wraps the bolded group name, so the name can lead the sentence in
-     *  languages that put it there — see core's cron.deleteDesc* pair. */
-    disbandDescPrefix: string
-    disbandDescSuffix: (count: number) => string
     stopped: (group: string) => string
     removeAttachment: string
     threadFallback: string
@@ -388,6 +386,7 @@ export type BotsMessages = {
     otherControls: string
     agentControls: string
     controlTaken: string
+    needsHttps: string
   }
 
   /** Bot-scoped scheduled jobs. Generic scheduling chrome (weekday names,

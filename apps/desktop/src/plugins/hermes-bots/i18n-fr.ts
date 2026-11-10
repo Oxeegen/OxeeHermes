@@ -5,11 +5,17 @@
  */
 
 import { CANONICAL_GROUP_LOCALES } from './canonical-group-locales'
+import { CROSS_GATEWAY_GROUP_LOCALES } from './cross-gateway-locales'
+import { GROUP_SURFACE_FR } from './group-surface-fr'
 import { type BotsMessages } from './i18n-messages'
 import { uiFr } from './i18n-ui'
 
+// Upstream translates part of the group surface to French (group-surface-fr.ts, held to its
+// wording tests); this bundle translates the rest of Bot Mode. Each section ends with upstream's
+// keys, so upstream's wording wins where both translate.
 export const fr: BotsMessages = {
   canonical: CANONICAL_GROUP_LOCALES.fr,
+  crossGateway: CROSS_GATEWAY_GROUP_LOCALES.fr,
   ui: uiFr,
   editor: {
     fullConfigHint:
@@ -89,99 +95,13 @@ export const fr: BotsMessages = {
     created: name => `Bot « ${name} » créé`,
     createdOn: (name, target) => `Bot « ${name} » créé sur ${target}`
   },
-  roster: {
-    search: 'Rechercher des bots et des discussions de groupe',
-    searchPlaceholder: 'Rechercher des bots et des discussions de groupe…',
-    newBotOrGroup: 'Nouveau bot ou discussion de groupe',
-    groupChats: 'Discussions de groupe',
-    emptyTitle: 'Aucun bot pour l’instant',
-    emptyDesc: 'Créez votre premier bot.',
-    noMatchQuery: query => `Aucun bot ni discussion de groupe ne correspond à « ${query} »`,
-    noMatchQueryOn: (query, gateway) => `Aucun bot ni discussion de groupe ne correspond à « ${query} » sur ${gateway}`,
-    noMatchFiltersOn: gateway => `Aucun bot ni discussion de groupe ne correspond à ces filtres sur ${gateway}`,
-    noMatchFilters: 'Aucun bot ni discussion de groupe ne correspond à ces filtres.',
-    clearFilters: 'Effacer les filtres',
-    allHidden: 'Tous les bots sont masqués',
-    allHiddenDesc: 'Ils continuent de fonctionner et gardent leur historique.',
-    showHidden: 'Afficher les bots masqués',
-    noHiddenMatch: 'Aucun bot masqué ne correspond à ces filtres.',
-    hiddenFromRoster: 'Masqué de la liste',
-    pinned: 'Épinglés',
-    needsAttention: 'demande votre attention',
-    needsInput: 'Attend votre réponse',
-    botsAndGroups: 'Bots et discussions de groupe',
-    botsOnly: 'Bots uniquement',
-    groupsOnly: 'Discussions de groupe uniquement',
-    anyActivity: 'Toute activité',
-    activeNow: 'Actif maintenant',
-    recentlyActive: 'Actif récemment',
-    older: 'Plus ancien',
-    gatewayRemoved: 'Passerelle supprimée',
-    onDemand: 'À la demande',
-    ready: 'Prêt',
-    statusUnknown: 'État inconnu',
-    unavailable: 'Indisponible',
-    retryNow: 'Réessayer maintenant',
-    rosterUnavailable: reason =>
-      `Liste indisponible : ${reason}. Si votre passerelle est antérieure à profiles.list, mettez à jour Oxee Hermes et redémarrez la passerelle.`,
-    waitingForGateway:
-      'En attente de la connexion à la passerelle… (une passerelle distante peut prendre quelques secondes ; nouvel essai automatique)'
-  },
-  sections: {
-    newSection: 'Nouvelle section',
-    newTitle: 'Nouvelle section',
-    renameTitle: 'Renommer la section',
-    nameLabel: 'Nom de la section',
-    namePlaceholder: 'ex. Clients',
-    create: 'Créer',
-    rename: 'Renommer…',
-    moveUp: 'Monter',
-    moveDown: 'Descendre',
-    unassigned: 'Sans section',
-    options: name => `Options de la section ${name}`,
-    headingTip: 'Déposez des bots ici · double-cliquez pour renommer',
-    emptyHint: 'Faites glisser des bots ici',
-    moveTo: 'Déplacer vers la section',
-    newSectionEllipsis: 'Nouvelle section…',
-    removeFromSection: 'Retirer de la section',
-    deleted: (name, count) =>
-      count === 0
-        ? `« ${name} » supprimée`
-        : `« ${name} » supprimée — ${count} ${count === 1 ? 'bot déplacé' : 'bots déplacés'} vers Sans section`,
-    undo: 'Annuler'
-  },
+  roster: GROUP_SURFACE_FR.roster,
+  sections: GROUP_SURFACE_FR.sections,
   bot: {
-    newTitle: 'Nouveau bot',
     editTitle: 'Modifier le profil',
-    editMenu: 'Modifier…',
     helpPromptPlaceholder: 'Pour quoi ce bot doit-il vous aider ?',
     descriptionHint: 'Laissez vide pour la générer à partir du nom et de la description du bot.',
-    newChatWith: 'Nouvelle discussion avec ce bot',
-    openBotChat: 'Ouvrir la discussion du bot',
-    openingChat: 'Ouverture de la discussion…',
-    pinToTop: 'Épingler en haut',
-    unpin: 'Désépingler',
-    pinnedToast: name => `${name} épinglé en haut`,
-    unpinnedToast: name => `${name} désépinglé`,
-    hide: 'Masquer',
-    unhide: 'Afficher',
-    hiddenToast: name => `${name} masqué — le bouton en forme d’œil, en haut de Bots, affiche les bots masqués`,
-    unhiddenToast: name => `${name} est de retour dans la liste`,
-    groupsMenu: groups => `Groupes : ${groups}…`,
-    manageGroups: 'Gérer les groupes…',
-    metadataLoadFailed: 'Impossible de charger les informations du bot',
-    loadFailed: 'Impossible de charger le bot',
-    groupsLoadFailed: 'Impossible de charger les groupes du bot',
-    thisDevice: 'Cet appareil',
-    attentionFallback: 'Demande votre attention',
-    attentionProviderAuth: 'Reconnectez-vous pour ce profil',
-    attentionQuota: 'Quota ou crédit épuisé',
-    attentionMissingConfig: 'Fournisseur non configuré — lancez hermes model',
-    attentionBlocked: 'Le bot est bloqué — voir son dernier message',
-    duplicate: 'Dupliquer',
-    duplicateFailed: 'La duplication a échoué',
     deleteTitle: 'Supprimer le bot et son profil ?',
-    removeFromAllGroups: 'Retirer de tous les groupes',
     createFirstHint: 'Ouvrez le panneau Bots et cliquez sur « Nouveau bot ».',
     createFailed: 'Impossible de créer le profil pour l’instant',
     advanced: 'Avancé',
@@ -197,7 +117,8 @@ export const fr: BotsMessages = {
     openChatFailedMessage: 'Réessayez.',
     openGateways: 'Ouvrir les passerelles',
     chatEmpty: 'Écrivez quelque chose pour commencer.',
-    kickoff: 'Bonjour, présente-toi !'
+    kickoff: 'Bonjour, présente-toi !',
+    ...GROUP_SURFACE_FR.bot
   },
   avatar: {
     classicShapes: 'Formes classiques',
@@ -206,7 +127,6 @@ export const fr: BotsMessages = {
     randomize: 'Au hasard',
     tabBot: 'Bot',
     tabGenerate: 'Générer',
-    upload: 'Importer',
     tabPet: 'Animal',
     removeImage: 'Retirer l’image — utiliser une forme',
     removeBackToShape: 'Retirer — revenir à l’avatar en forme',
@@ -220,88 +140,10 @@ export const fr: BotsMessages = {
     generationFailed: 'La génération de l’avatar a échoué',
     savedLocally: 'Apparence enregistrée en local ; l’enregistrement distant a échoué',
     savedLocallyDescriptionFailed: 'Apparence enregistrée en local ; la mise à jour de la description a échoué',
-    generate: 'Générer',
-    generating: 'Génération…'
+    ...GROUP_SURFACE_FR.avatar
   },
   group: {
-    newTitle: 'Nouvelle discussion de groupe',
-    manageDesc: 'Un bot peut rejoindre plusieurs discussions de groupe. Les participations sont synchronisées sur chaque machine.',
-    manageTitle: 'Gérer les groupes',
-    settingsTitle: 'Réglages du groupe',
-    settingsDesc: 'Renommez le groupe ou choisissez une image de salon. Les membres et l’historique sont conservés.',
-    nameLabel: 'Nom du groupe',
-    holdDetection: 'Détecter les consignes d’arrêt',
-    holdDetectionHint: 'Les messages du salon peuvent mettre en pause les membres visés, jusqu’à leur prochaine mention.',
-    compressHistory: 'Compresser l’historique',
-    compressHistoryHint: (member: string) =>
-      `Compresser l’historique caché du salon de ${member}, pour qu’il cesse de répondre à vide`,
-    compressing: (member: string) => `Compression de l’historique du salon de ${member}…`,
-    compressDone: (member: string, compressed: number, detail: string) =>
-      `${compressed} ${compressed === 1 ? 'session de salon compressée' : 'sessions de salon compressées'} pour ${member}${detail ? ` — ${detail}` : ''}`,
-    compressNothing: (member: string) => `Rien à compresser pour ${member} : pas encore de session de salon`,
-    compressFailed: (member: string, error: string) => `Impossible de compresser l’historique du salon de ${member} : ${error}`,
-    searchToAdd: 'Rechercher des bots à ajouter',
-    searchToAddPlaceholder: 'Rechercher des bots à ajouter…',
-    removeFromSelection: 'Retirer de la sélection',
-    disbandTitle: 'Dissoudre la discussion de groupe ?',
-    deleteTitle: 'Supprimer la discussion de groupe ?',
-    deleteAction: 'Supprimer',
-    composerPlaceholder: 'Écrivez quelque chose : tous les bots du groupe entendent le salon.',
-    slashCommandsUnsupported:
-      'Les commandes / ne sont pas disponibles dans les discussions de groupe. Ouvrez la discussion d’un bot pour les utiliser.',
-    attachHint: 'Joindre des fichiers : chaque bot qui répond les voit',
-    newThread: 'Nouveau fil',
-    reply: 'Répondre',
-    replyInThread: 'Répondre dans le fil',
-    replyInThreadPlaceholder: 'Répondre dans le fil…',
-    openThread: 'Ouvrir ce fil',
-    collapseThread: 'Replier le fil',
-    collapseThreadLabel: 'Replier ce fil',
-    activity: 'Activité',
-    noActivityYet: 'Pas encore d’activité dans ce tour.',
-    showActivity: 'Afficher l’activité du salon',
-    hideActivity: 'Masquer l’activité du salon',
-    stop: 'Arrêter',
-    stopHint: 'Arrêter ce tour : interrompt le membre qui parle et met les autres en pause',
-    allHeldStatus: count => `Les ${count} bots sont en pause`,
-    heldMembersStatus: members => `En pause : ${members}`,
-    holdReleaseHint: 'Mentionnez un bot en pause, ou envoyez @all resume pour tous les relancer.',
-    needsYourInput: 'Un bot de cette discussion de groupe attend votre réponse',
-    noMembersToSend: group =>
-      `${group} n’a aucun membre à qui écrire : ajoutez un bot, ou rouvrez le salon si les membres sont encore en chargement.`,
-    pictureGenerationFailed: 'La génération de l’image du groupe a échoué',
-    nameTaken: name => `Un groupe nommé « ${name} » existe déjà.`,
-    memberCount: count => `${count} bots`,
-    you: 'Vous',
-    availableCount: (available, total) => `${available} sur ${total} disponibles`,
-    settingsHint: group => `Réglages du groupe : renommer ${group} ou choisir une image de salon`,
-    settingsLabel: group => `Réglages du groupe ${group}`,
-    disbandHint: group => `Dissoudre la discussion de groupe ${group}`,
-    disbandLabel: group => `Dissoudre ${group}`,
-    disbandAction: 'Dissoudre',
-    disbanding: 'Dissolution…',
-    disbandDone: 'Dissous',
-    disbanded: group => `« ${group} » dissous`,
-    disbandDescPrefix: 'Cette action retire le groupe ',
-    disbandDescSuffix: count =>
-      ` de ses ${count} bots et efface le journal partagé du salon. Les bots eux-mêmes et leurs sessions de groupe sont conservés.`,
-    stopped: group => `${group} arrêté : les tours restants sont en pause jusqu’à votre reprise`,
-    removeAttachment: 'Retirer la pièce jointe',
-    threadFallback: 'Fil',
-    replyCount: replies => `${replies} ${replies === 1 ? 'réponse' : 'réponses'}`,
-    dropToThread: 'Déposez pour joindre à cette réponse du fil',
-    dropToRoom: 'Déposez pour joindre : chaque bot qui répond le voit',
-    waitingForAnswer: 'En attente de votre réponse…',
-    memberThinking: name => `${name} réfléchit…`,
-    roomWorking: 'Le salon travaille…',
-    messageRoom: group => `Écrire à ${group}`,
-    newThreadPlaceholder: group => `Nouveau fil dans ${group}… (@nom pour un bot, @everyone pour tous)`,
-    everyoneMeta: 'Tous les bots du salon',
-    commandApproval: 'validation de commande',
-    answerFailed: (handle, error) => `Impossible d’envoyer la réponse à @${handle} : ${error}`,
-    wantsToRunCommand: handle => `@${handle} veut lancer une commande :`,
-    asks: handle => `@${handle} demande :`,
-    answerTo: member => `Répondre à @${member}`
+    ...GROUP_SURFACE_FR.group
   },
   tools: {
     installHint: name => `Installer « ${name} » et l’ajouter à la liste ci-dessus`,
@@ -331,7 +173,6 @@ export const fr: BotsMessages = {
   },
   screen: {
     title: 'Écran',
-    menu: 'Ouvrir l’écran',
     unsupportedTitle: 'Pas d’écran de bot sur cet hôte',
     unsupportedBody: 'Les écrans de bot tournent sur les hôtes de passerelle Linux. Ce bot utilise l’affichage de l’hôte.',
     notInstalledTitle: 'Paquets d’écran manquants',
@@ -366,9 +207,6 @@ export const fr: BotsMessages = {
     managedNotIncludedBody:
       'Oxee Hermes Cloud inclut l’écran sur les bots dotés de 8 Go de mémoire ou plus. Il ne peut pas être installé sur un bot plus petit.',
     unavailableTitle: 'L’écran nécessite un Oxee Hermes plus récent',
-    autoOpenMenu: 'Ouvrir l’écran quand le bot l’utilise',
-    autoOpenOnToast: name => `L’écran de ${name} s’ouvre quand il commence à utiliser son bureau`,
-    autoOpenOffToast: name => `L’écran de ${name} reste fermé jusqu’à ce que vous l’ouvriez`,
     stoppedTitle: 'L’écran est éteint',
     stoppedBody: 'Démarrez le bureau de ce bot pour suivre ce qu’il fait, et prendre la main quand il a besoin de vous.',
     placementSandbox: backend => `L’écran tourne dans le bac à sable ${backend}, avec le terminal`,
@@ -389,7 +227,10 @@ export const fr: BotsMessages = {
     youControl: 'Vous avez la main',
     otherControls: 'Un autre spectateur a la main',
     agentControls: 'Le bot a la main',
-    controlTaken: 'Un autre spectateur a pris la main. Lecture seule.'
+    controlTaken: 'Un autre spectateur a pris la main. Lecture seule.',
+    needsHttps:
+      'Les écrans des bots nécessitent une connexion sécurisée. Ouvrez la Webapp en HTTPS, ou via un tunnel SSH vers 127.0.0.1, pour afficher celui-ci.',
+    ...GROUP_SURFACE_FR.screen
   },
   cron: {
     untitled: 'Tâche sans titre',

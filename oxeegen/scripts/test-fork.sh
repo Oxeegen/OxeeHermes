@@ -62,6 +62,8 @@ DESKTOP_TESTS=(
   src/i18n/overlay-completeness.test.ts
   scripts/i18n-keys.test.mjs
   src/components/chat/intro.test.tsx
+  src/plugins/hermes-bots/group-transcript-speaker.test.ts
+  src/plugins/hermes-bots/i18n-fr.test.ts
 )
 
 echo "== Python (Oxeegen)"
