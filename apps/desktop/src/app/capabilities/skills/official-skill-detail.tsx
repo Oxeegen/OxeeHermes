@@ -6,6 +6,7 @@ import { CountSkeleton } from '@/components/ui/skeleton'
 import { previewSkillHub, type ProfileScope, profileScopeKey } from '@/hermes'
 import { useI18n } from '@/i18n'
 import { Loader2 } from '@/lib/icons'
+import { useOxeeDescription } from '@/oxeegen/descriptions'
 import type { OfficialSkillInfo } from '@/types/hermes'
 
 import { PanelPill } from '../../overlays/panel'
@@ -27,6 +28,7 @@ export function OfficialSkillDetail({
   skill: OfficialSkillInfo
 }) {
   const { t } = useI18n()
+  const describe = useOxeeDescription()
 
   const previewQuery = useQuery({
     queryKey: ['official-skill-preview', skill.identifier, profileScopeKey(profile)],
@@ -43,7 +45,7 @@ export function OfficialSkillDetail({
   return (
     <>
       <DetailHeader
-        description={asText(skill.description) || t.skills.noDescription}
+        description={describe(asText(skill.description)) || t.skills.noDescription}
         pills={
           <>
             <PanelPill>{prettyName(skill.category)}</PanelPill>

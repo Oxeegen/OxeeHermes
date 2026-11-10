@@ -10,6 +10,7 @@ import { RowButton } from '@/components/ui/row-button'
 import { useI18n } from '@/i18n'
 import { ExternalLink } from '@/lib/external-link'
 import { cn } from '@/lib/utils'
+import { OxeeDescription } from '@/oxeegen/descriptions'
 
 import { catalogIcon, CatalogImage } from './catalog-card'
 import { type CatalogEntry, type CatalogKind, catalogLabel } from './catalog-data'
@@ -105,11 +106,11 @@ export function CatalogDetail({
       <CatalogDetailHeader action={action} dialog={dialog} entry={entry} />
 
       <p className="whitespace-pre-wrap break-words text-[length:var(--conversation-caption-font-size)] leading-relaxed text-(--ui-text-secondary)">
-        {entry.description}
+        <OxeeDescription text={entry.description} />
       </p>
       {entry.overview && entry.overview !== entry.description && (
         <p className="whitespace-pre-wrap break-words text-[length:var(--conversation-caption-font-size)] leading-relaxed text-(--ui-text-tertiary)">
-          {entry.overview}
+          <OxeeDescription text={entry.overview} />
         </p>
       )}
 

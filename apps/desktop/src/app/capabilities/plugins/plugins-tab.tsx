@@ -20,6 +20,7 @@ import { CheckCircle2, FolderOpen, Loader2, Monitor, Package, RefreshCw } from '
 import { isBrowserHostedDesktop } from '@/lib/platform'
 import { queryClient } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
+import { OxeeDescription } from '@/oxeegen/descriptions'
 import { removeDesktopPluginHalf } from '@/store/agent-plugins'
 import {
   $agentPluginBusy,
@@ -403,7 +404,7 @@ function PackageRow({
                   desktop?.status === 'error' ? 'text-(--ui-danger,#f87171)' : 'text-(--ui-text-tertiary)'
                 )}
               >
-                {desktop?.status === 'error' ? desktop.error : pkg.description}
+                {desktop?.status === 'error' ? desktop.error : <OxeeDescription text={pkg.description} />}
               </div>
             )}
             <PluginPageAccess plugin={desktop} pluginName={pkg.name} />

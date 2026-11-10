@@ -24,6 +24,7 @@ import {
 } from '@/contrib/settings-pages'
 import { useI18n } from '@/i18n'
 import type { IconComponent } from '@/lib/icons'
+import { OxeeDescription } from '@/oxeegen/descriptions'
 import {
   $agentPluginBusy,
   $agentPlugins,
@@ -357,7 +358,7 @@ function PluginSchemaSettingsPage({ agentKey, owner }: { agentKey: string; owner
         disabled={busy}
         fields={row.settings_schema}
         idPrefix={`plugin-settings-${agentKey}`}
-        intro={row.description ? <p className={BLURB_CLASS}>{row.description}</p> : undefined}
+        intro={row.description ? <p className={BLURB_CLASS}><OxeeDescription text={row.description} /></p> : undefined}
         onSave={async changes => {
           // Belt and braces: the key remount already discards a draft when
           // the scope moves, but a submit must never write a profile other

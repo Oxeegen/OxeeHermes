@@ -76,9 +76,20 @@ git checkout oxeegen && git merge main            # résoudre les hooks ci-dessu
 # puis mettre à jour upstream_version dans plugins/model-providers/oxeegen/oxeegen.json (ex. 0.23.0)
 node oxeegen/scripts/rebrand-source.mts           # nouvelles chaînes « Hermes »
 node oxeegen/scripts/apply-desktop-assets.cjs     # icônes écrasées par l'upstream
+python oxeegen/scripts/descriptions.py --lang fr pending --out pending.json  # skills/plugins à traduire (voir ci-dessous)
 oxeegen/scripts/test-fork.sh --full               # doit finir par « ✓ Oxeegen fork tests passed »
 oxeegen/scripts/functional/run.sh --rebuild       # doit finir par « ✓ Oxee Hermes functional tests passed »
 ```
+
+**Descriptions de skills et plugins en français** : l'upstream les affiche telles que leurs auteurs les
+ont écrites, en anglais. `apps/desktop/src/oxeegen/descriptions/fr/` les traduit (16 fichiers chargés à la demande), indexées par une
+empreinte du texte anglais (`src/oxeegen/descriptions.tsx`) : une description réécrite repasse en anglais
+au lieu d'afficher une traduction périmée. Couverture : skills et plugins livrés dans l'app, skills
+du catalogue sauf les annuaires communautaires ClawHub et skills.sh (~100 000, restent en anglais), tous
+les plugins du catalogue. Après une fusion upstream, et avant chaque release pour les nouveaux plugins du
+catalogue : `pending` liste les textes manquants en `[{key, en}]`, les traduire en fichiers
+`{"<key>": "<traduction>"}`, puis `python oxeegen/scripts/descriptions.py --lang fr merge <fichiers>`
+(depuis un shell activé). `test_oxeegen_descriptions.py` échoue tant qu'un skill ou plugin livré n'est pas traduit.
 
 Pour refaire le codemod à partir de zéro (après avoir changé la règle) : sauvegarder le diff des
 fichiers « hooks » ci-dessus, `git checkout -- apps/desktop/src apps/desktop/electron apps/shared/src

@@ -4,6 +4,7 @@ import { type CSSProperties, type ReactNode, useState } from 'react'
 
 import { RowButton } from '@/components/ui/row-button'
 import { cn } from '@/lib/utils'
+import { OxeeDescription } from '@/oxeegen/descriptions'
 
 import { type CatalogEntry, catalogLabel } from './catalog-data'
 import { CatalogDates, CatalogHeaderMeta, CatalogMetadata, CatalogRating } from './catalog-metadata'
@@ -137,7 +138,7 @@ export function CatalogCard({ entry, action, accentIndex, onOpen, onCategory, on
             <CatalogRating entry={entry} />
           </span>}
           <span className="catalog-card-description line-clamp-4 min-h-0 text-[length:var(--conversation-caption-font-size)] leading-relaxed text-(--ui-text-secondary)">
-            {entry.description}
+            <OxeeDescription text={entry.description} />
           </span>
         </div>
       </div>

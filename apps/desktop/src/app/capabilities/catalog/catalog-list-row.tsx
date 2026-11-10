@@ -3,6 +3,7 @@ import { RowButton } from '@/components/ui/row-button'
 import { useI18n } from '@/i18n'
 import { Lock } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { OxeeDescription } from '@/oxeegen/descriptions'
 
 import { type CatalogEntry, type CatalogKind, catalogLabel } from './catalog-data'
 import { CatalogHeaderMeta, CatalogMetadata } from './catalog-metadata'
@@ -66,7 +67,7 @@ export function CatalogListRow({
           )}
         </span>
         <span className="mt-1 line-clamp-2 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
-          {entry.description}
+          <OxeeDescription text={entry.description} />
         </span>
         <span className="pointer-events-auto relative mt-2 block">
           <CatalogMetadata entry={entry} limit={2} onCategory={onCategory} onSearch={onSearch} onTag={onTag} />
