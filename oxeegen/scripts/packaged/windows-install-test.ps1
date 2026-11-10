@@ -1,0 +1,107 @@
+<#
+.SYNOPSIS
+  Install, update and uninstall test of the Oxee Hermes setup.exe, on a clean Windows machine.
+
+.DESCRIPTION
+  Runs the way an end user's machine lives it, with the per-user ("only for me") install:
+    1. installs the previous release (-PreviousSetup), as electron-updater would find it;
+    2. updates it with the new setup (-NewSetup) using the arguments electron-updater passes
+       (--updated --force-run, plus /S because a CI session has no one to watch the progress);
+    3. uninstalls it.
+  After each step it checks what the user sees: the Apps & features version, the Start menu and
+  Desktop shortcuts, the extracted payload (no agent-payload.tar left behind), the oxee-hermes
+  command, and it prints how long each step took. Any failed check fails the script.
+
+  Run it only on a disposable machine (CI runner): it installs into and removes the real
+  per-user location.
+
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File oxeegen\scripts\packaged\windows-install-test.ps1 `
+    -PreviousSetup dist\previous\OxeeHermesBundled-Setup-0.8.2-x64.exe `
+    -NewSetup dist\windows\OxeeHermesBundled-Setup-0.8.3-x64.exe -NewVersion 0.8.3
+#>
+param(
+  [Parameter(Mandatory = $true)][string]$PreviousSetup,
+  [Parameter(Mandatory = $true)][string]$NewSetup,
+  [Parameter(Mandatory = $true)][string]$NewVersion,
+  [int]$StepTimeoutMinutes = 30
+)
+$ErrorActionPreference = 'Stop'
+$failures = New-Object System.Collections.Generic.List[string]
+$timings = [ordered]@{}
+
+$installDir = Join-Path $env:LOCALAPPDATA 'Programs\Oxee Hermes'
+$startMenuLink = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Oxee Hermes.lnk'
+$desktopLink = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Oxee Hermes.lnk'
+
+function Check([string]$name, [bool]$ok, [string]$detail = '') {
+  if ($ok) { Write-Host "PASS  $name" } else { Write-Host "FAIL  $name $detail"; $failures.Add("$name $detail") }
+}
+
+function Uninstall-Entry {
+  Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' -ErrorAction SilentlyContinue |
+    ForEach-Object { Get-ItemProperty $_.PSPath } | Where-Object { $_.DisplayName -eq 'Oxee Hermes' } | Select-Object -First 1
+}
+
+function Run-Step([string]$name, [string]$file, [string[]]$arguments) {
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  $process = Start-Process -FilePath $file -ArgumentList $arguments -PassThru
+  if (-not $process.WaitForExit($StepTimeoutMinutes * 60 * 1000)) {
+    $process | Stop-Process -Force
+    throw "$name did not finish within $StepTimeoutMinutes minutes"
+  }
+  # An update relaunches the app; the installer may hand over to child processes first.
+  Start-Sleep -Seconds 5
+  $timings[$name] = [math]::Round($watch.Elapsed.TotalSeconds)
+  Write-Host "----  $name took $($timings[$name]) s (exit $($process.ExitCode))"
+  return $process.ExitCode
+}
+
+function Stop-App {
+  Get-Process | Where-Object { $_.Path -like "$installDir\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+  Start-Sleep -Seconds 3
+}
+
+function Check-Installed([string]$step, [string]$version) {
+  $entry = Uninstall-Entry
+  Check "${step}: Apps & features lists Oxee Hermes $version" ($entry -and $entry.DisplayVersion -eq $version) "(found '$($entry.DisplayVersion)')"
+  Check "${step}: Start menu entry" (Test-Path $startMenuLink)
+  Check "${step}: Desktop shortcut" (Test-Path $desktopLink)
+  Check "${step}: app executable" (Test-Path (Join-Path $installDir 'Oxee Hermes.exe'))
+  Check "${step}: payload extracted" (Test-Path (Join-Path $installDir 'resources\agent-payload\manifest.json'))
+  Check "${step}: no payload archive left behind" (-not (Test-Path (Join-Path $installDir 'resources\agent-payload.tar')))
+  $count = (Get-ChildItem $installDir -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object).Count
+  Write-Host "      $count files installed"
+  $cli = Join-Path $installDir 'cli\oxee-hermes.cmd'
+  Check "${step}: oxee-hermes command shim" (Test-Path $cli)
+}
+
+# 1. First install of the previous release, "only for me".
+Run-Step 'install previous release' $PreviousSetup @('/S', '/currentuser') | Out-Null
+Stop-App
+$previous = (Uninstall-Entry).DisplayVersion
+Check-Installed 'install' $previous
+
+# 2. Update to the new build, with electron-updater's arguments.
+Run-Step 'update to the new build' $NewSetup @('--updated', '--force-run', '/S') | Out-Null
+Check 'update: the app was relaunched' ([bool](Get-Process | Where-Object { $_.Path -like "$installDir\Oxee Hermes.exe" }))
+Stop-App
+Check-Installed 'update' $NewVersion
+
+# 3. Uninstall.
+$uninstaller = Join-Path $installDir 'Uninstall Oxee Hermes.exe'
+Run-Step 'uninstall' $uninstaller @('/S', '/currentuser') | Out-Null
+Start-Sleep -Seconds 10
+Check 'uninstall: Apps & features entry removed' (-not (Uninstall-Entry))
+Check 'uninstall: Start menu entry removed' (-not (Test-Path $startMenuLink))
+Check 'uninstall: Desktop shortcut removed' (-not (Test-Path $desktopLink))
+Check 'uninstall: install folder removed' (-not (Test-Path (Join-Path $installDir 'resources')))
+
+Write-Host ''
+Write-Host '=== TIMINGS ==='
+$timings.GetEnumerator() | ForEach-Object { Write-Host ("{0,-28} {1,5} s" -f $_.Key, $_.Value) }
+if ($failures.Count) {
+  Write-Host "=== $($failures.Count) check(s) failed ==="
+  exit 1
+}
+Write-Host '=== install, update and uninstall checks passed ==='

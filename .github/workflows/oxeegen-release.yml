@@ -8,6 +8,9 @@
 # apps only see published releases. The upstream workflows of this fork are disabled on GitHub
 # (oxeegen/scripts/github-workflows.sh); this one is the only one that runs.
 #
+# The setup.exe is installed, updated from the latest published release and uninstalled on a clean
+# runner (oxeegen/scripts/packaged/windows-install-test.ps1) before any draft is created.
+#
 # Unsigned for now: Windows SmartScreen warns, and the macOS app is not notarized (Gatekeeper
 # warns, and macOS refuses to install its updates in place until it is signed).
 name: Oxee Hermes release
@@ -69,6 +72,35 @@ jobs:
             apps/desktop/release/OxeeHermesBundled-Setup-*-x64.exe.blockmap
             apps/desktop/release/latest.yml
 
+  windows-install-test:
+    name: Windows install, update and uninstall
+    needs: [windows]
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows
+          path: dist/windows
+
+      # The update starts from what users run today: the latest published release.
+      - name: Download the latest published release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download --repo "$GITHUB_REPOSITORY" --pattern 'OxeeHermesBundled-Setup-*-x64.exe' --dir dist/previous
+
+      - name: Install, update and uninstall
+        shell: powershell
+        run: |
+          $version = $env:VERSION -replace '^v', ''
+          $previous = (Get-ChildItem dist\previous\*.exe | Select-Object -First 1).FullName
+          $new = (Get-ChildItem dist\windows\OxeeHermesBundled-Setup-*-x64.exe | Select-Object -First 1).FullName
+          & oxeegen\scripts\packaged\windows-install-test.ps1 -PreviousSetup $previous -NewSetup $new -NewVersion $version
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
   macos:
     name: macOS app
     runs-on: macos-15
@@ -113,9 +145,9 @@ jobs:
 
   release:
     name: Draft GitHub release
-    needs: [windows, macos]
+    needs: [windows, windows-install-test, macos]
     # A macOS failure must not hold back Windows: the draft says which platforms it carries.
-    if: ${{ !cancelled() && needs.windows.result == 'success' && startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ !cancelled() && needs.windows.result == 'success' && needs.windows-install-test.result == 'success' && startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
