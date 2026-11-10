@@ -39,6 +39,10 @@ DESKTOP_TESTS=(
   src/oxeegen
   electron/oxeegen-fork.test.ts
   electron/oxeegen-upstream-hooks.test.ts
+  # setup.exe updates: GitHub feed, delta update, swap.
+  electron/updater/nsis-client.test.ts
+  electron/updater/oxeegen-delta.test.ts
+  electron/updater/oxeegen-delta-client.test.ts
   # Upstream tests adjusted for Oxeegen behaviour (identity, stamps, theme, voice, onboarding).
   electron/product-identity.test.ts
   scripts/commit-stamp-identity.test.mjs

@@ -47,7 +47,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/plugins/hermes-bots/roster-pane-toolbar.tsx', needs: ['botsText().ui.newMenu', 'botsText().ui.filterRoster'], why: 'Bots toolbar tooltips translated' },
   { file: 'apps/desktop/src/components/update-status.tsx', needs: ['oxeegenUpdateErrorLine(status, locale)'], why: 'feed failures worded, never the raw response' },
   { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ["env.HERMES_DESKTOP_PACKAGE === 'nsis' ? 'electron-updater'"], why: 'release setup.exe stamped electron-updater' },
-  { file: 'apps/desktop/electron-builder.config.cjs', needs: ["? [{ provider: 'github', owner, repo, channel }]", 'differentialPackage: Boolean(channel)'], why: 'GitHub Releases feed (mac + setup.exe blockmap)' },
+  { file: 'apps/desktop/electron-builder.config.cjs', needs: ["? [{ provider: 'github', owner, repo, channel }]", 'differentialPackage: Boolean(channel)', "{ from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' }"], why: 'GitHub Releases feed (mac + setup.exe blockmap), delta swap script' },
   { file: 'scripts/bundles/desktop.py', needs: ['env["HERMES_DESKTOP_PACKAGE"] = "nsis"'], why: 'NSIS release builds reach the stamp' },
   { file: 'apps/desktop/src/components/brand-mark.tsx', needs: ['oxeegen-icon-dark.svg', 'oxeegen-icon.svg'], why: 'in-app logo' },
   { file: 'apps/desktop/src/themes/presets.ts', needs: ['createOxeegenTheme(monoTheme,'], why: "Oxeegen theme is Fred's Mono retint" },

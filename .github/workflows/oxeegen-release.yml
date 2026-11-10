@@ -63,6 +63,26 @@ jobs:
           & scripts\build-bundle.ps1 -Nsis -Version $version
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
+      # Delta updates (only the changed files) from each of the last published releases: a user
+      # who skipped up to DELTA_RELEASES releases still updates in seconds.
+      - name: Download the last published releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DELTA_RELEASES: 3
+        run: |
+          for tag in $(gh release list --repo "$GITHUB_REPOSITORY" --exclude-drafts --exclude-pre-releases \
+              --limit "$DELTA_RELEASES" --json tagName --jq '.[].tagName'); do
+            gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern 'OxeeHermesBundled-Setup-*-x64.exe' --dir "dist/previous/$tag"
+          done
+
+      - name: Build the delta updates
+        shell: powershell
+        run: |
+          $version = $env:VERSION -replace '^v', ''
+          node oxeegen\scripts\packaged\build-deltas.mjs --app-dir apps\desktop\release\win-unpacked --previous dist\previous --version $version --out apps\desktop\release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: windows
@@ -70,6 +90,7 @@ jobs:
           path: |
             apps/desktop/release/OxeeHermesBundled-Setup-*-x64.exe
             apps/desktop/release/OxeeHermesBundled-Setup-*-x64.exe.blockmap
+            apps/desktop/release/OxeeHermesBundled-Delta-*
             apps/desktop/release/latest.yml
 
   windows-install-test:
@@ -98,7 +119,11 @@ jobs:
           $version = $env:VERSION -replace '^v', ''
           $previous = (Get-ChildItem dist\previous\*.exe | Select-Object -First 1).FullName
           $new = (Get-ChildItem dist\windows\OxeeHermesBundled-Setup-*-x64.exe | Select-Object -First 1).FullName
-          & oxeegen\scripts\packaged\windows-install-test.ps1 -PreviousSetup $previous -NewSetup $new -NewVersion $version
+          $from = [regex]::Match($previous, '-Setup-([^-]+)-x64\.exe$').Groups[1].Value
+          $plan = Get-ChildItem "dist\windows\OxeeHermesBundled-Delta-$from-to-$version-x64.json" -ErrorAction SilentlyContinue
+          if (-not $plan) { throw "no delta from $from to $version" }
+          & oxeegen\scripts\packaged\windows-install-test.ps1 -PreviousSetup $previous -NewSetup $new -NewVersion $version `
+            -DeltaPlan $plan.FullName -DeltaPack ($plan.FullName -replace '\.json$', '.tar.gz')
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
   macos:

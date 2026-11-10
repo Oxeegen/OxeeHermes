@@ -25,7 +25,10 @@ vi.mock('electron-updater', () => ({
   }
 }))
 
+vi.mock('./oxeegen-delta-electron', () => ({ createDeltaClient: () => null }))
+
 import { createNsisStrategy, NSIS_FEED_DIRECTORY } from './nsis-client'
+import type { DeltaClient } from './oxeegen-delta-client'
 
 afterEach((): void => {
   vi.clearAllMocks()
@@ -93,6 +96,7 @@ describe('Windows setup.exe updater', () => {
     const raw = Object.assign(new Error('404 "method: GET url: https://github.com/Oxeegen/OxeeHermes/releases.atom" Headers: { "set-cookie": "_gh_sess=secret" }'), {
       statusCode: 404
     })
+
     client.checkForUpdates.mockRejectedValueOnce(raw)
     const d = deps()
 
@@ -109,5 +113,51 @@ describe('Windows setup.exe updater', () => {
     await expect(createNsisStrategy(deps()).check()).resolves.toMatchObject({ error: 'feed-unreachable' })
     await expect(createNsisStrategy(deps()).apply()).rejects.toThrow('could not be reached')
     expect(client.quitAndInstall).not.toHaveBeenCalled()
+  })
+
+  describe('with a delta from this version', () => {
+    const setup = 'OxeeHermesBundled-Setup-1.3.0-x64.exe'
+    const info = { version: '1.3.0', files: [{ url: setup, sha512: '' }], path: setup, sha512: '', releaseDate: '' }
+
+    function fakeDelta(staged: boolean): DeltaClient & { prepare: ReturnType<typeof vi.fn>; swapAndQuit: ReturnType<typeof vi.fn> } {
+      return {
+        cleanLeftovers: vi.fn(async () => undefined),
+        prepare: vi.fn(async (_version: string, _setup: string, onProgress: (percent: number) => void, onStaging: () => void) => {
+          onProgress(50)
+          onStaging()
+
+          return staged ? { plan: { to: '1.3.0' }, stagingDir: 'C:/Programs/Oxee Hermes.oxee-update' } : null
+        }),
+        swapAndQuit: vi.fn()
+      } as never
+    }
+
+    it('downloads only the delta, prepares it, then swaps it in instead of running the setup', async () => {
+      client.checkForUpdates.mockResolvedValue({ isUpdateAvailable: true, updateInfo: info, versionInfo: info })
+      const d = deps()
+      const delta = fakeDelta(true)
+
+      const result = await createNsisStrategy(d, delta).apply()
+
+      expect(delta.prepare).toHaveBeenCalledWith('1.3.0', setup, expect.any(Function), expect.any(Function))
+      expect(client.downloadUpdate).not.toHaveBeenCalled()
+      expect(d.beforeInstall).toHaveBeenCalledOnce()
+      expect(delta.swapAndQuit).toHaveBeenCalledWith(expect.objectContaining({ stagingDir: 'C:/Programs/Oxee Hermes.oxee-update' }))
+      expect(client.quitAndInstall).not.toHaveBeenCalled()
+      expect(d.emitProgress).toHaveBeenCalledWith(expect.objectContaining({ stage: 'fetch', percent: 50 }))
+      expect(d.emitProgress).toHaveBeenCalledWith(expect.objectContaining({ stage: 'prepare' }))
+      expect(result).toMatchObject({ ok: true, handedOff: true })
+    })
+
+    it('takes the full setup.exe when there is no usable delta', async () => {
+      client.checkForUpdates.mockResolvedValue({ isUpdateAvailable: true, updateInfo: info, versionInfo: info })
+      const delta = fakeDelta(false)
+
+      await createNsisStrategy(deps(), delta).apply()
+
+      expect(client.downloadUpdate).toHaveBeenCalledOnce()
+      expect(client.quitAndInstall).toHaveBeenCalledWith(false, true)
+      expect(delta.swapAndQuit).not.toHaveBeenCalled()
+    })
   })
 })

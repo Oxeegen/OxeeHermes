@@ -8,7 +8,10 @@
     2. updates it with the new setup (-NewSetup) using the arguments electron-updater passes
        (--updated --force-run /S, how a 0.8.2 app updates), then again without /S (how the app
        updates from now on: progress window, no question, closes and relaunches by itself);
-    3. uninstalls it.
+    3. uninstalls it;
+    4. with -DeltaPlan: reinstalls the previous release, prepares the delta while the app runs
+       (the app's own code, apply-delta.mjs), swaps it in as the app quits
+       (apps/desktop/scripts/oxeegen-delta-swap.ps1), checks the result and uninstalls again.
   After each step it checks what the user sees: the Apps & features version, the Start menu and
   Desktop shortcuts, the extracted payload (no agent-payload.tar left behind), the oxee-hermes
   command, and it prints how long each step took. Any failed check fails the script.
@@ -25,6 +28,10 @@ param(
   [Parameter(Mandatory = $true)][string]$PreviousSetup,
   [Parameter(Mandatory = $true)][string]$NewSetup,
   [Parameter(Mandatory = $true)][string]$NewVersion,
+  # The delta from the previous release (oxeegen/scripts/packaged/build-deltas.mjs); with it, the
+  # test also reinstalls the previous release and updates it the delta way.
+  [string]$DeltaPlan = '',
+  [string]$DeltaPack = '',
   [int]$StepTimeoutMinutes = 30
 )
 $ErrorActionPreference = 'Stop'
@@ -160,6 +167,55 @@ Check 'uninstall: Apps & features entry removed' (-not (Uninstall-Entry))
 Check 'uninstall: Start menu entry removed' (-not (Test-Path $startMenuLink))
 Check 'uninstall: Desktop shortcut removed' (-not (Test-Path $desktopLink))
 Check 'uninstall: install folder removed' (-not (Test-Path (Join-Path $installDir 'resources')))
+
+# 4. Delta update: what a 0.8.4+ app does when the release carries a delta from its version.
+if ($DeltaPlan) {
+  $repo = Resolve-Path (Join-Path $PSScriptRoot '..\..\..')
+  $plan = Get-Content $DeltaPlan -Raw | ConvertFrom-Json
+  Run-Step 'reinstall previous release' $PreviousSetup @('/S', '/currentuser') | Out-Null
+  Stop-App
+  Check "delta: the previous release is $($plan.from)" ((Uninstall-Entry).DisplayVersion -eq $plan.from)
+  $app = Start-Process -FilePath (Join-Path $installDir 'Oxee Hermes.exe') -PassThru
+  Start-Sleep -Seconds 20
+
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  & node (Join-Path $repo 'oxeegen\scripts\packaged\apply-delta.mjs') prepare --install-dir $installDir --plan $DeltaPlan --pack $DeltaPack
+  $timings['delta: prepare (app running)'] = [math]::Round($watch.Elapsed.TotalSeconds)
+  Check 'delta: prepared while the app runs' ($LASTEXITCODE -eq 0)
+
+  # "Install and restart": the swap script starts, the app quits, the script swaps and relaunches.
+  $marker = Join-Path $env:TEMP 'oxee-delta-failed.txt'
+  Remove-Item $marker -Force -ErrorAction SilentlyContinue
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  $swap = Start-Process -FilePath powershell.exe -PassThru -WindowStyle Hidden -ArgumentList @(
+    '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $repo 'apps\desktop\scripts\oxeegen-delta-swap.ps1'),
+    '-InstallDir', "`"$installDir`"", '-StagedDir', "`"$installDir.oxee-update`"", '-Version', $NewVersion,
+    '-FailureMarker', "`"$marker`"", '-AppPid', $app.Id)
+  Stop-App
+  $swapped = $swap.WaitForExit(5 * 60 * 1000)
+  $timings['delta: swap after the app quit'] = [math]::Round($watch.Elapsed.TotalSeconds)
+  Check 'delta: swap finished' ($swapped -and $swap.ExitCode -eq 0) "(exit $($swap.ExitCode))"
+  Check 'delta: no failure recorded' (-not (Test-Path $marker))
+  Get-Content (Join-Path $env:TEMP 'oxee-hermes-delta-update.log') -Tail 8 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "      $_" }
+  Start-Sleep -Seconds 8
+  Check 'delta: the app was relaunched' ([bool](Get-Process | Where-Object { $_.Path -like "$installDir\Oxee Hermes.exe" }))
+  Stop-App
+  Check-Installed 'delta update' $NewVersion
+  & node (Join-Path $repo 'oxeegen\scripts\packaged\apply-delta.mjs') verify --install-dir $installDir --plan $DeltaPlan
+  Check 'delta: the install holds exactly the new version' ($LASTEXITCODE -eq 0)
+  Check 'delta: the prepared folder is gone' (-not (Test-Path "$installDir.oxee-update"))
+  Start-Sleep -Seconds 10
+  Check 'delta: the old folder is deleted' (-not (Test-Path "$installDir.oxee-old"))
+
+  $uninstaller = Join-Path $installDir 'Uninstall Oxee Hermes.exe'
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  Start-Process -FilePath $uninstaller -ArgumentList @('/S', '/currentuser') -Wait
+  while ((Uninstall-Entry) -and $watch.Elapsed.TotalMinutes -lt $StepTimeoutMinutes) { Start-Sleep -Seconds 2 }
+  while ((Get-Process | Where-Object { $_.ProcessName -like 'Un_*' -or $_.ProcessName -like 'Au_*' }) -and $watch.Elapsed.TotalMinutes -lt $StepTimeoutMinutes) { Start-Sleep -Seconds 2 }
+  Start-Sleep -Seconds 3
+  Check 'delta: uninstall afterwards removes the entry' (-not (Uninstall-Entry))
+  Check 'delta: uninstall afterwards removes the folder' (-not (Test-Path (Join-Path $installDir 'resources')))
+}
 
 Write-Host ''
 Write-Host '=== TIMINGS ==='

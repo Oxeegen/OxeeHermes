@@ -243,7 +243,12 @@ module.exports = {
     // The updaters' relaunch waiter is PowerShell run outside the package. The
     // sealed payload's snapshot omits scripts/, so it ships as a resource
     // (RELAUNCH_WAITER_SCRIPT in electron/updater/relaunch-waiter.ts).
-    extraResources: [{ from: 'scripts/update-relaunch-waiter.ps1', to: 'update-relaunch-waiter.ps1' }],
+    // Oxee Hermes: the setup.exe delta update swaps folders with oxeegen-delta-swap.ps1
+    // (electron/updater/oxeegen-delta-client.ts).
+    extraResources: [
+      { from: 'scripts/update-relaunch-waiter.ps1', to: 'update-relaunch-waiter.ps1' },
+      { from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' }
+    ],
     ...windowsSigning()
   },
   // Oxeegen setup.exe (scripts\build-bundle.ps1 -Nsis): an assisted installer
