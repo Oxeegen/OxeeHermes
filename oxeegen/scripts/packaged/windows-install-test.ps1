@@ -6,7 +6,8 @@
   Runs the way an end user's machine lives it, with the per-user ("only for me") install:
     1. installs the previous release (-PreviousSetup), as electron-updater would find it;
     2. updates it with the new setup (-NewSetup) using the arguments electron-updater passes
-       (--updated --force-run, plus /S because a CI session has no one to watch the progress);
+       (--updated --force-run /S, how a 0.8.2 app updates), then again without /S (how the app
+       updates from now on: progress window, no question, closes and relaunches by itself);
     3. uninstalls it.
   After each step it checks what the user sees: the Apps & features version, the Start menu and
   Desktop shortcuts, the extracted payload (no agent-payload.tar left behind), the oxee-hermes
@@ -87,6 +88,20 @@ Run-Step 'update to the new build' $NewSetup @('--updated', '--force-run', '/S')
 Check 'update: the app was relaunched' ([bool](Get-Process | Where-Object { $_.Path -like "$installDir\Oxee Hermes.exe" }))
 Stop-App
 Check-Installed 'update' $NewVersion
+
+# 2b. The update path the app takes from now on (electron/updater/nsis-client.ts: no /S): the
+# installer shows its progress but must ask nothing and close by itself. A page waiting for an
+# answer (install mode, folder, finish) would hold it until the timeout, which fails the step.
+$interactive = [Diagnostics.Stopwatch]::StartNew()
+$process = Start-Process -FilePath $NewSetup -ArgumentList @('--updated', '--force-run') -PassThru
+$closed = $process.WaitForExit(15 * 60 * 1000)
+$timings['update with progress window'] = [math]::Round($interactive.Elapsed.TotalSeconds)
+Check 'update with progress window: closes by itself, asking nothing' $closed
+if (-not $closed) { $process | Stop-Process -Force }
+Start-Sleep -Seconds 8
+Check 'update with progress window: the app was relaunched' ([bool](Get-Process | Where-Object { $_.Path -like "$installDir\Oxee Hermes.exe" }))
+Stop-App
+Check-Installed 'update with progress window' $NewVersion
 
 # 3. Uninstall.
 $uninstaller = Join-Path $installDir 'Uninstall Oxee Hermes.exe'
