@@ -34,6 +34,7 @@ import { AlertCircle, Check, Copy, ExternalLink, Terminal } from '@/lib/icons'
 import { resolveUpdateCopy, rollbackRelease, type UpdateTarget } from '@/lib/update-copy'
 import { fetchUpdateNoteItems, updateNotesSource, updateNotesUrl, updateReleaseTag } from '@/lib/update-notes'
 import { cn } from '@/lib/utils'
+import { $updateConfirmOpen } from '@/oxeegen/update-confirm-state'
 import {
   $backendUpdateApply,
   $backendUpdateChecking,
@@ -182,6 +183,7 @@ function overlayPhase(apply: UpdateApplyState): 'idle' | 'applying' | 'manual' |
 
 export function UpdatesOverlay() {
   const open = useStore($updateOverlayOpen)
+  const asking = useStore($updateConfirmOpen)
   const target = useStore($updateOverlayTarget)
 
   const clientStatus = useStore($updateStatus)
@@ -230,7 +232,7 @@ export function UpdatesOverlay() {
   }
 
   return (
-    <Dialog onOpenChange={handleClose} open={open}>
+    <Dialog onOpenChange={handleClose} open={open && !asking}>
       {/* This dialog has no inputs, so Radix's default autofocus would land on
           the close button and trigger its tooltip immediately on open. */}
       <DialogContent

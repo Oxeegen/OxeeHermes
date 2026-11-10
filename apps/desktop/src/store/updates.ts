@@ -765,8 +765,11 @@ export async function applyUpdates(opts: DesktopUpdateApplyOptions = {}): Promis
     return { ok: false, error: 'unavailable', message: 'Desktop bridge unavailable.' }
   }
 
-  // Oxee Hermes: the window closes for the install; ask first ("Later" keeps the app running).
+  // Oxee Hermes: the window closes for the install; ask first ("Later" keeps the app running and
+  // closes the Updates dialog, which the question hides while it is asked: updates-overlay.tsx).
   if (!(await confirmUpdateRestart())) {
+    $updateOverlayOpen.set(false)
+
     return { ok: false, error: 'cancelled' }
   }
 
