@@ -187,6 +187,7 @@ if ($DeltaPlan) {
   $marker = Join-Path $env:TEMP 'oxee-delta-failed.txt'
   Remove-Item $marker -Force -ErrorAction SilentlyContinue
   $watch = [Diagnostics.Stopwatch]::StartNew()
+  $swapStarted = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
   $swap = Start-Process -FilePath powershell.exe -PassThru -WindowStyle Hidden -ArgumentList @(
     '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $repo 'apps\desktop\scripts\oxeegen-delta-swap.ps1'),
     '-InstallDir', "`"$installDir`"", '-StagedDir', "`"$installDir.oxee-update`"", '-Version', $NewVersion,
@@ -201,8 +202,13 @@ if ($DeltaPlan) {
   Check 'delta: the app was relaunched' ([bool](Get-Process | Where-Object { $_.Path -like "$installDir\Oxee Hermes.exe" }))
   Stop-App
   Check-Installed 'delta update' $NewVersion
-  & node (Join-Path $repo 'oxeegen\scripts\packaged\apply-delta.mjs') verify --install-dir $installDir --plan $DeltaPlan
+  & node (Join-Path $repo 'oxeegen\scripts\packaged\apply-delta.mjs') verify --install-dir $installDir --plan $DeltaPlan --since $swapStarted
   Check 'delta: the install holds exactly the new version' ($LASTEXITCODE -eq 0)
+  # scripts/bundles/bytecode.py: every pyc unchecked-hash (flags 1), so the next delta carries
+  # only the modules that really changed.
+  $timestampPycs = @(Get-ChildItem (Join-Path $installDir 'resources\agent-payload\venv\Lib\site-packages') -Recurse -Filter *.cpython-3*.pyc |
+    Where-Object { $bytes = [IO.File]::ReadAllBytes($_.FullName); $bytes[4] -ne 1 })
+  Check 'payload: the venv bytecode is reproducible (unchecked-hash)' ($timestampPycs.Count -eq 0) "($($timestampPycs.Count) timestamp pycs, e.g. $($timestampPycs[0].Name))"
   Check 'delta: the prepared folder is gone' (-not (Test-Path "$installDir.oxee-update"))
   Start-Sleep -Seconds 10
   Check 'delta: the old folder is deleted' (-not (Test-Path "$installDir.oxee-old"))
