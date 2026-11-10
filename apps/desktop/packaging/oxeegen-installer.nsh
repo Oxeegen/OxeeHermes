@@ -29,6 +29,28 @@
   Pop $R8
 !macroend
 
+; Install timings: one line per phase ("<ms since boot> <phase>") in %TEMP%, read back by
+; oxeegen/scripts/packaged/windows-install-test.ps1 to show where an update spends its time.
+!macro oxeegenMark phase
+  Push $0
+  Push $1
+  System::Call 'kernel32::GetTickCount()i.r0'
+  FileOpen $1 "$TEMP\oxee-hermes-setup-timings.log" a
+  FileSeek $1 0 END
+  FileWrite $1 "$0 ${phase}$\r$\n"
+  FileClose $1
+  Pop $1
+  Pop $0
+!macroend
+
+!macro customInit
+  !insertmacro oxeegenMark "installer started"
+!macroend
+
+!macro customUnInit
+  !insertmacro oxeegenMark "uninstaller started"
+!macroend
+
 ; Windows' own tar.exe (System32 since Windows 10 1803). A 32-bit installer sees SysWOW64 as
 ; $SYSDIR, so the 64-bit System32 copy is reached through Sysnative first.
 !macro oxeegenSystemTool name outVar
@@ -72,12 +94,16 @@
 !macroend
 
 !macro customInstall
+  !insertmacro oxeegenMark "app files written"
   !insertmacro oxeegenExtractPayload
+  !insertmacro oxeegenMark "payload extracted"
   !insertmacro oxeegenCli Install
   !insertmacro oxeegenRepairInstallInfo
+  !insertmacro oxeegenMark "install done"
 !macroend
 
 !macro customUnInstall
+  !insertmacro oxeegenMark "uninstall: removing the payload"
   ; The payload goes in one native call instead of NSIS moving its ~38,000 files aside one by
   ; one (the update path's atomic rename): the app is stopped by now, and an update extracts a
   ; complete new payload anyway.
@@ -87,6 +113,7 @@
     nsExec::Exec '"$R7" /c rd /s /q "$INSTDIR\resources\agent-payload"'
     Pop $R8
   ${endIf}
+  !insertmacro oxeegenMark "uninstall: payload removed"
   ; An update runs the previous uninstaller first, then installs over it: the
   ; PATH entry stays and customInstall rewrites the shims.
   ${ifNot} ${isUpdated}
