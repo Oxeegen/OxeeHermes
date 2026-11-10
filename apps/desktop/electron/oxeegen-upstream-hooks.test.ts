@@ -44,7 +44,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/chat/composer/voice-menu.tsx', needs: ['{OXEEGEN_VOICE_ENGINE_PICKER ? ('], why: 'no voice engine rows in the voice menu' },
   { file: 'apps/desktop/src/plugins/hermes-bots/i18n.ts', needs: ["import { fr } from './i18n-fr'", '  fr,\n', 'ui: uiEn,'], why: 'Bot Mode in French; ui branch for the hardcoded chrome' },
   { file: 'apps/desktop/src/plugins/hermes-bots/bot-row.tsx', needs: ["bot.connectionLabel === 'This device'", 'botsText().ui.duplicating('], why: 'Bot rows: translated local label and toasts' },
-  { file: 'apps/desktop/src/components/update-status.tsx', needs: ['oxeegenUpdateErrorLine(status, locale)'], why: 'feed failures worded, never the raw response' },
+  { file: 'apps/desktop/src/components/update-status.tsx', needs: ['oxeegenUpdateView(derived, status, locale)'], why: 'feed failures worded, never the raw response' },
   { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ["env.HERMES_DESKTOP_PACKAGE === 'nsis' ? 'electron-updater'"], why: 'release setup.exe stamped electron-updater' },
   { file: 'apps/desktop/electron-builder.config.cjs', needs: ["? [{ provider: 'github', owner, repo, channel }]", 'differentialPackage: Boolean(channel)', "{ from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' }"], why: 'GitHub Releases feed (mac + setup.exe blockmap), delta swap script' },
   { file: 'scripts/bundles/bytecode.py', needs: ['"-q", "-f",', '"-s", str(root), "-p", "agent-payload",'], why: 'reproducible pycs: delta updates carry only real changes' },

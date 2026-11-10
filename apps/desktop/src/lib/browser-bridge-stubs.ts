@@ -112,6 +112,7 @@ export const BROWSER_BRIDGE_STUBS = {
       hermes_home: '',
       // No OS package owns a browser tab either: About shows no uninstall section.
       native_removal_instructions: null,
+      native_removal: null,
       packaged_app_paths: [],
       platform: 'browser',
       source_built_artifacts: [],

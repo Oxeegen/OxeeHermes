@@ -9,7 +9,8 @@ import { parseLocalRuntimeVersion, resolveLocalRuntimeVersion, type VersionProbe
 
 describe('local client version source', (): void => {
   it('parses the exact version line emitted by the local launcher', (): void => {
-    expect(parseLocalRuntimeVersion('Oxee Hermes v0.21.5+6644.gb412ee9 (2026.9.24)\n')).toBe('0.21.5+6644.gb412ee9')
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(parseLocalRuntimeVersion('Hermes Agent v0.21.5+6644.gb412ee9 (2026.9.24)\n')).toBe('0.21.5+6644.gb412ee9')
     expect(parseLocalRuntimeVersion('gateway: v0.21.5+6634\n')).toBe('')
   })
 
@@ -21,7 +22,8 @@ describe('local client version source', (): void => {
       expect(options.maxBuffer).toBe(64 * 1024)
       expect(options.env.HERMES_HOME).toBe('/isolated/home')
 
-      return 'Oxee Hermes v0.21.5+6644.gb412ee9 (local)\n'
+      // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+      return 'Hermes Agent v0.21.5+6644.gb412ee9 (local)\n'
     })
 
     await expect(resolveLocalRuntimeVersion('/isolated/hermes', '/isolated/home', {
@@ -66,7 +68,8 @@ describe('local client version source', (): void => {
         fs.mkdirSync(path.join(home, 'bin'), { recursive: true })
         fs.writeFileSync(
           path.join(home, 'bin', 'hermes'),
-          `#!/bin/sh\nsleep 1\nprintf '%s\\n' 'Oxee Hermes v1.2.3 (2026.10.1)' 'Install directory: ${root}'\n`,
+          // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+          `#!/bin/sh\nsleep 1\nprintf '%s\\n' 'Hermes Agent v1.2.3 (2026.10.1)' 'Install directory: ${root}'\n`,
           { mode: 0o755 }
         )
 

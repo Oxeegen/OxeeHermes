@@ -390,7 +390,7 @@ it('keeps a signed-out tab and says to sign in again instead of reconnecting', a
   act(() => Socket.instances[0].close(4401, 'signed out'))
 
   await waitFor(() => expect(screen.getByText('closed')).toBeTruthy())
-  expect(emulator.output).toMatch(/Signed out of Hermes\. Sign this browser in again/)
+  expect(emulator.output).toMatch(/Signed out of Oxee Hermes\. Sign this browser in again/)
   expect(emulator.output).not.toMatch(/Reconnecting/)
   expect(Socket.instances).toHaveLength(1)
   expect($terminals.get().some(tab => tab.id === id)).toBe(true)

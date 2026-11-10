@@ -25,7 +25,8 @@ function rig() {
 
 describe('normalizeDictionaryWord', () => {
   it('accepts one word of letters, marks, digits, apostrophes and hyphens', () => {
-    expect(normalizeDictionaryWord('Oxee Hermes')).toBe('Oxee Hermes')
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(normalizeDictionaryWord('Hermes')).toBe('Hermes')
     expect(normalizeDictionaryWord('  naïve  ')).toBe('naïve')
     expect(normalizeDictionaryWord("don't")).toBe("don't")
     expect(normalizeDictionaryWord('re-run')).toBe('re-run')
@@ -43,8 +44,10 @@ describe('normalizeDictionaryWord', () => {
       '1234',
       '--',
       '<script>',
-      '-Oxee Hermes',
-      "'Oxee Hermes'",
+      // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+      '-Hermes',
+      // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+      "'Hermes'",
       'Hermes-',
       'a/b',
       'x'.repeat(65),
@@ -62,19 +65,25 @@ describe('hermes:spellcheck:dictionary', () => {
   it("adds and removes a word on the sender's own session", async () => {
     const { call, session } = rig()
 
-    expect(await call({ op: 'add', word: ' Oxee Hermes ' })).toBe(true)
-    expect(session.addWordToSpellCheckerDictionary).toHaveBeenCalledWith('Oxee Hermes')
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(await call({ op: 'add', word: ' Hermes ' })).toBe(true)
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(session.addWordToSpellCheckerDictionary).toHaveBeenCalledWith('Hermes')
 
-    expect(await call({ op: 'remove', word: 'Oxee Hermes' })).toBe(true)
-    expect(session.removeWordFromSpellCheckerDictionary).toHaveBeenCalledWith('Oxee Hermes')
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(await call({ op: 'remove', word: 'Hermes' })).toBe(true)
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(session.removeWordFromSpellCheckerDictionary).toHaveBeenCalledWith('Hermes')
   })
 
   it('refuses an invalid word or an unknown op without touching the dictionary', async () => {
     const { call, session } = rig()
 
     expect(await call({ op: 'add', word: 'two words' })).toBe(false)
-    expect(await call({ op: 'list', word: 'Oxee Hermes' })).toBe(false)
-    expect(await call({ op: 'constructor', word: 'Oxee Hermes' })).toBe(false)
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(await call({ op: 'list', word: 'Hermes' })).toBe(false)
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(await call({ op: 'constructor', word: 'Hermes' })).toBe(false)
     expect(await call(undefined)).toBe(false)
 
     expect(session.addWordToSpellCheckerDictionary).not.toHaveBeenCalled()
@@ -86,6 +95,7 @@ describe('hermes:spellcheck:dictionary', () => {
 
     session.addWordToSpellCheckerDictionary.mockReturnValue(false)
 
-    expect(await call({ op: 'add', word: 'Oxee Hermes' })).toBe(false)
+    // oxeegen-keep: a test fixture (launcher output, dictionary word), not copy
+    expect(await call({ op: 'add', word: 'Hermes' })).toBe(false)
   })
 })

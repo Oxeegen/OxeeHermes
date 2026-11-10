@@ -39,7 +39,7 @@ cd apps/desktop
 if [[ $REBUILD -eq 1 || ! -f dist/electron-main.mjs ]]; then
   echo "Building the desktop app…"
   # A real build forces ~/.hermes-oxeegen; this override keeps the dev home.
-  HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}' npm run build >/dev/null
+  HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}' pnpm run build >/dev/null
 fi
 
 echo "Launching Oxee Hermes (data: $HERMES_HOME)…"

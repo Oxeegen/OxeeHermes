@@ -130,7 +130,7 @@ la fonctionnalité est désactivée.
   ```bash
   export HERMES_HOME=$PWD/.dev-home HERMES_RUNTIME_DIR=$PWD/.dev-home/tools
   source ./activate                          # première fois : provisionne Python et les outils
-  (cd apps/desktop && npm run build)
+  (cd apps/desktop && pnpm run build)
   node oxeegen/scripts/screenshot-app.mjs    # écrit oxeegen/screenshots/*.png
   ```
 
@@ -139,7 +139,7 @@ la fonctionnalité est désactivée.
   officiel. Sous WSL, ce harnais isole `HERMES_HOME` dans un dossier temporaire où l'agent ne
   trouve pas ses dépendances Python, d'où le script ci-dessus.
 
-Installer les dépendances avec `npx -y npm@11.17.0 ci` à la racine : le projet refuse npm 11.10 à 11.16.
+Installer les dépendances avec `pnpm install --frozen-lockfile` à la racine, après `source ./activate` (qui fournit le pnpm épinglé) : depuis v0.23 l'upstream est passé de npm à pnpm (`pnpm-lock.yaml`).
 
 ## Configuration imposée (étape 2)
 
@@ -280,7 +280,7 @@ Le produit s'appelle « Oxee Hermes » (anciennement « Oxeegen Hermes », puis 
 invisibles gardent `oxeegen` : dossier de données `hermes-oxeegen`, suffixe `-oxeegen` des services,
 AUMID `com.oxeegen.*`. Ainsi une mise à jour conserve la région, les clés et les sessions.
 
-Effet en développement : un build `npm run build` force `~/.hermes-oxeegen`. Pour les captures
+Effet en développement : un build `pnpm run build` force `~/.hermes-oxeegen`. Pour les captures
 contre `.dev-home`, construire avec `HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}'`.
 
 ## Reste à faire

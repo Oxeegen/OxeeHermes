@@ -473,7 +473,9 @@ def running_hermes_version() -> str:
 
 
 def _oxeegen_upstream_version() -> str:
-    path = Path(__file__).resolve().parents[1] / "plugins" / "model-providers" / "oxeegen" / "oxeegen.json"
+    from hermes_cli._startup_fast import project_root_str
+
+    path = Path(project_root_str()) / "plugins" / "model-providers" / "oxeegen" / "oxeegen.json"
     try:
         return str(json.loads(path.read_text(encoding="utf-8-sig")).get("upstream_version") or "").strip()
     except (OSError, ValueError):

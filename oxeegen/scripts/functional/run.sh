@@ -58,7 +58,10 @@ fi
 
 if [[ $REBUILD == 1 || ! -f apps/desktop/dist/index.html ]]; then
   echo "Building the desktop app…"
-  (cd apps/desktop && HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}' npm run build >/dev/null 2>&1) \
+  # activate puts the pinned pnpm first on PATH (upstream builds with pnpm since v0.23).
+  (export HERMES_HOME="$ROOT/.dev-home" HERMES_RUNTIME_DIR="$ROOT/.dev-home/tools"
+    source ./activate >/dev/null 2>&1 && cd apps/desktop &&
+    HERMES_BUNDLE_ENV_JSON='{"HERMES_HOME":"","HERMES_DATA_DIR_SUFFIX":""}' pnpm run build >/dev/null 2>&1) \
     || { echo "✗ desktop build failed"; exit 1; }
 fi
 

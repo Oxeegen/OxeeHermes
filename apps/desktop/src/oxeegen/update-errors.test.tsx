@@ -19,7 +19,7 @@ describe('update check failures in About', () => {
       fetchedAt: Date.now()
     })
 
-    const { container } = render(<UpdateStatusCard target="client" />)
+    const { container } = render(<UpdateStatusCard target="client" version={null} />)
 
     expect(screen.getByText('No Oxee Hermes version is published on GitHub yet.')).toBeTruthy()
     expect(container.textContent).not.toContain('no-release')
@@ -28,7 +28,7 @@ describe('update check failures in About', () => {
   it('says GitHub cannot be reached for any other failure', () => {
     $updateStatus.set({ supported: true, mechanism: 'electron-updater', error: 'feed-unreachable', fetchedAt: Date.now() })
 
-    render(<UpdateStatusCard target="client" />)
+    render(<UpdateStatusCard target="client" version={null} />)
 
     expect(screen.getByText(/GitHub cannot be reached/)).toBeTruthy()
   })
@@ -36,7 +36,7 @@ describe('update check failures in About', () => {
   it('keeps the upstream wording for other errors', () => {
     $updateStatus.set({ supported: true, error: 'check-failed', message: 'boom', fetchedAt: Date.now() })
 
-    render(<UpdateStatusCard target="client" />)
+    render(<UpdateStatusCard target="client" version={null} />)
 
     expect(screen.queryByText(/GitHub/)).toBeNull()
   })

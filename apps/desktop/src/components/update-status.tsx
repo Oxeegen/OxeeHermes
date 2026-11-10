@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import { shortVersion } from '@/lib/version-label'
 import { OxeeVersionWordmark } from '@/oxeegen/brand'
 import { OXEEGEN_RELEASES_URL } from '@/oxeegen/release-notes'
-import { oxeegenUpdateErrorLine } from '@/oxeegen/update-errors'
+import { oxeegenUpdateView } from '@/oxeegen/update-errors'
 import {
   $backendUpdateApply,
   $backendUpdateChecking,
@@ -376,8 +376,7 @@ function UpdateStatusCardBody({
   })
 
   // Oxee Hermes: a classified feed failure reads as one sentence, never the raw feed error.
-  const feedError = derived.tone === 'error' ? oxeegenUpdateErrorLine(status, locale) : null
-  const view = feedError ? { ...derived, error: undefined, line: feedError } : derived
+  const view = oxeegenUpdateView(derived, status, locale)
 
   const handleCheck = async (): Promise<void> => {
     setJustChecked(false)

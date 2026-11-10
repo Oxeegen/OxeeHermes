@@ -64,6 +64,9 @@ DESKTOP_TESTS=(
   src/components/chat/intro.test.tsx
   src/plugins/hermes-bots/group-transcript-speaker.test.ts
   src/plugins/hermes-bots/i18n-fr.test.ts
+  src/app/right-sidebar/terminal/use-terminal-session.test.tsx
+  src/app/session/hooks/use-message-stream/gateway-event/server-requests.test.ts
+  src/oxeegen/update-errors.test.tsx
 )
 
 echo "== Python (Oxeegen)"
@@ -93,7 +96,7 @@ fi
 rm -f "$tmp"
 
 echo "== Desktop typecheck"
-(cd apps/desktop && npm run typecheck >/dev/null 2>&1) || fail "typecheck (cd apps/desktop && npm run typecheck)"
+(source ./activate >/dev/null 2>&1 && cd apps/desktop && pnpm run typecheck >/dev/null 2>&1) || fail "typecheck (cd apps/desktop && pnpm run typecheck)"
 
 if [[ $FULL -eq 1 ]]; then
   echo "== Desktop full suite"

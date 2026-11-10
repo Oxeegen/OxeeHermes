@@ -7,7 +7,7 @@
 // with nothing configured yet.
 // The steps module exports `default async ({ page, shot, settle, home }) => {}`. The app sees the
 // demo home's fake user folder as HOME and working directory, so nothing of the real account
-// (or of this repository) shows up. Build the app first: `cd apps/desktop && npm run build`.
+// (or of this repository) shows up. Build the app first: `cd apps/desktop && pnpm run build`.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'

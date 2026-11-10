@@ -188,7 +188,7 @@ describe('preview action request routing', () => {
       await Promise.resolve()
 
       expect(JSON.parse(respond.mock.calls[0][0].value)).toMatchObject({
-        error: expect.stringContaining('desktop app') as string,
+        error: expect.stringContaining('Oxee Hermes app') as string,
         platform: 'browser'
       })
     } finally {

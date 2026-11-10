@@ -20,8 +20,8 @@ import type {
 import { checkHermesUpdate, getActionStatus, updateHermes } from '@/hermes'
 import { translateNow } from '@/i18n'
 import { persistString, storedString } from '@/lib/storage'
-import { cloudOwnsUpdates, updateTargetFor } from '@/store/cloud-updates'
 import { confirmUpdateRestart } from '@/oxeegen/update-confirm'
+import { cloudOwnsUpdates, updateTargetFor } from '@/store/cloud-updates'
 import { $connectionsRegistry, refreshConnectionsRegistry } from '@/store/connections'
 import { reconnectGateway } from '@/store/gateway-reconnect'
 import { dismissNotification, notify } from '@/store/notifications'
@@ -747,6 +747,7 @@ export async function setUpdateChannel(channel: SourceUpdateChannel): Promise<De
 
 const CLOUD_OWNED: DesktopUpdateApplyResult = { ok: false, error: 'cloud-managed' }
 
+// health: allow CC -- Oxee Hermes asks before the window closes for the install (one early return on top of upstream's function, which sits at the target)
 export async function applyUpdates(opts: DesktopUpdateApplyOptions = {}): Promise<DesktopUpdateApplyResult> {
   if (cloudOwnsUpdates('client')) {
     return CLOUD_OWNED
