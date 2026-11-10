@@ -14,8 +14,9 @@ export const NSIS_FEED_DIRECTORY = 'releases/win32/nsis'
  * app-update.yml, GitHub Releases of the Oxeegen repo (electron-builder.config.cjs),
  * unless `updates.desktop_feed_base_url` names a generic feed. It shares the macOS
  * strategy's check / download / teardown / handoff flow; only the install differs:
- * a silent setup run (the assisted pages would ask again what the user already
- * chose: for me or for all users, folder) that relaunches the app.
+ * the setup runs with its progress window (not /S, so the user sees the update
+ * advance), and packaging/oxeegen-installer.nsh keeps it from asking again what
+ * the user already chose (for me or for all users, folder) and relaunches the app.
  */
 export function createNsisStrategy(deps: NsisClientDeps): MacStrategy {
   const updater = new electronUpdater.NsisUpdater()
@@ -35,7 +36,7 @@ export function createNsisStrategy(deps: NsisClientDeps): MacStrategy {
     updater: {
       checkForUpdates: () => updater.checkForUpdates(),
       downloadUpdate: () => updater.downloadUpdate(),
-      quitAndInstall: () => updater.quitAndInstall(true, true),
+      quitAndInstall: () => updater.quitAndInstall(false, true),
       on: updater.on.bind(updater),
       removeListener: updater.removeListener.bind(updater)
     },

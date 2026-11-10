@@ -20,3 +20,7 @@ vi.mock('@/i18n/ru', async importOriginal => rebranded(importOriginal))
 vi.mock('@/i18n/fr', async importOriginal => rebranded(importOriginal))
 vi.mock('@/i18n/de', async importOriginal => rebranded(importOriginal))
 vi.mock('@/i18n/es', async importOriginal => rebranded(importOriginal))
+
+// Upstream update tests drive applyUpdates() end to end with no one to answer the Oxeegen
+// "install and restart?" question; they get a yes. update-confirm.test.ts covers the dialog.
+vi.mock('@/oxeegen/update-confirm', () => ({ confirmUpdateRestart: async () => true }))

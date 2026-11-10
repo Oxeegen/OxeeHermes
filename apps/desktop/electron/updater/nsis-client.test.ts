@@ -73,7 +73,7 @@ describe('Windows setup.exe updater', () => {
     })
   })
 
-  it('downloads, stops the backend, then runs the setup silently and relaunches', async () => {
+  it('downloads, stops the backend, then runs the setup with its progress window and relaunches', async () => {
     const info = { version: '1.3.0', files: [], path: '', sha512: '', releaseDate: '' }
     client.checkForUpdates.mockResolvedValue({ isUpdateAvailable: true, updateInfo: info, versionInfo: info })
     const d = deps()
@@ -82,7 +82,8 @@ describe('Windows setup.exe updater', () => {
 
     expect(client.downloadUpdate).toHaveBeenCalledOnce()
     expect(d.beforeInstall).toHaveBeenCalledOnce()
-    expect(client.quitAndInstall).toHaveBeenCalledWith(true, true)
+    // Not /S: the user sees the update advance (packaging/oxeegen-installer.nsh asks nothing).
+    expect(client.quitAndInstall).toHaveBeenCalledWith(false, true)
     expect(result).toMatchObject({ ok: true, handedOff: true })
     // No macOS signature step on Windows.
     expect(d.emitProgress).not.toHaveBeenCalledWith(expect.objectContaining({ stage: 'prepare' }))

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import logging
 import re
 from contextlib import suppress
@@ -440,10 +441,24 @@ _VERSION_COMPARATOR_RE = re.compile(r"^\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
 
 
 def running_hermes_version() -> str:
-    """Base release version of the Hermes code that is running."""
+    """Base release version of the Hermes code that is running.
+
+    Oxee Hermes: the upstream Hermes Agent release it is built on (oxeegen.json ``upstream_version``).
+    Plugins gate on Hermes' numbering; Oxee Hermes' own 0.8.x would refuse every ``>=0.21`` plugin."""
+    upstream = _oxeegen_upstream_version()
+    if upstream:
+        return upstream
     from hermes_cli.version_info import get_version_info
 
     return get_version_info().base_version
+
+
+def _oxeegen_upstream_version() -> str:
+    path = Path(__file__).resolve().parents[1] / "plugins" / "model-providers" / "oxeegen" / "oxeegen.json"
+    try:
+        return str(json.loads(path.read_text(encoding="utf-8-sig")).get("upstream_version") or "").strip()
+    except (OSError, ValueError):
+        return ""
 
 
 _VERSION_SEGMENT_RE = re.compile(r"^\d+")
@@ -488,7 +503,7 @@ def requires_hermes_error(manifest: PluginManifest) -> Optional[str]:
     current = running_hermes_version()
     if version_satisfies(spec, current):
         return None
-    return f"requires hermes {spec}, running {current}"
+    return f"requires hermes {spec}, running {current} (the Hermes release this Oxee Hermes is built on)"
 
 
 def portable_plugin_manifest(child: Path, source: str, prefix: str) -> PluginManifest:

@@ -20,6 +20,7 @@ import type {
 import { checkHermesUpdate, getActionStatus, updateHermes } from '@/hermes'
 import { translateNow } from '@/i18n'
 import { persistString, storedString } from '@/lib/storage'
+import { confirmUpdateRestart } from '@/oxeegen/update-confirm'
 import { $connectionsRegistry, refreshConnectionsRegistry } from '@/store/connections'
 import { reconnectGateway } from '@/store/gateway-reconnect'
 import { dismissNotification, notify } from '@/store/notifications'
@@ -718,6 +719,11 @@ export async function applyUpdates(opts: DesktopUpdateApplyOptions = {}): Promis
 
   if (!bridge) {
     return { ok: false, error: 'unavailable', message: 'Desktop bridge unavailable.' }
+  }
+
+  // Oxee Hermes: the window closes for the install; ask first ("Later" keeps the app running).
+  if (!(await confirmUpdateRestart())) {
+    return { ok: false, error: 'cancelled' }
   }
 
   dismissNotification(UPDATE_TOAST_ID)

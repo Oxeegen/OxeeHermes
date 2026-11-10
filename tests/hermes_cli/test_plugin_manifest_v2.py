@@ -399,6 +399,8 @@ class TestRequiresHermes:
     def test_gate_reads_the_running_code_version_not_dist_metadata(self, monkeypatch):
         """Compatibility gates use the running code's base release version."""
         from hermes_cli import plugins_manifest
+        # Oxee Hermes: oxeegen.json's upstream_version wins when set (test_oxeegen_upstream_version.py).
+        monkeypatch.setattr(plugins_manifest, "_oxeegen_upstream_version", lambda: "")
         monkeypatch.setattr(
             "hermes_cli.version_info.get_version_info",
             lambda: SimpleNamespace(base_version="0.21.4"),

@@ -26,6 +26,7 @@ PY_TESTS=(
   tests/hermes_cli/test_gateway_service_tag.py
   tests/hermes_cli/test_oxeegen_launchers.py
   tests/hermes_cli/test_oxeegen_identity.py
+  tests/hermes_cli/test_oxeegen_upstream_version.py
   tests/plugins/model_providers/test_oxeegen_profile.py
   tests/scripts/test_launcher_bundle_env.py
   tests/scripts/test_desktop_cli_wrapper.py

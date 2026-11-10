@@ -228,6 +228,8 @@
       }
     ]
   },
+  "_upstream_version_comment": "The Hermes Agent release this Oxee Hermes is built on (bumped with every upstream merge). Plugin requires_hermes gates compare against it, not against Oxee Hermes' own 0.8.x numbering.",
+  "upstream_version": "0.22.5",
   "_desktop_plugins_enabled_comment": "Bundled desktop plugins Oxee Hermes turns on by default (upstream ships them off). A user who switches one off keeps it off.",
   "desktop_plugins_enabled": ["kanban"],
   "signup_url": ""

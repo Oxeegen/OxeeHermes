@@ -18,6 +18,7 @@ import { runPython } from '../../../scripts/build/python.mjs'
 
 import { assertPackagedBackendReadyArtifact, resolvePackagedAsarPath } from './backend-ready-artifact.mjs'
 import { batchSignAppTree } from './batch-sign-binaries.mjs'
+import { archivePayloadForSetup } from './oxeegen-payload-archive.mjs'
 import { rehashPayloadDigests } from './payload-digests.mjs'
 import { resolveSigningIdentity, signNestedChromium } from './sign-nested-chromium.mjs'
 import { signWheelZipMembers } from './sign-wheel-zips.mjs'
@@ -140,4 +141,6 @@ export default async function afterPack(context) {
     resourcesDir: context.packager.buildResourcesDir,
   })
   rehashPayloadDigests(payload)
+  // Oxee Hermes: the setup.exe carries the payload as one tar (see oxeegen-payload-archive.mjs).
+  archivePayloadForSetup(resources)
 }

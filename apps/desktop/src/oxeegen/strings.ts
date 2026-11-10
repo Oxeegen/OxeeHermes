@@ -33,6 +33,11 @@ const EN = {
   ttsVoice: 'Voice',
   updateNoRelease: 'No Oxee Hermes version is published on GitHub yet.',
   updateUnreachable: 'GitHub cannot be reached. Check your connection and try again.',
+  updateRestartTitle: 'Install the update now?',
+  updateRestartBody:
+    'Oxee Hermes will close to install the update. It can take a few minutes; the installer shows its progress, then Oxee Hermes restarts by itself.',
+  updateRestartConfirm: 'Install and restart',
+  updateRestartLater: 'Later',
   ttsVoicesFemale: 'Female voices',
   ttsVoicesMale: 'Male voices',
   systemLanguage: 'System language',
@@ -69,6 +74,11 @@ const FR: OxeegenStrings = {
   ttsVoice: 'Voix',
   updateNoRelease: 'Aucune version d’Oxee Hermes n’est encore publiée sur GitHub.',
   updateUnreachable: 'GitHub est injoignable. Vérifiez votre connexion, puis réessayez.',
+  updateRestartTitle: 'Installer la mise à jour maintenant ?',
+  updateRestartBody:
+    'Oxee Hermes va se fermer pour installer la mise à jour. Cela peut prendre quelques minutes : l’installeur affiche sa progression, puis Oxee Hermes redémarre tout seul.',
+  updateRestartConfirm: 'Installer et redémarrer',
+  updateRestartLater: 'Plus tard',
   ttsVoicesFemale: 'Voix féminines',
   ttsVoicesMale: 'Voix masculines',
   systemLanguage: 'Langue du système',
