@@ -10,7 +10,8 @@
 # $OXEE_FUNCTIONAL_HOME or ~/.cache/oxee-hermes-functional/home, and is restored after each run.
 # A second home, ~/.cache/oxee-hermes-functional/first-run, keeps only its Python environment and is
 # emptied before each run: the app's very first launch, with nothing configured.
-# Screenshots of failures go to ~/.cache/oxee-hermes-functional/out. No model is ever called.
+# Screenshots go to ~/.cache/oxee-hermes-functional/out (failures, and every screen of the navigation
+# sweep under navigation-en/ and navigation-fr/). No model is ever called.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
@@ -76,6 +77,15 @@ rm -rf "${OUT:?}" && mkdir -p "$OUT"
 stop_gateway
 node "$HERE/launch.mjs" "$DEMO" "$OUT" "$HERE/functional.mjs" --lang en 2>&1 | grep -vE '^\s*$'
 status=${PIPESTATUS[0]}
+
+# Every route and Settings screen, in English then in French (the home is restored afterwards).
+stop_gateway
+node "$HERE/launch.mjs" "$DEMO" "$OUT/navigation-en" "$HERE/navigation.mjs" --lang en 2>&1 | grep -E 'NAVIGATION|PASS|FAIL'
+[[ ${PIPESTATUS[0]} == 0 ]] || status=1
+stop_gateway
+sed -i 's/^  language: en$/  language: fr/' "$DEMO/config.yaml"
+node "$HERE/launch.mjs" "$DEMO" "$OUT/navigation-fr" "$HERE/navigation.mjs" --lang fr 2>&1 | grep -E 'NAVIGATION|PASS|FAIL'
+[[ ${PIPESTATUS[0]} == 0 ]] || status=1
 
 # First launch: empty the first-run home down to its Python environment, then open the app on it.
 stop_gateway "$FIRST"

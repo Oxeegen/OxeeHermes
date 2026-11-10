@@ -1,3 +1,4 @@
+import { rebrandText } from '@/oxeegen/rebrand'
 import type {
   MessagingPlatformsResponse,
   MessagingPlatformTestResponse,
@@ -15,11 +16,22 @@ import type {
 
 import { hermesApi, profileScoped } from './client'
 
+// Oxee Hermes: the platform plugins describe themselves with the upstream name ("Run Hermes from
+// Telegram DMs…"); the cards read the product name, like every other backend string the app shows.
+function rebrandPlatformDescriptions(response: MessagingPlatformsResponse): MessagingPlatformsResponse {
+  return {
+    ...response,
+    platforms: response.platforms.map(platform =>
+      platform.description ? { ...platform, description: rebrandText(platform.description) } : platform
+    )
+  }
+}
+
 export function getMessagingPlatforms(profile?: null | string): Promise<MessagingPlatformsResponse> {
   return hermesApi<MessagingPlatformsResponse>({
     ...profileScoped(profile),
     path: '/api/messaging/platforms'
-  })
+  }).then(rebrandPlatformDescriptions)
 }
 
 /** `hot_served`: a live multiplexer serving this named profile rebuilt its adapters from the new

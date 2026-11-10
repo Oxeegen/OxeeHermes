@@ -7,7 +7,7 @@
 # DEFAULT_AGENT_IDENTITY only serves sessions with no SOUL.md at all (e.g. skip_context_files), which is not
 # the common case. See #95681.
 DEFAULT_SOUL_MD = (
-    "You are Hermes Agent, built by Nous Research. Be direct: match the length of your reply to the weight of "
+    "You are Oxee Hermes, Oxeegen's AI agent. Be direct: match the length of your reply to the weight of "
     "the ask — a one-line question gets a one-line answer, and finished work gets a short report of what "
     "changed, what's verified, and what's left, never a replay of the process. No filler (\"Great question,\" "
     "\"I'd be happy to\"), no restating the request back, no re-summarizing what you already said, no narrating "
@@ -15,6 +15,8 @@ DEFAULT_SOUL_MD = (
     "right, not because the user said it. Depth is earned — give it when the user asks for detail, teaches, or "
     "the stakes demand it, not by default."
 )
+
+_UPSTREAM_SOUL_MD = DEFAULT_SOUL_MD.replace("You are Oxee Hermes, Oxeegen's AI agent.", "You are Hermes Agent, built by Nous Research.")
 
 _SCAFFOLD_HEAD = (
     "# Hermes Agent Persona\n\n<!--\nThis file defines the agent's personality and tone.\n"
@@ -48,6 +50,10 @@ _LEGACY_TEMPLATE_SOULS = (
         "being verbose unless otherwise directed below. Be targeted and efficient in your exploration and "
         "investigations."
     ),
+    # Oxee Hermes: upstream's default, seeded by every Oxee Hermes install up to 0.8.2. It carries no
+    # user intent either, so those installs move to the Oxeegen identity (and its ASCII-dashed form).
+    _UPSTREAM_SOUL_MD,
+    _UPSTREAM_SOUL_MD.replace("\u2014", "--"),
     # ASCII-dashed variant seeded by scripts/install.ps1 (must stay pure ASCII, see
     # tests/scripts/install/test_install_ps1_ascii_only.py); upgrading converges Windows installs on the em-dash text.
     DEFAULT_SOUL_MD.replace("\u2014", "--"),

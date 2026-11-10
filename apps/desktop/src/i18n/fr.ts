@@ -3,6 +3,7 @@ import { defineFieldCopy } from '@/app/settings/field-copy'
 
 import { defineLocale, type TranslationOverrides } from './define-locale'
 import { frBoot } from './fr_boot'
+import { frCatalog } from './fr_catalog'
 import { frClarify } from './fr_clarify'
 import { frConnectorAccounts } from './fr_connector_accounts'
 import { frConnectorCard } from './fr_connector_card'
@@ -23,6 +24,8 @@ import { frUpdateChannel } from './fr_update_channel'
 import { introFr } from './intro-fr'
 
 export const frOverrides = {
+  // Oxee Hermes: the Capabilities catalog in French (fr_catalog.ts).
+  catalog: frCatalog,
   sharedMetrics: frSharedMetrics,
   firstRun: frFirstRun,
   intro: introFr,

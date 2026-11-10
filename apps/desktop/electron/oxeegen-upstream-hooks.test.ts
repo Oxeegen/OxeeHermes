@@ -94,6 +94,8 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/plugins/hermes-bots/canonical-group-registry.tsx', needs: ['labels.gatewayNotConnected'], why: 'the gateway disconnect notice in Bot Mode is translated' },
   { file: 'apps/desktop/src/contrib/plugins-store.ts', needs: ['oxeegenPluginDefault(id, defaultEnabled)'], why: 'Kanban and the other oxeegen.json desktop plugins default on' },
   { file: 'apps/desktop/src/plugins/kanban/i18n.ts', needs: ['{ en, fr, ja,'], why: 'Kanban in French (i18n-fr.ts)' },
+  { file: 'apps/desktop/src/api/messaging.ts', needs: ['rebrandPlatformDescriptions'], why: 'messaging platform cards read the product name' },
+  { file: 'apps/desktop/src/i18n/fr.ts', needs: ['catalog: frCatalog'], why: 'the Capabilities catalog in French (fr_catalog.ts)' },
   { file: 'apps/desktop/src/app/chat/session-draft-title.tsx', needs: ['t.commandCenter.nav.newChat.title'], why: 'a draft tab reads in the UI language' },
   { file: 'apps/desktop/src/lib/update-notes.ts', needs: ["'Oxeegen/OxeeHermes'"], why: 'release notes from the Oxeegen repo' },
   { file: 'scripts/build/launcher_wrapper.py', needs: ['apply_bundle_environment(repo_entry, environ)'], why: 'CLI lands in the isolated data home' },
