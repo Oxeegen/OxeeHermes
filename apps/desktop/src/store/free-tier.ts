@@ -33,7 +33,9 @@ export const $freeTierStatus = atom<FreeTierStatus | null>(null)
  */
 export const $freeTierSignInOpen = computed(
   [$freeTierStatus, $onboardingSurfaceClear],
-  (status, clear) => Boolean(status?.available || status?.has_guest) && clear
+  // Oxee Hermes: a Nous guest left from an earlier install (connected apps, no trial) is no reason
+  // to offer a Nous sign-in; the managed scope switches the trial off (nous.guest: false).
+  (status, clear) => Boolean(status?.available) && clear
 )
 
 // Fed here, beside the atom, so every importer of this store gets the same link.

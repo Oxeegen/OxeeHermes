@@ -63,6 +63,10 @@ telemetry:
   shared_metrics:
     enabled: false
     send: false
+
+# No Nous identity: no guest minted at Nous Research, so no Nous free trial and no "Sign in" to it.
+nous:
+  guest: false
 """
 
 

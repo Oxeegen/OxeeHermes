@@ -109,3 +109,14 @@ def test_oxeegen_models_think_at_max_unless_the_user_picks_a_level(oxeegen_manag
 
     _write_user_config("model:\n  provider: oxeegen\n  default: Oxee-max\nagent:\n  reasoning_effort: low\n")
     assert resolve_reasoning_config(load_config())["effort"] == "low"
+
+
+def test_no_nous_guest_identity_or_free_trial(oxeegen_managed):
+    """Oxee Hermes never mints a Nous guest, so the Nous free trial and its Sign in never show."""
+    from hermes_cli import anon_auth
+
+    _write_user_config("nous:\n  guest: true\n")
+
+    assert anon_auth.guest_allowed() is False
+    assert anon_auth.free_inference_active({"auth_method": anon_auth.ANON_AUTH_METHOD,
+                                            anon_auth.WELCOME_CLAIM_FLAG: True}) is False

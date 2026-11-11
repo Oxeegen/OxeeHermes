@@ -101,6 +101,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/capabilities/plugins/plugins-tab.tsx', needs: ['<OxeeDescription text={pkg.description} />'], why: 'installed plugins show translated descriptions' },
   { file: 'apps/desktop/src/app/capabilities/skills/official-skill-detail.tsx', needs: ['describe(asText(skill.description))'], why: 'official skill detail shows its translated description' },
   { file: 'apps/desktop/src/app/settings/plugin-settings.tsx', needs: ['<OxeeDescription text={row.description} />'], why: 'plugin settings show the translated description' },
+  { file: 'apps/desktop/src/store/free-tier.ts', needs: ['(status, clear) => Boolean(status?.available) && clear'], why: 'no Nous sign-in chip for a leftover Nous guest' },
   { file: 'apps/desktop/src/store/updates.ts', needs: ['confirmUpdateRestart()'], why: 'an app update asks before closing the window' },
   { file: 'apps/desktop/src/app/updates-overlay.tsx', needs: ['open={open && !asking}'], why: 'the update question replaces the Updates dialog instead of stacking on it' },
   { file: 'apps/desktop/scripts/after-pack.mjs', needs: ['archivePayloadForSetup(resources)'], why: 'the setup.exe carries the payload as one tar' },

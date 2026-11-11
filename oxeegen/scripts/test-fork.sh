@@ -41,6 +41,7 @@ DESKTOP_TESTS=(
   src/oxeegen
   electron/oxeegen-fork.test.ts
   electron/oxeegen-upstream-hooks.test.ts
+  src/app/shell/hooks/use-statusbar-items.test.tsx
   # setup.exe updates: GitHub feed, delta update, swap.
   electron/updater/nsis-client.test.ts
   electron/updater/oxeegen-delta.test.ts

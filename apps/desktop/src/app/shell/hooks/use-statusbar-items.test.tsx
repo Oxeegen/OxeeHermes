@@ -432,14 +432,11 @@ describe('free-tier Sign in in every interface mode', () => {
     expect($statusbarVisible.get()).toBe(false)
   })
 
-  it('shows the chip to a guest with connected apps but no trial, without the free model', () => {
+  // oxeegen-keep: Oxee Hermes offers no Nous sign-in to a guest without the trial (store/free-tier.ts).
+  it('hides the chip from a guest with connected apps but no trial', () => {
     $freeTierStatus.set({ ...freeTier(false), has_guest: true })
 
-    const { leftStatusbarItems, statusbarItems } = renderStatusbarItems()
-    const chip = [...leftStatusbarItems, ...statusbarItems].find(item => item.id === 'free-tier')
-
-    expect(signInChipVisible()).toBe(true)
-    expect(chip?.title).toBe('Nous')
+    expect(signInChipVisible()).toBe(false)
   })
 
   it('holds the chip while onboarding is open and brings it back after', () => {
