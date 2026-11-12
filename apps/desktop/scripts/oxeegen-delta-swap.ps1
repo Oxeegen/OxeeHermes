@@ -69,7 +69,12 @@ $swapped = $false
 try {
   # The app itself is never stopped: a quit the user held ("Keep running") abandons the swap.
   if ($AppPid) {
-    Wait-Process -Id $AppPid -Timeout $TimeoutSeconds -ErrorAction SilentlyContinue
+    # Polled, not Wait-Process: it can return at once while the app is still closing (it errors on a
+    # process that exits under it), which read as "still running" and dropped the update.
+    $deadline = $watch.Elapsed.TotalSeconds + $TimeoutSeconds
+    while ((Get-Process -Id $AppPid -ErrorAction SilentlyContinue) -and $watch.Elapsed.TotalSeconds -lt $deadline) {
+      Start-Sleep -Milliseconds 250
+    }
     if (Get-Process -Id $AppPid -ErrorAction SilentlyContinue) {
       Log 'the app is still running: update abandoned, the prepared version is removed at its next start'
       exit 2
