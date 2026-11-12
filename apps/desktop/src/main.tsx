@@ -40,6 +40,7 @@ import { installRendererAnimationPauseState } from './lib/renderer-loop-pause'
 import { installSelectionCopyColorGuard } from './lib/selection-copy-colors'
 import { isTransparentWindow } from './lib/transparent-windows'
 import { startUiPreferencesSync } from './lib/ui-preferences/sync'
+import { OxeegenLibraryWatch } from './oxeegen/library-watch'
 import { installBrowserTabTitle } from './store/browser-tab-title'
 import { ThemeProvider } from './themes/context'
 
@@ -118,6 +119,7 @@ if (winParam === 'overlay') {
                   <HashRouter useTransitions={false}>
                     <App />
                   </HashRouter>
+                  <OxeegenLibraryWatch />
                 </RootTooltipProvider>
               </HapticsProvider>
             </ThemeProvider>

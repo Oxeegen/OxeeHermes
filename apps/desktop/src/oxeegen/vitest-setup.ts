@@ -26,9 +26,11 @@ vi.mock('@/i18n/es', async importOriginal => rebranded(importOriginal))
 // "install and restart?" question; they get a yes. update-confirm.test.ts covers the dialog.
 vi.mock('@/oxeegen/update-confirm', () => ({ confirmUpdateRestart: async () => true }))
 
-// Upstream catalog tests must not read the live Oxeegen library from GitHub: whatever it holds
-// would join their lists. They get an empty library; library*.test.ts* cover it.
+// Upstream tests must not read the live Oxeegen library from GitHub, from the catalogs or from
+// the startup check: whatever it holds would join their lists. They get an empty library, never
+// read; library*.test.ts* cover it.
 vi.mock('@/oxeegen/library', async importOriginal => ({
   ...(await importOriginal<typeof Library>()),
-  useLibraryEntries: () => []
+  useLibraryEntries: () => [],
+  startLibraryRefresh: () => {}
 }))

@@ -45,6 +45,11 @@ const EN = {
   libraryTitle: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Oxeegen plugins' : 'Oxeegen skills'),
   libraryBlurb: 'Published and reviewed by Oxeegen.',
   libraryShelf: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Plugin library' : 'Skill library'),
+  libraryUpdateTitle: 'Oxeegen skill update',
+  libraryUpdateMessage: (name: string, available: string, installed: string): string =>
+    `${name} ${available} is available (installed: ${installed}).`,
+  libraryUpdateAction: 'Update',
+  libraryUpdateFailed: 'The skill update failed',
   librarySource: 'Oxeegen'
 }
 
@@ -90,6 +95,11 @@ const FR: OxeegenStrings = {
   libraryTitle: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Plugins Oxeegen' : 'Skills Oxeegen'),
   libraryBlurb: 'Publiés et vérifiés par Oxeegen.',
   libraryShelf: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Bibliothèque de plugins' : 'Bibliothèque de skills'),
+  libraryUpdateTitle: 'Mise à jour d’une skill Oxeegen',
+  libraryUpdateMessage: (name: string, available: string, installed: string) =>
+    `${name} ${available} est disponible (installée : ${installed}).`,
+  libraryUpdateAction: 'Mettre à jour',
+  libraryUpdateFailed: 'La mise à jour de la skill a échoué',
   librarySource: 'Oxeegen'
 }
 

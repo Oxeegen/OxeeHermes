@@ -5,7 +5,7 @@
  * The library's CI builds catalog.json on every merge into its main branch and keeps it on the
  * repository's `catalog` branch, read here from raw.githubusercontent.com (which, unlike a release
  * download, answers the app's cross-origin fetch). It is read when the catalogs open and every
- * REFRESH_MS after, and the last good copy is kept for offline starts. A skill installs through
+ * REFRESH_MS after, from startup on (library-watch.tsx), and the last good copy is kept for offline starts. A skill installs through
  * the skills hub like any GitHub skill (`Oxeegen/OxeeLibrary/skills/<id>`): pinned to a commit,
  * scanned, tracked for updates; the backend trusts that repository (tools/skills_guard.py).
  */
@@ -79,7 +79,8 @@ export async function refreshLibraryCatalog(fetcher: typeof fetch = fetch): Prom
   }
 }
 
-function startLibraryRefresh(): void {
+/** Read the catalog now and every REFRESH_MS after; later calls do nothing. */
+export function startLibraryRefresh(): void {
   if (timer) {
     return
   }
@@ -103,7 +104,7 @@ export function meetsMinimum(version: null | string | undefined, minimum: null |
   return index === -1 || have[index] > need[index]
 }
 
-const pick = (text: Localized, lang: string) => text[lang] || text.en || Object.values(text).find(Boolean) || ''
+export const pickLocalized = (text: Localized, lang: string): string => text[lang] || text.en || Object.values(text).find(Boolean) || ''
 
 /** The catalog's items of one kind, as catalog entries in the UI language. */
 export function libraryEntries(
@@ -127,8 +128,8 @@ export function libraryEntries(
 
       return {
         id: `oxeegen:${item.id}`,
-        name: pick(item.title, lang) || item.id,
-        description: pick(item.description, lang),
+        name: pickLocalized(item.title, lang) || item.id,
+        description: pickLocalized(item.description, lang),
         overview: '',
         category: item.tags[0] || 'oxeegen',
         categoryLabel: item.tags[0] || LIBRARY_SOURCE,

@@ -96,6 +96,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/api/messaging.ts', needs: ['rebrandPlatformDescriptions'], why: 'messaging platform cards read the product name' },
   { file: 'apps/desktop/src/i18n/fr.ts', needs: ['catalog: frCatalog'], why: 'the Capabilities catalog in French (fr_catalog.ts)' },
   { file: 'apps/desktop/src/app/capabilities/catalog/catalog-card.tsx', needs: ['<OxeeDescription text={entry.description} />'], why: 'catalog cards show translated descriptions' },
+  { file: 'apps/desktop/src/main.tsx', needs: ['<OxeegenLibraryWatch />'], why: 'the Oxeegen library is checked from startup' },
   { file: 'apps/desktop/src/app/capabilities/catalog/catalog-list-row.tsx', needs: ['<OxeeDescription text={entry.description} />'], why: 'catalog rows show translated descriptions' },
   { file: 'apps/desktop/src/app/capabilities/catalog/catalog-detail.tsx', needs: ['<OxeeDescription text={entry.description} />', '<OxeeDescription text={entry.overview} />'], why: 'catalog detail shows translated descriptions' },
   { file: 'apps/desktop/src/app/capabilities/plugins/plugins-tab.tsx', needs: ['<OxeeDescription text={pkg.description} />'], why: 'installed plugins show translated descriptions' },
