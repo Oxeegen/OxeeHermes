@@ -107,7 +107,7 @@ const HOOKS: Hook[] = [
   { file: 'tools/skills_guard.py', needs: ['"Oxeegen/OxeeLibrary",'], why: 'Oxeegen library skills install as trusted' },
   { file: 'apps/desktop/src/store/free-tier.ts', needs: ['(status, clear) => Boolean(status?.available) && clear'], why: 'no Nous sign-in chip for a leftover Nous guest' },
   { file: 'apps/desktop/src/store/updates.ts', needs: ['confirmUpdateRestart()'], why: 'an app update asks before closing the window' },
-  { file: 'apps/desktop/src/app/updates-overlay.tsx', needs: ['open={open && !asking}'], why: 'the update question replaces the Updates dialog instead of stacking on it' },
+  { file: 'apps/desktop/src/app/updates-overlay.tsx', needs: ['const shown = useUpdatesDialogShown(open)', 'open={shown}'], why: 'the update question replaces the Updates dialog instead of stacking on it' },
   { file: 'apps/desktop/scripts/after-pack.mjs', needs: ['archivePayloadForSetup(resources)'], why: 'the setup.exe carries the payload as one tar' },
   { file: 'hermes_cli/plugins_manifest.py', needs: ['_oxeegen_upstream_version()'], why: 'plugin requires_hermes gates read the upstream base version' },
   { file: 'apps/desktop/src/app/chat/session-draft-title.tsx', needs: ['t.commandCenter.nav.newChat.title'], why: 'a draft tab reads in the UI language' },
