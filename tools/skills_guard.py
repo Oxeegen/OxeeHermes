@@ -25,6 +25,8 @@ TRUSTED_REPOS = {
     "openai/skills", "anthropics/skills", "huggingface/skills", "NVIDIA/skills",
     "wandb/skills", "qdrant/skills", "pinecone-io/skills",
     "makenotion/skills", "Airtable/skills", "Shopify/Shopify-AI-Toolkit",
+    # Oxee Hermes: Oxeegen's own library, reviewed and checked before every merge (apps/desktop/src/oxeegen/library.ts).
+    "Oxeegen/OxeeLibrary",
 }
 
 INSTALL_POLICY = {

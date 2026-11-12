@@ -41,7 +41,10 @@ const EN = {
   ttsVoicesFemale: 'Female voices',
   ttsVoicesMale: 'Male voices',
   systemLanguage: 'System language',
-  title: 'Connect to Oxeegen'
+  title: 'Connect to Oxeegen',
+  libraryTitle: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Oxeegen plugins' : 'Oxeegen skills'),
+  libraryBlurb: 'Published and reviewed by Oxeegen.',
+  librarySource: 'Oxeegen'
 }
 
 type OxeegenStrings = typeof EN
@@ -82,7 +85,10 @@ const FR: OxeegenStrings = {
   ttsVoicesFemale: 'Voix féminines',
   ttsVoicesMale: 'Voix masculines',
   systemLanguage: 'Langue du système',
-  title: 'Connexion à Oxeegen'
+  title: 'Connexion à Oxeegen',
+  libraryTitle: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Plugins Oxeegen' : 'Skills Oxeegen'),
+  libraryBlurb: 'Publiés et vérifiés par Oxeegen.',
+  librarySource: 'Oxeegen'
 }
 
 const REGION_LABELS: Record<string, Record<string, string>> = {

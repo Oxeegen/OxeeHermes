@@ -6,6 +6,8 @@ import { type ReactNode, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Codicon } from '@/components/ui/codicon'
 import { useI18n } from '@/i18n'
+import { isLibraryEntry } from '@/oxeegen/library'
+import { OxeegenLibrarySection } from '@/oxeegen/library-section'
 
 import { BENTO_COLUMNS, packBento } from './catalog-bento'
 import type { CatalogCardVariant } from './catalog-card'
@@ -31,7 +33,7 @@ const CATEGORY_PAGE = 8
 /** Rows of the mixed "More to explore" shelf shown at first, and per "Show more". */
 const LOOSE_ROWS_PAGE = 3
 
-export function CatalogDiscovery({ entries, kind, card, onCategory, actions, narrowed, byCategory }: {
+export function CatalogDiscovery({ entries: allEntries, kind, card, onCategory, actions, narrowed, byCategory }: {
   entries: CatalogEntry[]
   kind: CatalogKind
   card: (entry: CatalogEntry, index: number, variant: CatalogCardVariant, placement?: React.CSSProperties) => ReactNode
@@ -43,6 +45,9 @@ export function CatalogDiscovery({ entries, kind, card, onCategory, actions, nar
   byCategory?: boolean
 }) {
   const { t } = useI18n()
+  // Oxee Hermes: the Oxeegen library leads the page in its own carousel (oxeegen/library-section.tsx).
+  const library = allEntries.filter(isLibraryEntry)
+  const entries = allEntries.filter(entry => !isLibraryEntry(entry))
   const [categoryLimit, setCategoryLimit] = useState(CATEGORY_PAGE)
   const [looseRows, setLooseRows] = useState(LOOSE_ROWS_PAGE)
   const title = kind === 'plugins' ? t.skills.tabPlugins : t.skills.tabSkills
@@ -89,6 +94,7 @@ export function CatalogDiscovery({ entries, kind, card, onCategory, actions, nar
 
   return (
     <div className="catalog-discovery">
+      {!narrowed && <OxeegenLibrarySection card={card} entries={library} kind={kind} />}
       {featured.length > 0 && <section data-catalog-section="featured">
         <header className="catalog-section-heading"><h2>{t.catalog.discoverKind(title)}</h2></header>
         <CatalogFeaturedSlider slides={featured.map((entry, index) => card(entry, index, 'hero'))} />
