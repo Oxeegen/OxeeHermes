@@ -103,6 +103,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/settings/plugin-settings.tsx', needs: ['<OxeeDescription text={row.description} />'], why: 'plugin settings show the translated description' },
   { file: 'apps/desktop/src/app/capabilities/catalog/catalog-browser.tsx', needs: ['const library = useLibraryEntries(kind)', 'mergeInstalled([...library, ...(data ?? [])]'], why: 'the Oxeegen library joins the catalogs' },
   { file: 'apps/desktop/src/app/capabilities/catalog/catalog-discovery.tsx', needs: ['<OxeegenLibrarySection card={card} entries={library} kind={kind} />'], why: 'the Oxeegen library carousel leads the Discover page' },
+  { file: 'apps/desktop/src/app/capabilities/catalog/catalog-card.tsx', needs: ['if (variant === \'hero\' && isLibraryEntry(entry))', '<OxeegenLibraryHero action={action} entry={entry} onOpen={onOpen} style={style} />'], why: 'an Oxeegen library slide sets its copy over its visual' },
   { file: 'apps/desktop/src/app/capabilities/catalog/skill-catalog.tsx', needs: ['libraryInstalled(entry, installedByName)'], why: 'an installed Oxeegen library skill reads as installed' },
   { file: 'tools/skills_guard.py', needs: ['"Oxeegen/OxeeLibrary",'], why: 'Oxeegen library skills install as trusted' },
   { file: 'apps/desktop/src/store/free-tier.ts', needs: ['(status, clear) => Boolean(status?.available) && clear'], why: 'no Nous sign-in chip for a leftover Nous guest' },

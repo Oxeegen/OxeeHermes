@@ -44,6 +44,7 @@ const EN = {
   title: 'Connect to Oxeegen',
   libraryTitle: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Oxeegen plugins' : 'Oxeegen skills'),
   libraryBlurb: 'Published and reviewed by Oxeegen.',
+  libraryShelf: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Plugin library' : 'Skill library'),
   librarySource: 'Oxeegen'
 }
 
@@ -88,6 +89,7 @@ const FR: OxeegenStrings = {
   title: 'Connexion à Oxeegen',
   libraryTitle: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Plugins Oxeegen' : 'Skills Oxeegen'),
   libraryBlurb: 'Publiés et vérifiés par Oxeegen.',
+  libraryShelf: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Bibliothèque de plugins' : 'Bibliothèque de skills'),
   librarySource: 'Oxeegen'
 }
 

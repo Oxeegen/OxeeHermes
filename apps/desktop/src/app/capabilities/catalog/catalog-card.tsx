@@ -5,6 +5,8 @@ import { type CSSProperties, type ReactNode, useState } from 'react'
 import { RowButton } from '@/components/ui/row-button'
 import { cn } from '@/lib/utils'
 import { OxeeDescription } from '@/oxeegen/descriptions'
+import { isLibraryEntry } from '@/oxeegen/library'
+import { OxeegenLibraryHero } from '@/oxeegen/library-hero'
 
 import { type CatalogEntry, catalogLabel } from './catalog-data'
 import { CatalogDates, CatalogHeaderMeta, CatalogMetadata, CatalogRating } from './catalog-metadata'
@@ -93,6 +95,11 @@ function CatalogCardFooter({ entry, action, hero }: { entry: CatalogEntry; actio
 }
 
 export function CatalogCard({ entry, action, accentIndex, onOpen, onCategory, onTag, onSearch, variant = 'default', style }: CatalogCardProps) {
+  // Oxee Hermes: an Oxeegen library slide sets its copy over its visual (oxeegen/library-hero.tsx).
+  if (variant === 'hero' && isLibraryEntry(entry)) {
+    return <OxeegenLibraryHero action={action} entry={entry} onOpen={onOpen} style={style} />
+  }
+
   return (
     <article
       className={cn(

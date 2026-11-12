@@ -46,3 +46,9 @@ uv run --no-project --with fonttools --with brotli --with uharfbuzz python oxeeg
 # idem pour "Hermes" et "Oxee Hermes"
 python3 oxeegen/scripts/wordmarks.py <dir> oxeegen/assets/wordmark
 ```
+
+## Logo Oxeegen
+
+`wordmark/oxeegen-logo-light.png` : le logo officiel (oxeegen.fr, 1200 × 231). `oxeegen-logo-dark.png` en est dérivé
+(lettrage blanc, symbole inchangé) par `uv run --no-project --with pillow python oxeegen/scripts/oxeegen_logo.py oxeegen/assets/wordmark`.
+En tête de la bibliothèque Oxeegen dans Capacités.

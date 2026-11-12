@@ -21,7 +21,7 @@ import { $desktopVersion } from '@/store/updates'
 export const LIBRARY_REPOSITORY = 'Oxeegen/OxeeLibrary'
 export const LIBRARY_CATALOG_URL = `https://raw.githubusercontent.com/${LIBRARY_REPOSITORY}/catalog/catalog.json`
 export const LIBRARY_SOURCE = 'Oxeegen'
-const REFRESH_MS = 6 * 60 * 60 * 1000
+const REFRESH_MS = 60 * 60 * 1000
 const CACHE_KEY = 'oxeegen:library-catalog'
 
 type Localized = Partial<Record<string, string>>

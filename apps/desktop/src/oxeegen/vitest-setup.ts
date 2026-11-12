@@ -7,6 +7,7 @@
  */
 import { vi } from 'vitest'
 
+import type * as Library from './library'
 import { rebrandTranslations } from './rebrand'
 
 const rebranded = async (load: () => Promise<Record<string, unknown>>) => rebrandTranslations(await load())
@@ -24,3 +25,10 @@ vi.mock('@/i18n/es', async importOriginal => rebranded(importOriginal))
 // Upstream update tests drive applyUpdates() end to end with no one to answer the Oxeegen
 // "install and restart?" question; they get a yes. update-confirm.test.ts covers the dialog.
 vi.mock('@/oxeegen/update-confirm', () => ({ confirmUpdateRestart: async () => true }))
+
+// Upstream catalog tests must not read the live Oxeegen library from GitHub: whatever it holds
+// would join their lists. They get an empty library; library*.test.ts* cover it.
+vi.mock('@/oxeegen/library', async importOriginal => ({
+  ...(await importOriginal<typeof Library>()),
+  useLibraryEntries: () => []
+}))
