@@ -1,5 +1,5 @@
 import { credentialPreview } from '@/app/settings/helpers'
-import { getEnvVars, type ProfileScope, revealEnvVar, setEnvVar } from '@/hermes'
+import { getEnvVars, getHermesConfig, type ProfileScope, revealEnvVar, setEnvVar } from '@/hermes'
 
 import { OXEEGEN, OXEEGEN_REGIONS, oxeegenRegion, type OxeegenRegionId, parseRegion } from './config'
 
@@ -18,6 +18,9 @@ export interface OxeegenRegionKey {
 
 export interface OxeegenConnection {
   keys: Record<OxeegenRegionId, OxeegenRegionKey>
+  /** Set when the administrator set the region and key for the computer (the
+   *  machine's oxeegen.env, electron/oxeegen-managed.ts): nothing to edit here. */
+  managedRegion: null | OxeegenRegionId
   region: null | OxeegenRegionId
 }
 
@@ -26,7 +29,8 @@ type GatewayRequester = <T = unknown>(method: string, params?: Record<string, un
 const scopeProfile = (profile?: ProfileScope) => (typeof profile === 'object' && profile ? profile.profile : profile)
 
 export async function readOxeegenConnection(profile?: ProfileScope): Promise<OxeegenConnection> {
-  const env = await getEnvVars(scopeProfile(profile))
+  const [env, config] = await Promise.all([getEnvVars(scopeProfile(profile)), getHermesConfig(scopeProfile(profile) ?? undefined)])
+  const managed = (config as { oxeegen?: { managed_region?: string } }).oxeegen?.managed_region
 
   const keys = Object.fromEntries(
     OXEEGEN_REGIONS.map(r => [
@@ -39,7 +43,7 @@ export async function readOxeegenConnection(profile?: ProfileScope): Promise<Oxe
     ? parseRegion((await revealEnvVar(OXEEGEN.regionEnv, profile)).value)
     : null
 
-  return { keys, region }
+  return { keys, managedRegion: parseRegion(managed), region }
 }
 
 /** Stores the region (and its key when given), derives the active key and

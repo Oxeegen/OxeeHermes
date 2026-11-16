@@ -84,7 +84,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/store/titlebar-app-actions.ts', needs: ["'new-browser': {}", "['new-browser', 'settings', 'layout', 'hud']"], why: 'titlebar width reserves the button' },
   { file: 'apps/desktop/src/i18n/en.ts', needs: ["'view.newBrowserTab': 'New browser tab'"], why: 'shortcut label' },
   // Isolation from an installed official Hermes
-  { file: 'apps/desktop/electron/main.ts', needs: ['oxeegenManagedDir(', "'oxee-hermes'", 'app.setAppUserModelId(PRODUCT_IDENTITY.appId)'], why: 'managed scope, own deep-link scheme, own AUMID' },
+  { file: 'apps/desktop/electron/main.ts', needs: ['applyOxeegenManagedScope(', "'oxee-hermes'", 'app.setAppUserModelId(PRODUCT_IDENTITY.appId)'], why: 'managed scope, own deep-link scheme, own AUMID' },
   { file: 'apps/desktop/electron/main.ts', needs: ['bundledTicketBackend() ?? ensureRuntime(', 'command: payload.storePython,'], why: 'bundled Windows gateway tickets run on the payload python (upstream bug fix)' },
   { file: 'apps/desktop/electron/notification-linux.ts', needs: ["new Variant('s', PRODUCT_IDENTITY.appId)"], why: 'Linux notifications use our desktop entry' },
   { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ['oxeegenBundleEnvironment('], why: 'stamp carries the isolation env (CLI launcher reads it)' },

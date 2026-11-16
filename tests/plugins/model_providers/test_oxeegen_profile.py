@@ -101,3 +101,23 @@ def test_picker_offers_only_the_chat_models_with_their_context_windows(oxeegen):
         caps = profile.model_capabilities[model["id"]]
         assert caps["context_window"] == model["context_window"]
         assert caps["supports_tools"]
+
+
+def test_an_administrator_region_and_key_beat_the_users(oxeegen, monkeypatch, tmp_path):
+    """The machine's oxeegen.env (composed into the managed .env by the desktop) wins, and the
+    user's own .env is left as it was."""
+    from hermes_cli.managed_scope import invalidate_managed_cache
+
+    managed = tmp_path / "managed"
+    managed.mkdir()
+    (managed / ".env").write_text(f"OXEEGEN_REGION=eu\n{EU['api_key_env']}=sk-admin\n", encoding="utf-8")
+    monkeypatch.setenv("HERMES_MANAGED_DIR", str(managed))
+    invalidate_managed_cache()
+    user = {"OXEEGEN_REGION": "us", US["api_key_env"]: "sk-user", "OXEEGEN_API_KEY": "sk-user"}
+    env = _write_env(user)
+
+    oxeegen.sync_active_region()
+
+    assert os.environ["OXEEGEN_BASE_URL"] == EU["base_url"]
+    assert os.environ["OXEEGEN_API_KEY"] == "sk-admin"
+    assert _read_env(env) == user

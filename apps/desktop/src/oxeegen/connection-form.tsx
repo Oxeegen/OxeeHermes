@@ -14,6 +14,8 @@ import { useOxeegenStrings } from './strings'
 type GatewayRequester = <T = unknown>(method: string, params?: Record<string, unknown>) => Promise<T>
 
 interface OxeegenConnectionFormProps {
+  /** Shown above the editable form only: there is nothing to choose when the administrator set it. */
+  intro?: string
   onSaved?: () => Promise<void> | void
   profile?: ProfileScope
   requestGateway: GatewayRequester
@@ -22,7 +24,7 @@ interface OxeegenConnectionFormProps {
 }
 
 /** Region + API key: the only inference settings Oxee Hermes exposes. */
-export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submitLabel }: OxeegenConnectionFormProps) {
+export function OxeegenConnectionForm({ intro, onSaved, profile, requestGateway, submitLabel }: OxeegenConnectionFormProps) {
   const s = useOxeegenStrings()
   const [current, setCurrent] = useState<null | OxeegenConnection>(null)
   const [region, setRegion] = useState<OxeegenRegionId>(OXEEGEN.defaultRegion)
@@ -45,6 +47,7 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
           live &&
           setCurrent({
             keys: Object.fromEntries(OXEEGEN_REGIONS.map(r => [r.id, { preview: null, set: false }])) as OxeegenConnection['keys'],
+            managedRegion: null,
             region: null
           })
       )
@@ -84,6 +87,10 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
     }
   }
 
+  if (current?.managedRegion) {
+    return <ManagedConnection onContinue={onSaved} region={current.managedRegion} />
+  }
+
   return (
     <form
       className="grid gap-4"
@@ -92,6 +99,7 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
         void submit()
       }}
     >
+      {intro ? <p className="text-sm text-(--ui-text-tertiary)">{intro}</p> : null}
       <div className="grid gap-1.5">
         <span className="text-sm font-medium">{s.region}</span>
         <SegmentedControl
@@ -139,5 +147,34 @@ export function OxeegenConnectionForm({ onSaved, profile, requestGateway, submit
         </Button>
       </div>
     </form>
+  )
+}
+
+/** The administrator set the region and key for this computer: shown, not editable. */
+function ManagedConnection({ onContinue, region }: { onContinue?: () => Promise<void> | void; region: OxeegenRegionId }) {
+  const s = useOxeegenStrings()
+  const label = s.regionLabel(region, OXEEGEN_REGIONS.find(r => r.id === region)?.label ?? region)
+
+  return (
+    <div className="grid gap-4" data-oxeegen-managed-connection>
+      <dl className="grid gap-3 text-sm">
+        <div className="grid gap-0.5">
+          <dt className="font-medium">{s.region}</dt>
+          <dd className="text-(--ui-text-secondary)">{label}</dd>
+        </div>
+        <div className="grid gap-0.5">
+          <dt className="font-medium">{s.apiKey}</dt>
+          <dd className="text-(--ui-text-secondary)">{s.apiKeyManaged}</dd>
+        </div>
+      </dl>
+      <p className="text-xs text-(--ui-text-tertiary)">{s.managedNotice}</p>
+      {onContinue ? (
+        <div>
+          <Button onClick={() => void onContinue()} type="button">
+            {s.continue}
+          </Button>
+        </div>
+      ) : null}
+    </div>
   )
 }

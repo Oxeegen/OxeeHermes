@@ -435,7 +435,7 @@ import {
   withoutInteractiveOauthLogin
 } from './oauth-rest-request'
 import { wireOauthSessionResponse } from './oauth-session-response'
-import { oxeegenManagedDir } from './oxeegen-managed'
+import { applyOxeegenManagedScope } from './oxeegen-managed'
 import { listWindowsProcesses, reapPackageRootedProcesses } from './package-process-reap'
 import {
   bundledPayload,
@@ -1261,15 +1261,14 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding')
 
 const SOURCE_REPO_ROOT = path.resolve(APP_ROOT, '../..')
 
-// Oxeegen: the managed scope (provider, model, voice routing, provider allowlist)
-// governs every backend and CLI this app spawns. See electron/oxeegen-managed.ts.
-{
-  const managedDir = oxeegenManagedDir([bundledPayload(process.resourcesPath)?.repoDir, SOURCE_REPO_ROOT])
-
-  if (managedDir) {
-    process.env.HERMES_MANAGED_DIR = managedDir
-  }
-}
+// Oxeegen: the managed scope (provider, model, voice routing, provider allowlist, and the
+// administrator's region and key) governs every backend and CLI this app spawns.
+applyOxeegenManagedScope({
+  isPackaged: app.isPackaged,
+  payloadRoot: bundledPayload(process.resourcesPath)?.repoDir,
+  sourceRoot: SOURCE_REPO_ROOT,
+  userData: app.getPath('userData')
+})
 
 // Runtime identity comes only from the baked artifact stamp. Dev runs have none.
 if (INSTALL_STAMP) {

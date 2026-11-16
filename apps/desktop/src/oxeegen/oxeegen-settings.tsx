@@ -18,8 +18,7 @@ export function OxeegenSettings() {
   return (
     <SettingsContent>
       <SettingsSection icon={KeyRound} meta={OXEEGEN.mainModel} title={s.title}>
-        <p className="mb-4 text-sm text-(--ui-text-tertiary)">{s.intro}</p>
-        <OxeegenConnectionForm profile={profile} requestGateway={requestGateway} />
+        <OxeegenConnectionForm intro={s.intro} profile={profile} requestGateway={requestGateway} />
       </SettingsSection>
     </SettingsContent>
   )

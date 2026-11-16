@@ -25,13 +25,18 @@ import { OXEEGEN, OXEEGEN_REGIONS } from './config'
 import { saveOxeegenConnection } from './connection'
 
 const hermesApi = vi.hoisted(() => ({
+  config: {} as Record<string, unknown>,
   env: {} as Record<string, string>,
+  getEnvVars: vi.fn(async () => ({})),
+  getHermesConfig: vi.fn(async () => hermesApi.config),
   revealEnvVar: vi.fn(),
   setEnvVar: vi.fn()
 }))
 
 vi.mock('@/hermes', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
+  getEnvVars: hermesApi.getEnvVars,
+  getHermesConfig: hermesApi.getHermesConfig,
   revealEnvVar: hermesApi.revealEnvVar,
   setEnvVar: hermesApi.setEnvVar
 }))
@@ -325,6 +330,36 @@ describe('onboarding form', () => {
     await waitFor(() => expect((connect as HTMLButtonElement).disabled).toBe(true))
     fireEvent.change(screen.getByPlaceholderText('sk-…'), { target: { value: 'sk-test' } })
     expect((connect as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  it('a region and key set by the administrator are shown, not editable, and never the key', async () => {
+    const { OxeegenConnectionForm } = await import('./connection-form')
+    const onSaved = vi.fn()
+
+    hermesApi.env = {}
+    hermesApi.config = { oxeegen: { managed_region: 'us' } }
+
+    try {
+      render(
+        <OxeegenConnectionForm
+          intro="Choose your region and enter your key."
+          onSaved={onSaved}
+          requestGateway={vi.fn() as unknown as OnboardingContext['requestGateway']}
+        />
+      )
+
+      expect(await screen.findByText('Set by your administrator')).toBeTruthy()
+      expect(screen.queryByText('Choose your region and enter your key.')).toBeNull()
+      expect(screen.getByText('United States')).toBeTruthy()
+      expect(screen.queryByPlaceholderText('sk-…')).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Save' })).toBeNull()
+      fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      expect(onSaved).toHaveBeenCalled()
+      expect(hermesApi.setEnvVar).not.toHaveBeenCalled()
+      expect(hermesApi.revealEnvVar).not.toHaveBeenCalled()
+    } finally {
+      hermesApi.config = {}
+    }
   })
 
   it('links to the API key page only when oxeegen.json names one', async () => {

@@ -23,11 +23,9 @@ export function OxeegenOnboarding({ ctx }: { ctx: OnboardingContext }) {
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-1">
-        <h2 className="text-lg font-semibold">{s.title}</h2>
-        <p className="text-sm text-(--ui-text-tertiary)">{s.intro}</p>
-      </div>
+      <h2 className="text-lg font-semibold">{s.title}</h2>
       <OxeegenConnectionForm
+        intro={s.intro}
         onSaved={finish}
         profile={ctx.scope}
         requestGateway={ctx.requestGateway}

@@ -47,7 +47,16 @@ def sync_active_region() -> None:
     url_env, key_env, region_env = _CONFIG["base_url_env"], _CONFIG["api_key_env"], _CONFIG["region_env"]
     try:
         from hermes_cli.config import load_env, remove_env_value, save_env_value
+        from hermes_cli.managed_scope import load_managed_env
 
+        # A region the administrator set (the desktop composes it from the machine's
+        # oxeegen.env, see apps/desktop/electron/oxeegen-managed.ts) beats the user's: the user's
+        # .env is left alone, and the managed overlay already refuses writes to these keys.
+        managed = load_managed_env()
+        if region_env in managed:
+            url, key = active_pair(managed)
+            _publish_pair(url_env, url, key_env, key)
+            return
         on_disk = load_env()
         if region_env not in on_disk:
             os.environ.setdefault(url_env, active_pair(on_disk)[0])
@@ -62,6 +71,10 @@ def sync_active_region() -> None:
     except Exception:
         logger.warning("oxeegen: could not reconcile the active region in .env", exc_info=True)
         return
+    _publish_pair(url_env, url, key_env, key)
+
+
+def _publish_pair(url_env: str, url: str, key_env: str, key: str) -> None:
     os.environ[url_env] = url
     if key:
         os.environ[key_env] = key

@@ -17,7 +17,7 @@ import { afterEach, beforeEach, describe, test } from 'vitest'
 // @ts-expect-error -- plain ESM build script without declarations
 import { applyBundleEnvironment, OXEEGEN_BUNDLE_ENV, oxeegenBundleEnvironment } from '../scripts/bundle-env.mjs'
 
-import { oxeegenManagedDir } from './oxeegen-managed'
+import { machineConfigDir, oxeegenManagedDir, oxeegenManagedScope } from './oxeegen-managed'
 
 const require: NodeJS.Require = createRequire(import.meta.url)
 const DESKTOP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -158,6 +158,74 @@ describe('managed scope', () => {
 
     assert.equal(oxeegenManagedDir([payload, ROOT]), path.join(payload, 'oxeegen', 'managed'))
     assert.equal(oxeegenManagedDir([null, os.tmpdir()]), null)
+  })
+})
+
+describe('machine configuration (administrator region and key)', () => {
+  const run = (machine: null | string) => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'oxeegen-machine-'))
+    const machineFile = path.join(dir, 'oxeegen.env')
+    const outDir = path.join(dir, 'user-data', 'oxeegen-managed')
+    const logs: string[] = []
+
+    if (machine !== null) {
+      fs.writeFileSync(machineFile, machine)
+    }
+
+    const managed = oxeegenManagedScope({ log: line => logs.push(line), machineFile, outDir, roots: [ROOT] })
+
+    return { logs, managed, outDir }
+  }
+
+  test('without the file, the shipped scope applies as is', () => {
+    assert.equal(run(null).managed, path.join(ROOT, 'oxeegen', 'managed'))
+  })
+
+  test("the administrator's region and key become managed values, the endpoint from oxeegen.json", () => {
+    const { logs, managed, outDir } = run('\uFEFF# set by IT\r\nOXEEGEN_REGION=US\r\nOXEEGEN_API_KEY="sk-admin"\r\n')
+    const spec = JSON.parse(fs.readFileSync(path.join(ROOT, 'plugins/model-providers/oxeegen/oxeegen.json'), 'utf8'))
+
+    assert.equal(managed, outDir)
+    assert.equal(
+      fs.readFileSync(path.join(outDir, '.env'), 'utf8'),
+      `OXEEGEN_REGION=us\nOXEEGEN_US_API_KEY=sk-admin\nOXEEGEN_API_KEY=sk-admin\nOXEEGEN_BASE_URL=${spec.regions.us.base_url}\n`
+    )
+    const config = fs.readFileSync(path.join(outDir, 'config.yaml'), 'utf8')
+    assert.ok(config.startsWith(fs.readFileSync(path.join(ROOT, 'oxeegen/managed/config.yaml'), 'utf8').trimEnd()))
+    assert.match(config, /\noxeegen:\n {2}managed_region: us\n$/)
+    assert.ok(!logs.join('\n').includes('sk-admin'))
+  })
+
+  test("a region's own key wins over the generic one", () => {
+    const { outDir } = run('OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-generic\nOXEEGEN_EU_API_KEY=sk-eu\n')
+
+    assert.match(fs.readFileSync(path.join(outDir, '.env'), 'utf8'), /^OXEEGEN_EU_API_KEY=sk-eu$/m)
+  })
+
+  test.each([
+    ['an unknown region', 'OXEEGEN_REGION=mars\nOXEEGEN_API_KEY=sk-x\n'],
+    ['no key', 'OXEEGEN_REGION=eu\n'],
+    ["another region's key only", 'OXEEGEN_REGION=eu\nOXEEGEN_US_API_KEY=sk-us\n']
+  ])('%s: the file is ignored, said in the log, and an earlier composition removed', (_name, text) => {
+    const first = run('OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-x\n')
+    fs.writeFileSync(path.join(first.outDir, '..', '..', 'oxeegen.env'), text)
+    const logs: string[] = []
+
+    const managed = oxeegenManagedScope({
+      log: line => logs.push(line),
+      machineFile: path.join(first.outDir, '..', '..', 'oxeegen.env'),
+      outDir: first.outDir,
+      roots: [ROOT]
+    })
+
+    assert.equal(managed, path.join(ROOT, 'oxeegen', 'managed'))
+    assert.equal(fs.existsSync(first.outDir), false)
+    assert.match(logs.join('\n'), /is not applied/)
+  })
+
+  test('the machine file lives outside the install folder', () => {
+    assert.equal(machineConfigDir('win32', { ProgramData: 'D:\\ProgramData' }), 'D:\\ProgramData\\Oxee Hermes')
+    assert.equal(machineConfigDir('win32', {}), 'C:\\ProgramData\\Oxee Hermes')
   })
 })
 
