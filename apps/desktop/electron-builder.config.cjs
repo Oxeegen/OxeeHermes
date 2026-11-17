@@ -107,7 +107,9 @@ module.exports = {
     // the build's own display name, never the official "Hermes" (shared lock =
     // our app exits into a running official one).
     productName: displayName,
-    desktopName: appId
+    desktopName: appId,
+    // Oxeegen: the publisher Apps & features and the .msi show (companyName / Manufacturer).
+    author: { name: 'Oxeegen' }
   },
   directories: {
     output: 'release'
@@ -249,7 +251,9 @@ module.exports = {
     // (electron/updater/oxeegen-delta-client.ts).
     extraResources: [
       { from: 'scripts/update-relaunch-waiter.ps1', to: 'update-relaunch-waiter.ps1' },
-      { from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' }
+      { from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' },
+      // The .msi writes the administrator's region and key with it (scripts/oxeegen-msi-project.mjs).
+      { from: 'scripts/oxeegen-machine-config.ps1', to: 'oxeegen-machine-config.ps1' }
     ],
     ...windowsSigning()
   },
@@ -284,7 +288,9 @@ module.exports = {
     artifactName: `${artifactNamePascal}-\${version}-\${arch}.\${ext}`,
     shortcutName: displayName,
     createDesktopShortcut: true,
-    createStartMenuShortcut: true
+    createStartMenuShortcut: true,
+    // WixQuietExec64, which writes the machine configuration without logging the key.
+    additionalLightArgs: ['-ext', 'WixUtilExtension']
   },
   msix: {
     // A store build uses the Partner Center packaging identity (the Store

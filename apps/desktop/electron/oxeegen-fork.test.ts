@@ -234,13 +234,14 @@ describe('machine configuration (administrator region and key)', () => {
 describe('.msi machine configuration', () => {
   const template = fs.readFileSync(path.join(path.dirname(require.resolve('app-builder-lib')), '../templates/msi/template.xml'), 'utf8')
 
-  test('the region and a hidden key property write a permanent oxeegen.env in ProgramData', () => {
+  test('the key is hidden, and so is the command line that writes it as SYSTEM after the files', () => {
     const wxs = withMachineConfig(template)
 
     assert.match(wxs, /<Property Id="OXEEGEN_API_KEY" Secure="yes" Hidden="yes"\/>/)
-    assert.match(wxs, /<Property Id="MsiHiddenProperties" Value="OXEEGEN_API_KEY"\/>/)
-    assert.match(wxs, /<Directory Id="CommonAppDataFolder">\s*<Directory Id="OXEEGEN_MACHINE_DIR" Name="Oxee Hermes"\/>/)
-    assert.match(wxs, /Permanent="yes">\s*<Condition><!\[CDATA\[OXEEGEN_API_KEY\]\]><\/Condition>/)
+    assert.match(wxs, /<Property Id="OxeegenWriteMachineConfig" Hidden="yes"\/>/)
+    assert.match(wxs, /DllEntry="WixQuietExec64" Execute="deferred" Impersonate="no" Return="check" HideTarget="yes"/)
+    assert.match(wxs, /resources\\oxeegen-machine-config\.ps1/)
+    assert.doesNotMatch(wxs, /<IniFile/)
     assert.equal(withMachineConfig(wxs), wxs)
   })
 

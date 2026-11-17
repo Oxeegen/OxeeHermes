@@ -8,40 +8,33 @@
  *
  *   msiexec /i OxeeHermes-X.Y.Z-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY=sk-...
  *
- * writes C:\ProgramData\Oxee Hermes\oxeegen.env (an [oxeegen] section of KEY=value lines; the app
- * skips the section line). The key is a hidden property, so msiexec logs show asterisks. The file
- * component is permanent and only installed when a key is passed: an uninstall, or an upgrade
- * deployed without the properties, keeps the file as it is, including a hand edit.
+ * A deferred custom action (WixQuietExec64, as SYSTEM) runs resources\oxeegen-machine-config.ps1,
+ * which writes C:\ProgramData\Oxee Hermes\oxeegen.env. Not the IniFile table: Windows Installer
+ * writes IniFile values in clear in a verbose log even for a hidden property. Here the key is a
+ * Hidden property, the command line that carries it is a hidden property too, and both custom
+ * actions hide their target, so no msiexec log shows it. The file is not a component: an
+ * uninstall, or an upgrade deployed without the properties, leaves it as it is, hand edits included.
  */
 import fs from 'node:fs'
 
-/** Fixed forever: Windows Installer tracks the machine configuration by this component id. */
-const MACHINE_CONFIG_COMPONENT_GUID = 'DFE3132D-BE00-4F09-A2A0-006C97D91891'
+const WRITE = 'OxeegenWriteMachineConfig'
+const WHEN = '<![CDATA[OXEEGEN_API_KEY AND NOT (REMOVE~="ALL")]]>'
 
 export const MACHINE_CONFIG_WIX = `
     <Property Id="OXEEGEN_REGION" Secure="yes" Value="eu"/>
     <Property Id="OXEEGEN_API_KEY" Secure="yes" Hidden="yes"/>
-    <Property Id="MsiHiddenProperties" Value="OXEEGEN_API_KEY"/>
-    <DirectoryRef Id="TARGETDIR">
-      <Directory Id="CommonAppDataFolder">
-        <Directory Id="OXEEGEN_MACHINE_DIR" Name="Oxee Hermes"/>
-      </Directory>
-    </DirectoryRef>
-    <DirectoryRef Id="OXEEGEN_MACHINE_DIR">
-      <Component Id="OxeegenMachineConfig" Guid="{${MACHINE_CONFIG_COMPONENT_GUID}}" Permanent="yes">
-        <Condition><![CDATA[OXEEGEN_API_KEY]]></Condition>
-        <RegistryValue Root="HKLM" Key="Software\\Oxeegen\\Oxee Hermes" Name="MachineConfig" Type="integer" Value="1" KeyPath="yes"/>
-        <IniFile Id="OxeegenRegion" Action="addLine" Directory="OXEEGEN_MACHINE_DIR" Name="oxeegen.env" Section="oxeegen" Key="OXEEGEN_REGION" Value="[OXEEGEN_REGION]"/>
-        <IniFile Id="OxeegenApiKey" Action="addLine" Directory="OXEEGEN_MACHINE_DIR" Name="oxeegen.env" Section="oxeegen" Key="OXEEGEN_API_KEY" Value="[OXEEGEN_API_KEY]"/>
-      </Component>
-    </DirectoryRef>
-    <Feature Id="OxeegenMachineConfigFeature" Absent="disallow" Display="hidden" Level="1">
-      <ComponentRef Id="OxeegenMachineConfig"/>
-    </Feature>
+    <Property Id="${WRITE}" Hidden="yes"/>
+    <CustomAction Id="OxeegenSetMachineConfig" Property="${WRITE}" Execute="immediate" HideTarget="yes"
+      Value="&quot;[System64Folder]WindowsPowerShell\\v1.0\\powershell.exe&quot; -NoProfile -NonInteractive -ExecutionPolicy Bypass -File &quot;[APPLICATIONFOLDER]resources\\oxeegen-machine-config.ps1&quot; -Region &quot;[OXEEGEN_REGION]&quot; -ApiKey &quot;[OXEEGEN_API_KEY]&quot;"/>
+    <CustomAction Id="${WRITE}" BinaryKey="WixCA" DllEntry="WixQuietExec64" Execute="deferred" Impersonate="no" Return="check" HideTarget="yes"/>
+    <InstallExecuteSequence>
+      <Custom Action="OxeegenSetMachineConfig" Before="${WRITE}">${WHEN}</Custom>
+      <Custom Action="${WRITE}" After="InstallFiles">${WHEN}</Custom>
+    </InstallExecuteSequence>
 `
 
 export function withMachineConfig(wxs) {
-  if (wxs.includes('OXEEGEN_MACHINE_DIR')) {
+  if (wxs.includes(WRITE)) {
     return wxs
   }
 
