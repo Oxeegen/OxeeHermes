@@ -252,8 +252,9 @@ export function buildStampPayload(stamp, env = process.env, platform = process.p
     '': 'self',
     bootstrap: 'self',
     store: 'microsoft-store',
-    // Oxee Hermes: the NSIS setup.exe updates itself through electron-updater (GitHub Releases).
-    bundled: { win32: env.HERMES_DESKTOP_PACKAGE === 'nsis' ? 'electron-updater' : 'app-installer', darwin: 'electron-updater' }[platform] || 'external',
+    // Oxee Hermes: the NSIS setup.exe updates itself through electron-updater (GitHub Releases);
+    // the .msi is the administrator's to update (the next .msi, deployed like the first).
+    bundled: { win32: { nsis: 'electron-updater', msi: 'external' }[env.HERMES_DESKTOP_PACKAGE] || 'app-installer', darwin: 'electron-updater' }[platform] || 'external',
     light: platform === 'darwin' ? 'electron-updater' : 'external'
   }[variant]
   if (!updateMechanism) throw new Error(`Unknown desktop variant: ${variant}`)

@@ -7,6 +7,10 @@
   scripts\build-bundle.ps1 -Store      Microsoft Store MSIX (Store identity).
   scripts\build-bundle.ps1 -Nsis       Setup .exe (NSIS) instead of the sideload MSIX: no certificate to
                                        trust, per-user or per-machine install, oxee-hermes* commands on PATH.
+  scripts\build-bundle.ps1 -Msi -Version 1.2.0
+                                       Per-machine .msi (Program Files, silent) for GPO / Intune
+                                       deployment, with the OXEEGEN_REGION / OXEEGEN_API_KEY properties.
+                                       Updates come by deploying the next .msi.
   scripts\build-bundle.ps1 -Nsis -Version 1.2.0
                                        Release setup .exe "Oxee Hermes" 1.2.0 (no commit suffix) with the
                                        latest.yml + .blockmap electron-updater reads from GitHub Releases.
@@ -36,8 +40,11 @@
 .PARAMETER Nsis
   Build the NSIS setup .exe instead of the sideload MSIX. Not with -Store.
 
+.PARAMETER Msi
+  Build the per-machine .msi instead of the sideload MSIX. Not with -Store or -Nsis.
+
 .PARAMETER Version
-  With -Nsis: build release X.Y.Z instead of a commit build. A local claim tag
+  With -Nsis or -Msi: build release X.Y.Z instead of a commit build. A local claim tag
   (rc.<N>-vX.Y.Z) stands in for the release workflow's and is deleted afterwards.
 
 .PARAMETER Python
@@ -50,6 +57,7 @@
 param(
   [switch]$Store,
   [switch]$Nsis,
+  [switch]$Msi,
   [string]$Version = '',
   [string]$Python = '',
   [string]$Remote = 'origin'
@@ -114,7 +122,9 @@ function Get-ClaimAttempt([string]$Version) {
 
 Set-Location $Repo
 if ($Store -and $Nsis) { Fail '-Store and -Nsis are exclusive.' }
-if ($Version -and -not $Nsis) { Fail '-Version builds the release setup .exe: use it with -Nsis.' }
+if ($Msi -and ($Store -or $Nsis)) { Fail '-Msi is exclusive with -Store and -Nsis.' }
+if ($Version -and -not ($Nsis -or $Msi)) { Fail '-Version builds a release setup .exe or .msi: use it with -Nsis or -Msi.' }
+$package = if ($Msi) { 'msi' } elseif ($Nsis) { 'nsis' } else { 'msix' }
 if ($Version -and $Version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') { Fail "-Version '$Version' is not X.Y.Z." }
 $py = Find-Python
 
@@ -175,13 +185,12 @@ try {
     $env:HERMES_PAYLOAD_TAG = "v$Version"
     $env:HERMES_PAYLOAD_VERSION = $Version
     $env:HERMES_DESKTOP_VARIANT = 'bundled'
-    Write-Host "build-bundle: building $sha as release setup.exe v$Version (local claim $claim)"
-    & $py scripts/bundles/desktop.py --tag "v$Version" --release-commit $sha --variant bundled --clean nsis
+    Write-Host "build-bundle: building $sha as release $package v$Version (local claim $claim)"
+    & $py scripts/bundles/desktop.py --tag "v$Version" --release-commit $sha --variant bundled --clean $package
     if ($LASTEXITCODE) { Fail "release build failed (exit $LASTEXITCODE)" }
   } else {
-    $format = if ($Nsis) { 'nsis' } else { 'msix' }
-    Write-Host "build-bundle: building $sha (sideload $format)"
-    & $py scripts/bundles/desktop.py --commit $sha --variant bundled --clean $format
+    Write-Host "build-bundle: building $sha (sideload $package)"
+    & $py scripts/bundles/desktop.py --commit $sha --variant bundled --clean $package
     if ($LASTEXITCODE) { Fail "build failed (exit $LASTEXITCODE)" }
   }
 } finally {

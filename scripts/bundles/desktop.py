@@ -120,6 +120,13 @@ def _build_prepared(prepared, builder_args: list[str], variant: str | None) -> N
         # electron-builder reads formats only right after the platform flag.
         targets = ["--win", "nsis"]
         builder_args = [arg for arg in builder_args if arg != "nsis"]
+    elif sys.platform == "win32" and "msi" in builder_args:
+        # Oxeegen: the per-machine .msi for GPO / Intune; updates come by deploying the next one.
+        if request.channel_request is not None:
+            raise ValueError(".msi packages are commit or release builds, not channel builds")
+        env["HERMES_DESKTOP_PACKAGE"] = "msi"
+        targets = ["--win", "msi"]
+        builder_args = [arg for arg in builder_args if arg != "msi"]
     package_args = ["--prepared", str(prepared.packager), "--native-deps", str(prepared.native),
                     *targets, f"-c.extraMetadata.version={request.version}"]
     run([node, "scripts/run-electron-builder.mjs", "--validate-only", *package_args, *builder_args],

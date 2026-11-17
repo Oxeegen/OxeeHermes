@@ -119,6 +119,8 @@ module.exports = {
     return false
   } : 'scripts/before-build.mjs',
   beforePack: 'scripts/before-pack.mjs',
+  // Oxeegen .msi: the administrator's region and key as msiexec properties.
+  msiProjectCreated: 'scripts/oxeegen-msi-project.mjs',
   // The exe identity stamp runs here, on the pristine electron.exe, because
   // ASAR integrity rewrites the PE later and rcedit cannot commit to that
   // rewritten file (#105629). afterPack keeps the signing/payload work.
@@ -269,6 +271,20 @@ module.exports = {
     differentialPackage: Boolean(channel),
     // The oxee-hermes* commands that the MSIX declares as execution aliases.
     include: 'packaging/oxeegen-installer.nsh'
+  },
+  // Oxeegen .msi (scripts\build-bundle.ps1 -Msi): per-machine and silent, for GPO / Intune
+  // deployment. Updates come by deploying the next .msi (the stamp says 'external'), and the
+  // machine configuration properties come from scripts/oxeegen-msi-project.mjs.
+  msi: {
+    oneClick: true,
+    perMachine: true,
+    runAfterFinish: false,
+    // Fixed forever: a new .msi replaces the installed one because they share it.
+    upgradeCode: '63071DFB-63AD-4268-8D9A-7EE6770418ED',
+    artifactName: `${artifactNamePascal}-\${version}-\${arch}.\${ext}`,
+    shortcutName: displayName,
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true
   },
   msix: {
     // A store build uses the Partner Center packaging identity (the Store

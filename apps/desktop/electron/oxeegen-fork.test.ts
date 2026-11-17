@@ -16,6 +16,8 @@ import { afterEach, beforeEach, describe, test } from 'vitest'
 
 // @ts-expect-error -- plain ESM build script without declarations
 import { applyBundleEnvironment, OXEEGEN_BUNDLE_ENV, oxeegenBundleEnvironment } from '../scripts/bundle-env.mjs'
+// @ts-expect-error -- plain ESM build script without declarations
+import { withMachineConfig } from '../scripts/oxeegen-msi-project.mjs'
 
 import { machineConfigDir, oxeegenManagedDir, oxeegenManagedScope } from './oxeegen-managed'
 
@@ -226,6 +228,24 @@ describe('machine configuration (administrator region and key)', () => {
   test('the machine file lives outside the install folder', () => {
     assert.equal(machineConfigDir('win32', { ProgramData: 'D:\\ProgramData' }), 'D:\\ProgramData\\Oxee Hermes')
     assert.equal(machineConfigDir('win32', {}), 'C:\\ProgramData\\Oxee Hermes')
+  })
+})
+
+describe('.msi machine configuration', () => {
+  const template = fs.readFileSync(path.join(path.dirname(require.resolve('app-builder-lib')), '../templates/msi/template.xml'), 'utf8')
+
+  test('the region and a hidden key property write a permanent oxeegen.env in ProgramData', () => {
+    const wxs = withMachineConfig(template)
+
+    assert.match(wxs, /<Property Id="OXEEGEN_API_KEY" Secure="yes" Hidden="yes"\/>/)
+    assert.match(wxs, /<Property Id="MsiHiddenProperties" Value="OXEEGEN_API_KEY"\/>/)
+    assert.match(wxs, /<Directory Id="CommonAppDataFolder">\s*<Directory Id="OXEEGEN_MACHINE_DIR" Name="Oxee Hermes"\/>/)
+    assert.match(wxs, /Permanent="yes">\s*<Condition><!\[CDATA\[OXEEGEN_API_KEY\]\]><\/Condition>/)
+    assert.equal(withMachineConfig(wxs), wxs)
+  })
+
+  test('a changed electron-builder template fails the build instead of shipping without it', () => {
+    assert.throws(() => withMachineConfig('<Wix></Wix>'), /template changed/)
   })
 })
 
