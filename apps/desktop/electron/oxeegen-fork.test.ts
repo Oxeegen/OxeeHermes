@@ -18,6 +18,8 @@ import { afterEach, beforeEach, describe, test } from 'vitest'
 import { applyBundleEnvironment, OXEEGEN_BUNDLE_ENV, oxeegenBundleEnvironment } from '../scripts/bundle-env.mjs'
 // @ts-expect-error -- plain ESM build script without declarations
 import { withMachineConfig } from '../scripts/oxeegen-msi-project.mjs'
+// @ts-expect-error -- plain ESM build script without declarations
+import { validatePreparedBuilderArgs } from '../scripts/run-electron-builder.mjs'
 
 import { machineConfigDir, oxeegenManagedDir, oxeegenManagedScope } from './oxeegen-managed'
 
@@ -232,6 +234,10 @@ describe('machine configuration (administrator region and key)', () => {
 })
 
 describe('.msi machine configuration', () => {
+  test('prepared packaging admits a build of the .msi alone', () => {
+    assert.doesNotThrow(() => validatePreparedBuilderArgs(['--win', 'msi', '-c.extraMetadata.version=0.8.6'], { formats: ['msi'], target: 'win32-x64' }))
+  })
+
   const template = fs.readFileSync(path.join(path.dirname(require.resolve('app-builder-lib')), '../templates/msi/template.xml'), 'utf8')
 
   test('the key is hidden, and so is the command line that writes it as SYSTEM after the files', () => {
