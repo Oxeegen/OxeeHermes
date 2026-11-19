@@ -20,6 +20,10 @@
   "models": {
     "main": "Oxee-max",
     "auxiliary": "Oxee-flash",
+    "_auxiliary_defaults_comment": "Settings > Model > Auxiliary: what a new user starts with and what 'Reset all' restores (hermes_cli/config_defaults_auxiliary.py). Keys: a task id (vision, compression, approval, mcp, title_generation, review, voice_chat, triage_specifier, kanban_decomposer, profile_describer, curator) or '*' for every other task. Entry: {\"model\": \"Oxee-flash\"} pins that Oxeegen model, no model = auto (the main model); \"reasoning_effort\": none|low|medium|high|... or \"\" (model default).",
+    "auxiliary_defaults": {
+      "*": {}
+    },
     "_chat_comment": "Models offered in the chat model picker (ids, context windows and capabilities as reported / verified on the EU endpoint 2026-10-16: tools, reasoning, vision).",
     "chat": [
       {

@@ -4,7 +4,7 @@ Pure-data leaf module — must not import from hermes_cli.config. Comments are t
 docs of config.yaml.
 """
 
-from hermes_cli.config_defaults_auxiliary import _aux
+from hermes_cli.config_defaults_auxiliary import _aux, apply_oxeegen_auxiliary_defaults
 
 #: Image every container terminal backend (docker/modal/daytona, the singularity plugin) uses unless the
 #: user pins one. LEGACY_SANDBOX_IMAGES are the plain defaults that preceded the desktop stack
@@ -2701,7 +2701,7 @@ DEFAULT_CONFIG = {
     },
     "_config_version": 53,  # Config schema version - bump this when adding new required fields
 }
-
+apply_oxeegen_auxiliary_defaults(DEFAULT_CONFIG["auxiliary"])
 
 from hermes_cli.config_defaults_env import OptionalEnvVars, _base_url, _env, _msg, _prov, _setting, _skill, _tool
 

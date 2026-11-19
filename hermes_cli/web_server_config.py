@@ -884,10 +884,14 @@ def _normalize_aux_reasoning_effort(value: Optional[str]) -> Optional[str]:
     return "none" if parsed.get("enabled") is False else parsed["effort"]
 
 
-def _aux_default_effort(slot: str) -> str:
+def _aux_default_block(slot: str) -> dict:
     from hermes_cli.config_defaults import DEFAULT_CONFIG
     block = (DEFAULT_CONFIG.get("auxiliary") or {}).get(slot)
-    return str(block.get("reasoning_effort") or "") if isinstance(block, dict) else ""
+    return block if isinstance(block, dict) else {}
+
+
+def _aux_default_effort(slot: str) -> str:
+    return str(_aux_default_block(slot).get("reasoning_effort") or "")
 
 
 def _apply_aux_assignment_sync(cfg: dict, provider: str, model: str, task: str, base_url: str, api_key: str,
@@ -905,11 +909,13 @@ def _apply_aux_assignment_sync(cfg: dict, provider: str, model: str, task: str, 
     slots = _aux_task_slots()
 
     if task == "__reset__":
-        # Reset every slot to provider="auto", model="", no effort override — keeps other fields intact.
+        # Reset every slot to its default provider/model ("auto"/"" unless DEFAULT_CONFIG ships one), no
+        # effort override — keeps other fields intact.
         for slot in slots:
             slot_cfg = _slot(slot)
-            slot_cfg["provider"] = "auto"
-            slot_cfg["model"] = ""
+            default = _aux_default_block(slot)
+            slot_cfg["provider"] = default.get("provider") or "auto"
+            slot_cfg["model"] = default.get("model") or ""
             slot_cfg.pop("reasoning_effort", None)
             slot_cfg.pop("base_url", None)
             clear_model_endpoint_credentials(slot_cfg)
