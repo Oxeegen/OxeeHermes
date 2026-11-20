@@ -45,10 +45,10 @@ export const frModelSettings: TranslationOverride<ModelSettingsTranslations> = {
   restartingBackend: 'Redémarrage du backend...',
   restartFailed: 'Impossible de redémarrer le backend',
   auxiliaryTitle: 'Modèles auxiliaires',
-  resetAllToMain: 'Tout réinitialiser au principal',
+  resetAllToMain: 'Tout réinitialiser par défaut',
   staleAuxDismiss: 'Ne plus afficher',
   auxiliaryDesc:
-    "Les tâches d'assistance s'exécutent sur le modèle principal par défaut. Attribuez un modèle dédié à toute tâche pour remplacer.",
+    "Les tâches d'assistance démarrent sur les modèles choisis par Oxee Hermes pour chacune. Attribuez un autre modèle à une tâche pour le remplacer.",
   setToMain: 'Définir comme principal',
   change: 'Modifier',
   autoUseMain: 'auto · utiliser le modèle principal',
