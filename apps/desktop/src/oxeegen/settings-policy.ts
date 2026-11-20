@@ -3,10 +3,10 @@
  * the router enum (so any `?tab=<hidden>` deep link falls back to the Oxeegen
  * page), the settings search and the command palette.
  *
- * Billing belongs to Nous services. Providers keeps API keys and custom
- * endpoints but not Accounts, the Nous / OAuth sign-ins. Web Access (serving
- * the Webapp to other devices) is not offered. Model, Advanced and Providers
- * are shown: the managed scope still pins what the administrator set.
+ * Billing belongs to Nous services. Providers is not offered: the managed
+ * scope allows no provider but Oxeegen, whose key the Oxeegen page holds. Web
+ * Access (serving the Webapp to other devices) is not offered. Model and
+ * Advanced are shown: the managed scope still pins the main model.
  * Plugins stays: a model-provider plugin cannot route inference elsewhere.
  * Passwords and credentials (vault) stays: it keeps the user's own logins
  * (local, Bitwarden, 1Password). Gateways stays: it is how other Hermes on the
@@ -17,19 +17,11 @@ import { OXEEGEN } from './config'
 
 export const OXEEGEN_SETTINGS_VIEW = 'oxeegen'
 
-const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set(['billing', 'web-access'])
+const HIDDEN_SETTINGS_VIEWS: ReadonlySet<string> = new Set(['billing', 'providers', 'web-access'])
 
-/** Sub-views hidden inside a shown view, as `<tab>&<param>=<value>`. */
-const HIDDEN_SETTINGS_SUBVIEWS: ReadonlySet<string> = new Set(['providers&pview=accounts'])
-
-/** The Providers sub-view a bare `?tab=providers` opens (upstream opens Accounts). */
-export const OXEEGEN_PROVIDER_VIEW = 'keys'
-
-/** `view` may carry query tails (`providers&pview=keys`): the tab, then each tail, can hide it. */
+/** `view` may carry query tails (`providers&pview=keys`); only the tab counts. */
 export function isVisibleSettingsView(view: string): boolean {
-  const [tab = view, ...tails] = view.split('&')
-
-  return !HIDDEN_SETTINGS_VIEWS.has(tab) && !tails.some(tail => HIDDEN_SETTINGS_SUBVIEWS.has(`${tab}&${tail}`))
+  return !HIDDEN_SETTINGS_VIEWS.has(view.split('&')[0] ?? view)
 }
 
 /**
@@ -51,12 +43,20 @@ export function oxeegenPluginDefault(id: string, upstreamDefault: boolean): bool
 export const OXEEGEN_HERMES_CLOUD = false
 
 /**
+ * Advanced > Terminal backend offers `local` only (constants.ts): the agent's commands run on this
+ * computer, never in a container or a third-party cloud sandbox, so the image of each of those
+ * backends has nothing to configure.
+ */
+const TERMINAL_IMAGE_FIELDS = ['terminal.daytona_image', 'terminal.docker_image', 'terminal.modal_image', 'terminal.singularity_image']
+
+/**
  * Voice is chained: Oxeegen STT → Hermes → Oxeegen TTS, pinned by the managed
  * scope (gen-managed.py). The Voice conversation page and these rows would
  * only offer choices that cannot apply: another wiring (GPT-Live), another
  * provider, live transcription, turning recognition off.
  */
 const HIDDEN_SETTING_FIELDS: ReadonlySet<string> = new Set([
+  ...TERMINAL_IMAGE_FIELDS,
   'stt.enabled',
   'stt.openai.streaming_model',
   'stt.provider',

@@ -31,7 +31,7 @@ import { isEditableTarget } from '@/lib/keybinds/combo'
 import { typeToFocusChar } from '@/lib/keybinds/composer-focus-keys'
 import { cn } from '@/lib/utils'
 import { OxeegenSettings } from '@/oxeegen/oxeegen-settings'
-import { isVisibleSettingsView, OXEEGEN_PROVIDER_VIEW, OXEEGEN_SETTINGS_VIEW } from '@/oxeegen/settings-policy'
+import { isVisibleSettingsView, OXEEGEN_SETTINGS_VIEW } from '@/oxeegen/settings-policy'
 import { oxeegenStrings } from '@/oxeegen/strings'
 import { $commandPaletteOpen, openCommandPalettePage } from '@/store/command-palette'
 import { confirm } from '@/store/confirm'
@@ -95,9 +95,6 @@ const SETTINGS_VIEWS: readonly SettingsViewId[] = (
   'about'
   ] as SettingsViewId[]
 ).filter(isVisibleSettingsView)
-
-// Oxeegen: Providers without its hidden sub-views (Accounts), opening on API keys.
-const VISIBLE_PROVIDER_VIEWS = PROVIDER_VIEWS.filter(view => isVisibleSettingsView(`providers&pview=${view}`))
 
 // Pages that take nothing but the resolved sub-page.
 const SUBPAGE_VIEWS: Partial<Record<SettingsViewId, ComponentType<{ subpage?: string }>>> = {
@@ -175,7 +172,7 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
   }, [activeView, setActiveView])
   // Providers subnav (Accounts vs API keys) lives in its own param so each
   // sub-view is deep-linkable and survives a refresh.
-  const [providerView, setProviderView] = useRouteEnumParam<ProviderView>('pview', VISIBLE_PROVIDER_VIEWS, OXEEGEN_PROVIDER_VIEW)
+  const [providerView, setProviderView] = useRouteEnumParam<ProviderView>('pview', PROVIDER_VIEWS, 'accounts')
   const [keysView] = useRouteEnumParam<KeysView>('kview', KEYS_VIEWS, 'tools')
   const [billingView] = useRouteEnumParam<BillingSubView>('bview', BILLING_VIEWS, 'overview')
   const billingState = useBillingState()
@@ -209,7 +206,7 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
   )
 
   const openProviderView = useCallback(
-    (view: ProviderView) => openSubView('providers', 'pview', view, OXEEGEN_PROVIDER_VIEW),
+    (view: ProviderView) => openSubView('providers', 'pview', view, 'accounts'),
     [openSubView]
   )
 
@@ -376,7 +373,7 @@ export function SettingsView({ onClose, onConfigSaved, onMainModelChanged }: Set
                     }
                   ]
                 : [])
-            ].filter(child => isVisibleSettingsView(`providers&${child.id.replace(':', '=')}`)),
+            ],
             gapBefore: true,
             icon: Zap,
             id: 'providers',

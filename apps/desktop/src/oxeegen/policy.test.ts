@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { ENUM_OPTIONS } from '@/app/settings/constants'
+import { sectionFieldEntries } from '@/app/settings/helpers'
 import { sharedMetricsOfferPending } from '@/store/shared-metrics'
 
 import { OXEEGEN, OXEEGEN_REGIONS, oxeegenRegion, parseRegion } from './config'
@@ -30,13 +32,25 @@ describe('Oxeegen regions', () => {
 })
 
 describe('Oxeegen settings policy', () => {
-  it.each(['billing', 'web-access', 'providers&pview=accounts'])('hides %s', view =>
+  it.each(['billing', 'web-access', 'providers', 'providers&pview=keys'])('hides %s', view =>
     expect(isVisibleSettingsView(view)).toBe(false)
   )
 
-  it.each(['config:model', 'config:advanced', 'providers', 'providers&pview=keys', 'providers&pview=custom-endpoints', 'oxeegen', 'config:chat', 'config:voice', 'config:browser', 'keys', 'sessions', 'about', 'gateway', 'connections', 'vault', 'plugins'])('keeps %s', view =>
+  it.each(['config:model', 'config:advanced', 'oxeegen', 'config:chat', 'config:voice', 'config:browser', 'keys', 'sessions', 'about', 'gateway', 'connections', 'vault', 'plugins'])('keeps %s', view =>
     expect(isVisibleSettingsView(view)).toBe(true)
   )
+})
+
+describe('Oxeegen terminal backend', () => {
+  it('offers only local, and Advanced shows no container or sandbox image', () => {
+    const keys = ['terminal.backend', 'terminal.docker_image', 'terminal.singularity_image', 'terminal.modal_image', 'terminal.daytona_image']
+    const schema = Object.fromEntries(keys.map(key => [key, { type: 'string' }]))
+
+    const advanced = sectionFieldEntries(schema as Parameters<typeof sectionFieldEntries>[0], {}).get('advanced') ?? []
+
+    expect(advanced.map(([key]) => key).filter(key => key.startsWith('terminal.'))).toEqual(['terminal.backend'])
+    expect(ENUM_OPTIONS['terminal.backend']).toEqual(['local'])
+  })
 })
 
 describe('Oxeegen privacy', () => {

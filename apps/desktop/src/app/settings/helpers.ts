@@ -226,7 +226,8 @@ export function sectionFieldEntries(
   return new Map(
     SECTIONS.map(s => [
       s.id,
-      s.keys.flatMap(k => {
+      // Oxeegen: fields the policy hides never reach a page or the search.
+      s.keys.filter(isVisibleSettingField).flatMap(k => {
         const value = getNested(config, k)
         const field = schema[k] ?? (value === undefined ? undefined : inferFieldSchema(value))
 
