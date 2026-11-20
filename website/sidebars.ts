@@ -201,6 +201,7 @@ const sidebars: SidebarsConfig = {
                     'user-guide/skills/bundled/creative/creative-claude-design',
                     'user-guide/skills/bundled/creative/creative-humanizer',
                     'user-guide/skills/bundled/creative/creative-manim-video',
+                    'user-guide/skills/bundled/creative/creative-oxeegen-style-kit',
                     'user-guide/skills/bundled/creative/creative-p5js',
                     'user-guide/skills/bundled/creative/creative-popular-web-designs',
                     'user-guide/skills/bundled/creative/creative-songwriting-and-ai-music',

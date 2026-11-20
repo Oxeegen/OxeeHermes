@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oxeegen Style Kit — Starter</title>
+<!--
+  ============================================================
+  OXEEGEN STYLE KIT — starter template
+  Re-usable design system for all Oxee Hermes agents.
+  Docs: product/agent/oxeegen-style-guide.md
+  Rules: light/dark toggle ALWAYS · brand accents · NO GREEN
+         (positive = Solarize blue #268bd2) · info dots for
+         detail · self-contained single file (zero CDN deps).
+  ============================================================
+-->
+<style>
+  :root{
+    color-scheme: light;
+    --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f3f2ee; --surface-3:#ecebe6;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#7a7873;
+    --grid:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,.10);
+    /* Brand accents (canonical: AI/Oxee/website/prototype-2-ai/css/style.css) */
+    --brand:#5e4af5;            /* blurple — main accent on light */
+    --brand-2:#8a7cf7;          /* blurple AA-safe on dark */
+    --blue:#268bd2;             /* Solarize blue — POSITIVE / data / replaces green */
+    --blue-2:#5fb4e8;           /* sky blue on dark */
+    --fuchsia:#ef2076;          /* secondary accent */
+    --fuchsia-2:#f561a4;
+    --orange:#ed5818;           /* tertiary accent */
+    --orange-2:#ff8a52;
+    --cyan:#00cfff;             /* electric accent / streaks */
+    --amber:#b45309; --amber-2:#fbbf24;   /* highlights, best-in-row */
+    --red:#c0392b; --red-2:#f87171;       /* negative only */
+    --seq:var(--blue); --accent:var(--brand);
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321; --surface-3:#2b2b29;
+      --ink:#f0efec; --ink-2:#c3c2b7; --muted:#9a988f;
+      --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+      --brand:var(--brand-2); --seq:var(--blue-2);
+      --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321; --surface-3:#2b2b29;
+    --ink:#f0efec; --ink-2:#c3c2b7; --muted:#9a988f;
+    --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+    --brand:var(--brand-2); --seq:var(--blue-2);
+    --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--page);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+  a{color:var(--accent)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{line-height:1.15;letter-spacing:-.015em;margin:0 0 10px}
+  h1{font-size:clamp(30px,4.5vw,46px)} h2{font-size:24px} h3{font-size:17px}
+  p{margin:0 0 14px}
+  .lead{color:var(--ink-2);font-size:17px;max-width:720px}
+  code{background:var(--surface-2);border:1px solid var(--grid);padding:1px 6px;border-radius:6px;font-size:.9em}
+
+  /* ---------- top bar ---------- */
+  .bar{position:sticky;top:0;z-index:30;background:color-mix(in oklab,var(--page) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--grid)}
+  .bar .in{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:12px 26px;max-width:1180px;margin:0 auto}
+  .wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:650;font-size:19px;letter-spacing:-.01em}
+  .wordmark img.h{height:30px;display:block}
+  .wordmark svg{width:30px;height:30px;display:block}
+  .bar nav{display:flex;align-items:center;gap:8px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:14px;font-weight:550;padding:8px 14px;border-radius:10px;border:1px solid var(--grid);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;transition:transform .12s,border-color .12s,background .12s}
+  .btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent}
+  .iconbtn{width:36px;height:36px;justify-content:center;padding:0;font-size:15px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+  .hero .glow{position:absolute;inset:0;pointer-events:none;background:
+    radial-gradient(600px 300px at 12% 8%, color-mix(in oklab,var(--brand) 12%,transparent), transparent 60%),
+    radial-gradient(700px 340px at 88% 20%, color-mix(in oklab,var(--blue) 10%,transparent), transparent 60%)}
+  .hero h1 .grad{background:linear-gradient(92deg,var(--brand),var(--blue) 55%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:38px}
+  .stat b{display:block;font-size:30px;letter-spacing:-.02em;color:var(--ink)}
+  .stat span{font-size:12.5px;color:var(--muted)}
+  .stat b .u{color:var(--accent);font-size:18px;font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0}
+  section h2 .tagline{display:block;font-size:12.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px}
+  .grid{display:grid;gap:14px}
+  .grid.c3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .grid.c4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .card h3{margin-bottom:4px}
+  .card .sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+
+  /* swatches */
+  .sw{padding:14px;display:flex;flex-direction:column;gap:8px;position:relative}
+  .sw .chipv{height:52px;border-radius:10px;border:1px solid var(--ring)}
+  .sw .nm{font-weight:600;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+  .sw .hex{font-size:12px;color:var(--muted);font-family:ui-monospace,Consolas,monospace}
+  .sw .desc{font-size:12px;color:var(--muted);line-height:1.4}
+  .sw button{cursor:pointer;background:none;border:none;color:var(--muted);font-size:11px;padding:0}
+
+  /* info dot */
+  .info{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--axis);color:var(--muted);font-size:10.5px;font-weight:600;cursor:help;vertical-align:-2px;margin-left:5px;font-style:normal}
+  .info:hover{border-color:var(--accent);color:var(--accent)}
+  #tip{position:fixed;z-index:60;pointer-events:none;max-width:340px;background:var(--surface);color:var(--ink);border:1px solid var(--ring);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:10px 12px;font-size:12.5px;line-height:1.5;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+  #tip.on{opacity:1;transform:none}
+  #tip b{display:block;margin-bottom:2px}
+  #tip .mut{color:var(--muted)}
+
+  /* badges — positive is BLUE, no green */
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--grid)}
+  .badge svg{width:12px;height:12px;filter:none}
+  .b-ok{color:var(--blue);border-color:color-mix(in oklab,var(--blue) 45%,var(--grid));background:color-mix(in oklab,var(--blue) 9%,var(--surface))}
+  .b-warn{color:var(--amber);border-color:color-mix(in oklab,var(--amber) 45%,var(--grid));background:color-mix(in oklab,var(--amber) 9%,var(--surface))}
+  .b-err{color:var(--red);border-color:color-mix(in oklab,var(--red) 45%,var(--grid));background:color-mix(in oklab,var(--red) 9%,var(--surface))}
+  .b-info{color:var(--brand);border-color:color-mix(in oklab,var(--brand) 45%,var(--grid));background:color-mix(in oklab,var(--brand) 9%,var(--surface))}
+
+  /* ---------- SVG diagram: animated pipeline ---------- */
+  .schema{margin:14px 0}
+  .schema svg{width:100%;height:auto;display:block}
+  .node rect{fill:var(--surface);stroke:var(--grid);stroke-width:1.4;rx:12}
+  .node text{fill:var(--ink);font-size:13.5px;font-weight:600;font-family:inherit}
+  .node .nsub{fill:var(--muted);font-size:10.5px;font-weight:400}
+  .edge{fill:none;stroke:var(--blue);stroke-width:2;stroke-dasharray:6 7;animation:flow 1.6s linear infinite;opacity:.85}
+  .edge.alt{stroke:var(--brand)}
+  @keyframes flow{to{stroke-dashoffset:-26}}
+  @media (prefers-reduced-motion: reduce){.edge{animation:none}}
+
+  /* ---------- charts (pure CSS) ---------- */
+  .gauge{width:110px;height:110px;border-radius:50%;background:conic-gradient(var(--blue) 0 78%, var(--surface-3) 78% 100%);display:grid;place-items:center;margin:auto}
+  .gauge::after{content:"78%";width:78px;height:78px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-weight:700;font-size:20px}
+  .hbar{display:grid;grid-template-columns:120px 1fr 44px;gap:10px;align-items:center;font-size:12.5px;margin:9px 0}
+  .hbar .lb{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbar .tr{height:18px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+  .hbar .fl{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:5px}
+  .hbar .vl{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+
+  /* mini table */
+  table.mini{width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;font-size:13px}
+  table.mini th,table.mini td{padding:9px 10px;border-bottom:1px solid var(--grid);text-align:left}
+  table.mini th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  table.mini td.num{text-align:right}
+  table.mini .heat{display:inline-block;min-width:52px;text-align:center;padding:2px 8px;border-radius:6px;margin:0 auto}
+
+  footer{border-top:1px solid var(--grid);margin-top:30px;padding:30px 0 44px;color:var(--muted);font-size:13px}
+  footer .in{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  footer img{height:26px;display:block}
+
+  @media (max-width:700px){ .hero{padding:46px 0 26px} .grid.c4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))} }
+  @media print{ .bar{position:static} #tip{display:none} }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="in">
+    <a class="wordmark" href="#top">
+      <img class="h logo-light" src="../assets/logo-oxeegen-purple.png" alt="Oxeegen">
+      <img class="h logo-dark" src="../assets/logo-oxeegen-light-for-dark.png" alt="Oxeegen">
+    </a>
+    <nav>
+      <a class="btn ghost" href="#tokens">Tokens</a>
+      <a class="btn ghost" href="#components">Components</a>
+      <a class="btn ghost" href="#graphics">Graphics</a>
+      <button class="btn iconbtn" id="themeBtn" type="button" title="Toggle light / dark">◐</button>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+
+  <div class="hero">
+    <div class="glow"></div>
+    <p class="tagline" style="color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.09em">Oxeegen · Internal design system · v1.0</p>
+    <h1>Build things that look<br><span class="grad">inevitably Oxeegen.</span></h1>
+    <p class="lead">One palette, one toggle, one standard — for every artifact any Oxee agent produces. Light, airy, Anthropic-grade clarity, with the brand accents to make it ours. This page is the proof.</p>
+    <div class="cta">
+      <a class="btn primary" href="#tokens">See the palette</a>
+      <a class="btn" href="#graphics">See the graphics</a>
+      <button class="btn" id="copyBtn">Copy tokens CSS</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span class="cnt" data-to="5">0</span></b><span>brand accent colors</span></div>
+      <div class="stat"><b><span class="cnt" data-to="2">0</span></b><span>themes, one toggle</span></div>
+      <div class="stat"><b><span class="cnt" data-to="0">0</span></b><span>greens. ever.</span></div>
+      <div class="stat"><b><span class="cnt" data-to="100" data-suf="%">0</span></b><span>self-contained</span></div>
+    </div>
+  </div>
+
+  <section id="tokens">
+    <h2><span class="tagline">Section 01</span>Accent palette</h2>
+    <p class="lead" style="margin-bottom:20px">The five accents, canonical from <code>website/prototype-2-ai/css/style.css</code>. Hover a swatch for the light/dark pair; click to copy.</p>
+    <div class="grid c4" id="swatches"></div>
+  </section>
+
+  <section id="components">
+    <h2><span class="tagline">Section 02</span>Components</h2>
+    <div class="grid c3">
+      <div class="card">
+        <h3>Info dots <span class="info" data-info="Hover me. This is the pattern: small circled i, no clutter. The detail lives here, in a floating card.">i</span></h3>
+        <p class="sub">Detail stays out of the layout — place it behind the dot.</p>
+        <p style="font-size:13.5px;color:var(--ink-2)">A clean sentence can still explain a lot<span class="info" data-info="Longer explanations, caveats, sources, settings — everything goes in the tooltip. The page stays scannable.">i</span>, if the depth lives behind the dot.</p>
+        <p><span class="badge b-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Positive (blue)</span>
+           <span class="badge b-info">Info (blurple)</span>
+           <span class="badge b-warn">Warning (amber)</span>
+           <span class="badge b-err">Negative (red)</span></p>
+        <p class="sub">Semantic states allow amber/red only; positive is <b style="color:var(--blue)">Solarize blue</b> — never green.</p>
+      </div>
+      <div class="card">
+        <h3>Buttons &amp; chips</h3>
+        <p class="sub">Hairline borders, 10px radius, gentle lift on hover.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn primary">Primary</button>
+          <button class="btn">Secondary</button>
+          <button class="btn ghost">Ghost</button>
+          <span class="btn" style="cursor:default">Chip</span>
+        </div>
+        <h3 style="margin-top:14px">Heat table</h3>
+        <table class="mini">
+          <tr><th>Benchmark</th><th>Model A</th><th>Model B</th><th>Model C</th></tr>
+          <tr><td>Terminal-Bench 4.0</td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 30%,var(--surface))">94.2</span></td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 14%,var(--surface))">88.3</span></td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 5%,var(--surface))">71.0</span></td></tr>
+          <tr><td>GPQA Diamond</td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 26%,var(--surface))">95.4</span></td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 18%,var(--surface))">90.1</span></td><td class="num"><span class="heat" style="background:color-mix(in oklab,var(--seq) 8%,var(--surface))">79.5</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Cards</h3>
+        <p class="sub">Surface on page, 1px ring, soft shadow in light / flat in dark.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="card" style="padding:12px 14px"><b style="font-size:14px">Layered notes</b><p class="sub" style="margin:2px 0 0">Cards nest for grouping, charts, and callouts.</p></div>
+          <div class="card" style="padding:12px 14px;border-left:3px solid var(--brand)"><b style="font-size:14px">Accent edge</b><p class="sub" style="margin:2px 0 0">2–3px side stripe marks the important callout.</p></div>
+          <div class="card" style="padding:12px 14px;border-left:3px solid var(--blue)"><b style="font-size:14px">Positive edge</b><p class="sub" style="margin:2px 0 0">Blue stripe for the “working / good” callout.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="graphics">
+    <h2><span class="tagline">Section 03</span>Graphical generation</h2>
+    <p class="lead" style="margin-bottom:6px">Prefer inline SVG + CSS charts over images: crisp in both themes, animated, zero deps, source-controlled. Below, three ready recipes.</p>
+    <div class="grid c3" style="margin-top:16px">
+      <div class="card">
+        <h3>Animated pipeline</h3>
+        <p class="sub">Your architecture, drawn as a schema. Flow = Solarize blue, rhythm = <code>dasharray</code>.</p>
+        <div class="schema">
+          <svg viewBox="0 0 520 150" role="img" aria-label="Channel to agent to model pipeline">
+            <line class="edge" x1="38" y1="75" x2="164" y2="75"/>
+            <line class="edge alt" x1="194" y1="75" x2="322" y2="75"/>
+            <line class="edge" x1="352" y1="75" x2="482" y2="75"/>
+            <text x="19" y="28" text-anchor="middle" class="nsub">Channel</text>
+            <text x="179" y="28" text-anchor="middle" class="nsub">Agent</text>
+            <text x="337" y="28" text-anchor="middle" class="nsub">Memory</text>
+            <text x="499" y="28" text-anchor="middle" class="nsub">Model</text>
+            <g class="node"><rect x="0" y="40" width="38" height="70" rx="12"/><text x="19" y="80" text-anchor="middle" font-size="17">📡</text></g>
+            <g class="node"><rect x="164" y="40" width="30" height="70" rx="12"/><text x="179" y="80" text-anchor="middle" font-size="17">⚙️</text></g>
+            <g class="node"><rect x="322" y="40" width="30" height="70" rx="12"/><text x="337" y="80" text-anchor="middle" font-size="17">🧠</text></g>
+            <g class="node"><rect x="482" y="40" width="38" height="70" rx="12"/><text x="501" y="80" text-anchor="middle" font-size="17">✨</text></g>
+          </svg>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Gauge + bars</h3>
+        <p class="sub">Pure CSS metrics — <code>conic-gradient</code> for gauges, gradient fills for bars.</p>
+        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+          <div class="gauge"></div>
+          <div style="flex:1;min-width:180px">
+            <div class="hbar"><span class="lb">Flash</span><span class="tr"><span class="fl" style="width:64%"></span></span><span class="vl">64%</span></div>
+            <div class="hbar"><span class="lb">Pro</span><span class="tr"><span class="fl" style="width:78%"></span></span><span class="vl">78%</span></div>
+            <div class="hbar"><span class="lb">Max</span><span class="tr"><span class="fl" style="width:92%"></span></span><span class="vl">92%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Logo usage</h3>
+        <p class="sub">Icon: vector mark (brand gradient). Lockup: PNG variants in <code>assets/</code>.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+          <svg viewBox="0 0 1120 1120" style="width:52px;height:52px" role="img" aria-label="Oxeegen mark">
+            <defs><linearGradient id="oxg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6c2bff"/><stop offset=".5" stop-color="#5e4af5"/><stop offset="1" stop-color="#4a0bf9"/></linearGradient>
+            <mask id="oxm"><rect width="1120" height="1120" fill="#fff"/><rect x="336" y="0" width="147" height="1120" fill="#000"/><rect x="637" y="0" width="146" height="1120" fill="#000"/></mask></defs>
+            <circle cx="559.5" cy="559.5" r="552" fill="url(#oxg)" mask="url(#oxm)"/>
+          </svg>
+          <img src="../assets/logo-oxeegen-purple.png" alt="Oxeegen lockup" style="height:34px;background:#fff;padding:6px 10px;border-radius:10px;border:1px solid var(--grid)">
+          <img src="../assets/logo-oxeegen-light-for-dark.png" alt="Oxeegen lockup (dark)" style="height:34px;background:#1a1a19;padding:6px 10px;border-radius:10px;border:1px solid var(--grid)">
+          <p class="sub" style="margin:2px 0 0">Wordmark colors are baked into the PNGs: purple lockup on light surfaces, the light variant on dark.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="in">
+      <img class="logo-light" src="../assets/logo-oxeegen-purple.png" alt="Oxeegen">
+      <img class="logo-dark" src="../assets/logo-oxeegen-light-for-dark.png" alt="Oxeegen">
+      <span>Oxeegen style kit · v1.0 · maintained by Clark · 2026-11-10</span>
+    </div>
+  </footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+/* ---------- theme toggle (standard) ---------- */
+const $ = s => document.querySelector(s);
+const store = { get(k,d){try{const v=localStorage.getItem("oxstyle:"+k);return v===null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem("oxstyle:"+k,JSON.stringify(v))}catch(e){}} };
+(function(){
+  const saved = store.get("theme", null);
+  if (saved) document.documentElement.dataset.theme = saved;
+  applyLogo();
+  $("#themeBtn").onclick = () => {
+    const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.dataset.theme = cur === "dark" ? "light" : "dark";
+    store.set("theme", document.documentElement.dataset.theme); applyLogo();
+  };
+})();
+function applyLogo(){
+  const dark = (document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+  document.querySelectorAll(".logo-light").forEach(i => i.style.display = dark ? "none" : "block");
+  document.querySelectorAll(".logo-dark").forEach(i => i.style.display = dark ? "block" : "none");
+}
+
+/* ---------- info dots: hover tooltips ---------- */
+const tip = $("#tip");
+function moveTip(ev){
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - pad;
+  tip.style.left = Math.max(8,x)+"px"; tip.style.top = Math.max(8,y)+"px";
+}
+document.querySelectorAll(".info").forEach(el => {
+  el.onmouseenter = ev => { tip.innerHTML = el.dataset.info; tip.classList.add("on"); moveTip(ev); };
+  el.onmousemove = moveTip;
+  el.onmouseleave = () => tip.classList.remove("on");
+});
+
+/* ---------- palette swatches ---------- */
+const swdata = [
+  { nm:"Blurple", hex:"#5e4af5", hex2:"#8a7cf7", css:"var(--brand)", role:"Main accent", d:"Links, primary buttons, active states. Dark theme uses the AA-safe #8a7cf7." },
+  { nm:"Solarize blue", hex:"#268bd2", hex2:"#5fb4e8", css:"var(--blue)", role:"Positive & data", d:"The replacement for green: success, progress, charts, heat. Also the Solarized brand blue." },
+  { nm:"Fuchsia", hex:"#ef2076", hex2:"#f561a4", css:"var(--fuchsia)", role:"Secondary", d:"Highlights, proprietary/closed marks, category contrast — never for positive." },
+  { nm:"Orange", hex:"#ed5818", hex2:"#ff8a52", css:"var(--orange)", role:"Tertiary", d:"Warm highlights, risk-to-opportunity framing, seasonal/campaign accents." },
+  { nm:"Cyan", hex:"#00cfff", hex2:"#00cfff", css:"var(--cyan)", role:"Electric", d:"Streaks, gradients, glow — sparingly. The high-energy edge of the brand." },
+];
+$("#swatches").innerHTML = swdata.map(s => `<div class="card sw">
+  <div class="chipv" style="background:linear-gradient(90deg,${s.hex},${s.hex2})"></div>
+  <div class="nm">${s.nm}<button data-copy="${s.css}" title="Copy var()">⧉</button></div>
+  <div class="hex">${s.hex} <span style="opacity:.6">/ dark</span> ${s.hex2}</div>
+  <div class="desc"><b style="color:var(--ink)">${s.role}.</b> ${s.d}</div>
+</div>`).join("");
+document.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => navigator.clipboard?.writeText(b.dataset.copy));
+$("#copyBtn").onclick = () => navigator.clipboard?.writeText(
+  ":root{--brand:#5e4af5;--brand-2:#8a7cf7;--blue:#268bd2;--blue-2:#5fb4e8;--fuchsia:#ef2076;--orange:#ed5818;--cyan:#00cfff;}"
+);
+
+/* ---------- count-up stats ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return; io.unobserve(e.target);
+  const el = e.target, to = +el.dataset.to, suf = el.dataset.suf || "";
+  let s = 0; const step = Math.max(1, Math.round(to/40));
+  const t = setInterval(() => { s += step; if (s >= to){ s = to; clearInterval(t); } el.textContent = s + suf; }, 26);
+}), { threshold:.4 });
+document.querySelectorAll(".cnt").forEach(el => io.observe(el));
+</script>
+</body>
+</html>

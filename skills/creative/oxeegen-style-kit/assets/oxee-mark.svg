@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1120" role="img" aria-label="Oxeegen mark">
+  <defs>
+    <linearGradient id="oxg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6c2bff"/>
+      <stop offset=".5" stop-color="#5e4af5"/>
+      <stop offset="1" stop-color="#4a0bf9"/>
+    </linearGradient>
+    <mask id="oxm">
+      <rect width="1120" height="1120" fill="#fff"/>
+      <rect x="336" y="0" width="147" height="1120" fill="#000"/>
+      <rect x="637" y="0" width="146" height="1120" fill="#000"/>
+    </mask>
+  </defs>
+  <circle cx="559.5" cy="559.5" r="552" fill="url(#oxg)" mask="url(#oxm)"/>
+</svg>
