@@ -16,9 +16,7 @@ import { afterEach, beforeEach, describe, test } from 'vitest'
 
 // @ts-expect-error -- plain ESM build script without declarations
 import { applyBundleEnvironment, OXEEGEN_BUNDLE_ENV, oxeegenBundleEnvironment } from '../scripts/bundle-env.mjs'
-// @ts-expect-error -- plain ESM build script without declarations
 import { withMachineConfig } from '../scripts/oxeegen-msi-project.mjs'
-// @ts-expect-error -- plain ESM build script without declarations
 import { validatePreparedBuilderArgs } from '../scripts/run-electron-builder.mjs'
 
 import { machineConfigDir, oxeegenManagedDir, oxeegenManagedScope } from './oxeegen-managed'

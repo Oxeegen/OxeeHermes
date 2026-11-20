@@ -41,3 +41,19 @@ describe('update check failures in About', () => {
     expect(screen.queryByText(/GitHub/)).toBeNull()
   })
 })
+
+describe('an administrator-managed install in About', () => {
+  it('says the administrator installs updates, with no check button', () => {
+    $updateStatus.set({
+      supported: false,
+      mechanism: 'external',
+      reason: 'administrator-managed',
+      fetchedAt: Date.now()
+    })
+
+    render(<UpdateStatusCard target="client" version={null} />)
+
+    expect(screen.getByText('Updates are installed by your administrator.')).toBeTruthy()
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+})
