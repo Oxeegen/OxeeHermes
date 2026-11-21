@@ -602,17 +602,19 @@ hermes-acp = "acp_adapter.entry:main"
 opt-in-extras = [
   "kittentts",
   # Oxeegen: the bundle carries only what an Oxeegen-only agent uses (MCP, ACP, browser, computer
-  # use, documents, vision, audio I/O, web search). Messaging connectors, local voice / wake word,
-  # other providers' SDKs and cloud sandboxes install on demand if a user enables one. `all` pulls
-  # some of these back in, so it is opted out too (its useful members are listed on their own).
+  # use, documents, vision, audio I/O, and every backend Advanced > Tools offers for web search,
+  # extraction and image / video generation: Firecrawl, Exa, Parallel, FAL). Messaging connectors,
+  # local voice / wake word, other providers' SDKs and cloud sandboxes are left out: their screens
+  # are hidden or pinned (voice is Oxeegen's, the terminal runs locally), and an installed app
+  # cannot add them on demand. `all` pulls some of these back in, so it is opted out too (its
+  # useful members are listed on their own).
   "all",
   "feishu", "dingtalk", "google", "google-chat", "google-meet", "messaging", "telegram", "discord",
   "slack", "teams", "wecom", "sms", "termux", "termux-all",
   "voice", "stt-whisper", "piper", "wake", "wake-openwakeword", "wake-sherpa", "wake-porcupine",
   "edge-tts", "tts-premium",
-  "anthropic", "bedrock", "vertex", "mistral", "azure-identity", "fal",
+  "anthropic", "bedrock", "vertex", "mistral", "azure-identity",
   "modal", "daytona", "vercel",
-  "exa", "firecrawl", "parallel-web",
   "trace-upload", "otlp", "silk",
 ]
 
