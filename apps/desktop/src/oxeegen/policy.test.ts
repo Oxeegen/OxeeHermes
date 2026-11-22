@@ -32,11 +32,11 @@ describe('Oxeegen regions', () => {
 })
 
 describe('Oxeegen settings policy', () => {
-  it.each(['billing', 'web-access', 'providers', 'providers&pview=keys'])('hides %s', view =>
+  it.each(['billing', 'web-access', 'providers&pview=accounts'])('hides %s', view =>
     expect(isVisibleSettingsView(view)).toBe(false)
   )
 
-  it.each(['config:model', 'config:advanced', 'oxeegen', 'config:chat', 'config:voice', 'config:browser', 'keys', 'sessions', 'about', 'gateway', 'connections', 'vault', 'plugins'])('keeps %s', view =>
+  it.each(['config:model', 'config:advanced', 'providers', 'providers&pview=keys', 'providers&pview=custom-endpoints', 'oxeegen', 'config:chat', 'config:voice', 'config:browser', 'keys', 'sessions', 'about', 'gateway', 'connections', 'vault', 'plugins'])('keeps %s', view =>
     expect(isVisibleSettingsView(view)).toBe(true)
   )
 })
