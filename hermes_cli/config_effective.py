@@ -32,7 +32,10 @@ _EFFECTIVE_CACHE: dict[str, tuple[Any, ...]] = {}
 
 def _effective(raw: dict[str, Any]) -> dict[str, Any]:
     expanded = _config._expand_env_vars(raw)
-    merged = managed_scope.apply_managed_overlay(expanded if isinstance(expanded, dict) else {})
+    # Managed defaults.yaml (the model a profile starts with) sits under the user's file, as in
+    # load_config: the gateway stamps a session's model from here and refuses a policy without one.
+    user = _config._deep_merge(managed_scope.with_managed_defaults({}), expanded if isinstance(expanded, dict) else {})
+    merged = managed_scope.apply_managed_overlay(user)
     return _config._normalize_root_model_keys(merged if isinstance(merged, dict) else {})
 
 

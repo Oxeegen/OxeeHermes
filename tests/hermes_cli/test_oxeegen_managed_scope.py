@@ -33,6 +33,22 @@ def test_a_profile_that_never_chose_a_model_runs_on_oxeegen(oxeegen_managed):
     assert load_config()["model"] == {"provider": "oxeegen", "default": "Oxee-max"}
 
 
+def test_the_gateway_stamps_new_sessions_with_the_oxeegen_model(oxeegen_managed):
+    # A session policy without a model is refused on restore (storage_unavailable).
+    from gateway.run import _resolve_gateway_model
+    from hermes_cli.config_effective import load_user_config_effective
+    from hermes_cli.managed_scope import invalidate_managed_cache
+
+    invalidate_managed_cache()
+    _write_user_config("agent:\n  max_turns: 40\n")
+
+    assert load_user_config_effective()["model"] == {"provider": "oxeegen", "default": "Oxee-max"}
+    assert _resolve_gateway_model() == "Oxee-max"
+
+    _write_user_config("model:\n  provider: openrouter\n  default: openai/gpt-5\n")
+    assert load_user_config_effective()["model"] == {"provider": "openrouter", "default": "openai/gpt-5"}
+
+
 def test_the_users_provider_fallbacks_and_custom_endpoints_win(oxeegen_managed):
     from hermes_cli.config import load_config
     from hermes_cli.provider_allowlist import allowed_providers
