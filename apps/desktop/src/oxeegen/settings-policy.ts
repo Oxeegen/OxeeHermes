@@ -6,7 +6,7 @@
  * Billing belongs to Nous services. Providers keeps API keys and custom
  * endpoints but not Accounts, the Nous / OAuth sign-ins. Web Access (serving
  * the Webapp to other devices) is not offered. Model, Advanced and Providers
- * are shown: the managed scope still pins what the administrator set.
+ * are shown: Oxeegen is the default provider, the user may pick another.
  * Plugins stays: a model-provider plugin cannot route inference elsewhere.
  * Passwords and credentials (vault) stays: it keeps the user's own logins
  * (local, Bitwarden, 1Password). Gateways stays: it is how other Hermes on the
@@ -31,13 +31,6 @@ export function isVisibleSettingsView(view: string): boolean {
 
   return !HIDDEN_SETTINGS_VIEWS.has(tab) && !tails.some(tail => HIDDEN_SETTINGS_SUBVIEWS.has(`${tab}&${tail}`))
 }
-
-/**
- * The model menus offer Oxeegen's chat models only: no "add a provider", no
- * custom model slug, no catalog editing. The backend enforces the same through
- * the provider allowlist; this keeps the doors out of sight.
- */
-export const OXEEGEN_MODEL_MENU_EXTRAS = false
 
 const DESKTOP_PLUGINS_ENABLED: ReadonlySet<string> = new Set(OXEEGEN.desktopPluginsEnabled)
 

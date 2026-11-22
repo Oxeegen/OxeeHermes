@@ -34,6 +34,7 @@ _CACHE_LOCK = threading.Lock()
 # path_key -> (*file_cache_version, parsed)
 _CONFIG_CACHE: dict[str, tuple] = {}
 _ENV_CACHE: dict[str, tuple] = {}
+_DEFAULTS_CACHE: dict[str, tuple] = {}
 
 
 def _under_pytest() -> bool:
@@ -64,6 +65,7 @@ def invalidate_managed_cache() -> None:
     with _CACHE_LOCK:
         _CONFIG_CACHE.clear()
         _ENV_CACHE.clear()
+        _DEFAULTS_CACHE.clear()
 
 
 def _cached_read(path: Path, cache: dict[str, tuple], parse):
@@ -112,6 +114,26 @@ def load_managed_config() -> dict:
     if not get_config_backend().honors_managed_config():
         return {}
     return _load_managed_file("config.yaml", _CONFIG_CACHE, lambda p: fast_safe_load(p.read_text(encoding="utf-8-sig")) or {})
+
+
+def load_managed_defaults() -> dict:
+    """Parsed managed defaults.yaml, or {} when absent/malformed (fail-open). Unlike config.yaml it
+    pins nothing: its values sit between DEFAULT_CONFIG and the user's config.yaml, so a deployment
+    can choose what a profile starts with (Oxee Hermes: the Oxeegen model) and the user can still
+    change it. Same remote-mode rule as config.yaml."""
+    from hermes_cli.config_backend import get_config_backend
+
+    if not get_config_backend().honors_managed_config():
+        return {}
+    return _load_managed_file("defaults.yaml", _DEFAULTS_CACHE, lambda p: fast_safe_load(p.read_text(encoding="utf-8-sig")) or {})
+
+
+def with_managed_defaults(base: dict) -> dict:
+    """A deep copy of ``base`` (DEFAULT_CONFIG) with the managed defaults.yaml merged over it."""
+    from hermes_cli.config import _deep_merge
+
+    defaults = load_managed_defaults()
+    return _deep_merge(copy.deepcopy(base), defaults) if defaults else copy.deepcopy(base)
 
 
 def load_managed_env() -> dict[str, str]:

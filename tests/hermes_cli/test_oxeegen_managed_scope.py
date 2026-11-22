@@ -1,4 +1,4 @@
-"""The shipped Oxeegen managed scope pins the provider and routes voice to the chosen region."""
+"""The shipped Oxeegen managed scope: Oxeegen is the default model, not a pin; voice routes to the chosen region."""
 
 from pathlib import Path
 
@@ -22,19 +22,34 @@ def _write_user_config(body: str) -> None:
     (home / "config.yaml").write_text(body, encoding="utf-8")
 
 
-def test_user_config_cannot_move_inference_off_oxeegen(oxeegen_managed):
+def test_a_profile_that_never_chose_a_model_runs_on_oxeegen(oxeegen_managed):
     from hermes_cli.config import load_config
+    from hermes_cli.managed_scope import invalidate_managed_cache
+
+    invalidate_managed_cache()
+
+    _write_user_config("agent:\n  max_turns: 40\n")
+
+    assert load_config()["model"] == {"provider": "oxeegen", "default": "Oxee-max"}
+
+
+def test_the_users_provider_fallbacks_and_custom_endpoints_win(oxeegen_managed):
+    from hermes_cli.config import load_config
+    from hermes_cli.provider_allowlist import allowed_providers
 
     _write_user_config(
         "model:\n  provider: openrouter\n  default: openai/gpt-5\n"
         "fallback_providers: [{provider: deepseek, model: deepseek-v4-pro}]\n"
+        "custom_providers: [{name: lab, base_url: 'http://127.0.0.1:8080/v1'}]\n"
     )
 
     cfg = load_config()
 
-    assert cfg["model"]["provider"] == "oxeegen"
-    assert cfg["fallback_providers"] == []
-    assert cfg["model_catalog"]["allowed_providers"] == ["oxeegen"]
+    assert cfg["model"]["provider"] == "openrouter"
+    assert cfg["model"]["default"] == "openai/gpt-5"
+    assert cfg["fallback_providers"] == [{"provider": "deepseek", "model": "deepseek-v4-pro"}]
+    assert [p["name"] for p in cfg["custom_providers"]] == ["lab"]
+    assert allowed_providers(cfg) is None
 
 
 def test_voice_uses_the_oxeegen_key_and_region(oxeegen_managed):
@@ -98,6 +113,7 @@ def test_shipped_managed_scope_is_generated_from_oxeegen_json():
     source = json.loads((root / "plugins/model-providers/oxeegen/oxeegen.json").read_text(encoding="utf-8"))
 
     assert (MANAGED_DIR / "config.yaml").read_text(encoding="utf-8") == gen.render(source)
+    assert (MANAGED_DIR / "defaults.yaml").read_text(encoding="utf-8") == gen.render_defaults(source)
 
 
 def test_oxeegen_models_think_at_max_unless_the_user_picks_a_level(oxeegen_managed):

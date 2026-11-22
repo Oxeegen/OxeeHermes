@@ -194,6 +194,7 @@ describe('machine configuration (administrator region and key)', () => {
     )
     const config = fs.readFileSync(path.join(outDir, 'config.yaml'), 'utf8')
     assert.ok(config.startsWith(fs.readFileSync(path.join(ROOT, 'oxeegen/managed/config.yaml'), 'utf8').trimEnd()))
+    assert.equal(fs.readFileSync(path.join(outDir, 'defaults.yaml'), 'utf8'), fs.readFileSync(path.join(ROOT, 'oxeegen/managed/defaults.yaml'), 'utf8'))
     assert.match(config, /\noxeegen:\n {2}managed_region: us\n$/)
     assert.ok(!logs.join('\n').includes('sk-admin'))
   })

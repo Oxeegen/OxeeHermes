@@ -28,9 +28,7 @@ const saveMoaModels = vi.fn()
 const setEnvVar = vi.fn()
 const getHermesConfigRecord = vi.fn()
 const saveHermesConfig = vi.fn()
-const startManualLocalEndpoint = vi.fn()
-const startManualOnboarding = vi.fn()
-const startManualProviderOAuth = vi.fn()
+const requestRoute = vi.fn()
 let profileSwitchHandler: (() => void) | null = null
 
 // Keep the real read-origin helpers (WeakMap peek/bind) live: the shared
@@ -52,10 +50,9 @@ vi.mock('@/hermes', async () => ({
   setApiRequestProfile: () => {}
 }))
 
-vi.mock('@/store/onboarding', () => ({
-  startManualLocalEndpoint: (...args: unknown[]) => startManualLocalEndpoint(...args),
-  startManualOnboarding: (...args: unknown[]) => startManualOnboarding(...args),
-  startManualProviderOAuth: (...args: unknown[]) => startManualProviderOAuth(...args)
+vi.mock('@/store/recovery-requests', async () => ({
+  ...(await vi.importActual<object>('@/store/recovery-requests')),
+  requestRoute: (path: string) => requestRoute(path)
 }))
 
 vi.mock('../hooks/use-on-profile-switch', () => ({
@@ -147,8 +144,9 @@ describe('ModelSettings', () => {
     expect(screen.getByText('Model', { exact: true })).toBeTruthy()
     expect(setModelAssignment).not.toHaveBeenCalled()
   })
+  // Oxee Hermes: the onboarding overlay only holds the Oxeegen form, so setup opens Settings > Providers.
   it.each(['custom', 'local', 'custom:lab'])(
-    'opens local endpoint setup when %s has no inventory row',
+    'opens Providers > Custom endpoints when %s has no inventory row',
     async provider => {
       getGlobalModelInfo.mockResolvedValueOnce({ provider, model: '' })
       getGlobalModelOptions.mockResolvedValueOnce({ providers: [] })
@@ -163,48 +161,27 @@ describe('ModelSettings', () => {
 
       fireEvent.click(await screen.findByRole('button', { name: 'Set up provider' }))
 
-      expect(startManualLocalEndpoint).toHaveBeenCalledOnce()
-      expect(startManualLocalEndpoint).toHaveBeenCalledWith(null, 'leverage-ai')
-      expect(startManualOnboarding).not.toHaveBeenCalled()
-      expect(startManualProviderOAuth).not.toHaveBeenCalled()
+      expect(requestRoute).toHaveBeenCalledExactlyOnceWith('/settings?tab=providers&pview=custom-endpoints')
     }
   )
 
-  it('opens the generic provider picker for an unknown provider with no inventory row', async () => {
-    getGlobalModelInfo.mockResolvedValueOnce({ provider: 'retired-provider', model: '' })
-    getGlobalModelOptions.mockResolvedValueOnce({ providers: [] })
+  it.each([
+    ['an unknown provider with no inventory row', 'retired-provider', [], 'Set up provider'],
+    [
+      'an OAuth provider row',
+      'anthropic',
+      [{ name: 'Anthropic', slug: 'anthropic', models: [], authenticated: false, auth_type: 'oauth' }],
+      'Set up Anthropic'
+    ]
+  ])('opens Providers > API keys for %s', async (_, provider, providers, button) => {
+    getGlobalModelInfo.mockResolvedValueOnce({ provider, model: '' })
+    getGlobalModelOptions.mockResolvedValueOnce({ providers })
 
     renderModelSettings('leverage-ai')
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Set up provider' }))
+    fireEvent.click(await screen.findByRole('button', { name: button }))
 
-    expect(startManualOnboarding).toHaveBeenCalledOnce()
-    expect(startManualOnboarding).toHaveBeenCalledWith(undefined, 'leverage-ai')
-    expect(startManualLocalEndpoint).not.toHaveBeenCalled()
-    expect(startManualProviderOAuth).not.toHaveBeenCalled()
-  })
-
-  it('deep-links a known OAuth provider row into its scoped setup flow', async () => {
-    getGlobalModelInfo.mockResolvedValueOnce({ provider: 'anthropic', model: '' })
-    getGlobalModelOptions.mockResolvedValueOnce({
-      providers: [
-        {
-          name: 'Anthropic',
-          slug: 'anthropic',
-          models: [],
-          authenticated: false,
-          auth_type: 'oauth'
-        }
-      ]
-    })
-
-    renderModelSettings('leverage-ai')
-
-    fireEvent.click(await screen.findByRole('button', { name: 'Set up Anthropic' }))
-
-    expect(startManualProviderOAuth).toHaveBeenCalledWith('anthropic', 'leverage-ai')
-    expect(startManualLocalEndpoint).not.toHaveBeenCalled()
-    expect(startManualOnboarding).not.toHaveBeenCalled()
+    expect(requestRoute).toHaveBeenCalledExactlyOnceWith('/settings?tab=providers&pview=keys')
   })
 
   it('replaces the selected provider and model when the active profile changes', async () => {

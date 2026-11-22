@@ -50,7 +50,6 @@ import { accountResetMs, formatReset, modelResetMs } from '@/lib/provider-limit'
 import { reasoningEffortLabel } from '@/lib/reasoning-effort'
 import { foldIncludes, normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
-import { OXEEGEN_MODEL_MENU_EXTRAS } from '@/oxeegen/settings-policy'
 import { $customModels, addCustomModel, customModelCandidate, withCustomModels } from '@/store/custom-models'
 import { $favoriteModels, favoriteModelKey, toggleFavoriteModel } from '@/store/favorite-models'
 import { $localModelsEnabled } from '@/store/local-models-flag'
@@ -244,7 +243,7 @@ function useDownloadRows(owner: LocalModelsOwner, localModelsEnabled: boolean) {
  * plugin surfaces that pick a model without a session behind it — so the two
  * can never drift apart.
  */
-// health: allow CC FUNC_LINES -- usage-window plans: section headings and the limit line in the existing list render; this component was over target on main. Oxee Hermes gates the custom-model and Edit Models rows (OXEEGEN_MODEL_MENU_EXTRAS), two lines over
+// health: allow CC FUNC_LINES -- usage-window plans: section headings and the limit line in the existing list render; this component was over target on main.
 export function ModelCatalogMenu({
   controller,
   footer,
@@ -925,8 +924,7 @@ export function ModelCatalogMenu({
           trailing block it has always rendered. */}
       <DropdownMenuSeparator className="mx-0" />
       {footer}
-      {OXEEGEN_MODEL_MENU_EXTRAS && (
-<DropdownMenuItem
+      <DropdownMenuItem
         className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)', slugEntry && 'text-foreground')}
         onSelect={event => {
           event.preventDefault()
@@ -940,16 +938,13 @@ export function ModelCatalogMenu({
         <Codicon name="add" size="0.75rem" />
         {copyPicker.addCustomModelAction}
       </DropdownMenuItem>
-)}
-      {OXEEGEN_MODEL_MENU_EXTRAS && (
-        <DropdownMenuItem
-          className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)')}
-          onSelect={() => setModelVisibilityOpen(true)}
-        >
-          <Codicon name="settings-gear" size="0.75rem" />
-          {copy.editModels}
-        </DropdownMenuItem>
-      )}
+      <DropdownMenuItem
+        className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)')}
+        onSelect={() => setModelVisibilityOpen(true)}
+      >
+        <Codicon name="settings-gear" size="0.75rem" />
+        {copy.editModels}
+      </DropdownMenuItem>
     </>
   )
 }

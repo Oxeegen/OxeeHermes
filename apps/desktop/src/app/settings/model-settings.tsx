@@ -35,11 +35,11 @@ import { isSubmitEnter } from '@/lib/ime'
 import { catalogProviderMatches, findCatalogProvider } from '@/lib/model-options'
 import { composerServiceTier } from '@/lib/model-status-label'
 import { cn } from '@/lib/utils'
+import { openOxeegenProviderSetup } from '@/oxeegen/provider-setup'
 import { showLargeModelNotice } from '@/store/agent-notices'
 import { $customModels, withCustomModels } from '@/store/custom-models'
 import { setMainModelAssignment } from '@/store/model-assignment'
 import { notify, notifyError, readableError } from '@/store/notifications'
-import { startManualLocalEndpoint, startManualOnboarding, startManualProviderOAuth } from '@/store/onboarding'
 
 import { hermesConfigCacheWriter, invalidateHermesConfig, useHermesConfigRecord } from '../hooks/use-config-record'
 import { useOnProfileSwitch } from '../hooks/use-on-profile-switch'
@@ -851,29 +851,13 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
     }
   }, [apiKeyDraft, m.loadFailed, scopeProfile, selectedProviderRow, setCaughtError])
 
-  // OAuth / external providers can't be activated with a pasted key — hand off
-  // to the shared onboarding flow scoped to this provider's real sign-in. The
-  // custom / local endpoint is NOT an OAuth provider, so it gets the dedicated
-  // local-endpoint form (URL + optional API key) instead of being dead-ended
-  // on the OAuth picker (the original "booted back to the first screen" loop).
+  // OAuth / external providers can't be activated with a pasted key. Oxee Hermes: the onboarding
+  // overlay only holds the Oxeegen form, so the provider is set up in Settings > Providers.
   const startProviderSetup = () => {
-    const rowSlug = selectedProviderRow?.slug.trim() ?? ''
-    const slug = rowSlug || selectedProvider.trim()
+    const slug = selectedProviderRow?.slug.trim() || selectedProvider.trim()
 
-    if (!slug) {
-      return
-    }
-
-    const lower = slug.toLowerCase()
-
-    if (lower === 'custom' || lower === 'local' || lower.startsWith('custom:')) {
-      startManualLocalEndpoint(null, scopeProfile)
-    } else if (rowSlug) {
-      startManualProviderOAuth(rowSlug, scopeProfile)
-    } else {
-      // An absent row has no trustworthy auth metadata. Open the generic
-      // provider picker instead of deep-linking an unknown or stale slug.
-      startManualOnboarding(undefined, scopeProfile)
+    if (slug) {
+      openOxeegenProviderSetup(slug)
     }
   }
 
@@ -907,6 +891,7 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
       if (result.notice) {
         showLargeModelNotice(result.notice)
       }
+
       setSwitchStaleAux(result.stale_aux ?? [])
       notify({ kind: 'success', title: m.mainAppliedTitle, message: m.mainAppliedMessage(model) })
 

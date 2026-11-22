@@ -45,7 +45,7 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/plugins/hermes-bots/i18n.ts', needs: ["import { fr } from './i18n-fr'", '  fr,\n', 'ui: uiEn,'], why: 'Bot Mode in French; ui branch for the hardcoded chrome' },
   { file: 'apps/desktop/src/plugins/hermes-bots/bot-row.tsx', needs: ["bot.connectionLabel === 'This device'", 'botsText().ui.duplicating('], why: 'Bot rows: translated local label and toasts' },
   { file: 'apps/desktop/src/components/update-status.tsx', needs: ['oxeegenUpdateView(derived, status, locale)'], why: 'feed failures worded, never the raw response' },
-  { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ["env.HERMES_DESKTOP_PACKAGE === 'nsis' ? 'electron-updater'"], why: 'release setup.exe stamped electron-updater' },
+  { file: 'apps/desktop/scripts/write-build-stamp.mjs', needs: ["{ nsis: 'electron-updater', msi: 'external' }[env.HERMES_DESKTOP_PACKAGE]"], why: 'setup.exe stamped electron-updater, .msi external (the administrator updates)' },
   { file: 'apps/desktop/electron-builder.config.cjs', needs: ["? [{ provider: 'github', owner, repo, channel }]", 'differentialPackage: Boolean(channel)', "{ from: 'scripts/oxeegen-delta-swap.ps1', to: 'oxeegen-delta-swap.ps1' }"], why: 'GitHub Releases feed (mac + setup.exe blockmap), delta swap script' },
   { file: 'scripts/bundles/bytecode.py', needs: ['"-q", "-f",', '"-s", str(root), "-p", "agent-payload",'], why: 'reproducible pycs: delta updates carry only real changes' },
   { file: 'scripts/bundles/desktop.py', needs: ['env["HERMES_DESKTOP_PACKAGE"] = "nsis"'], why: 'NSIS release builds reach the stamp' },
@@ -60,8 +60,8 @@ const HOOKS: Hook[] = [
   { file: 'apps/desktop/src/app/command-palette/index.tsx', needs: ['SECTIONS.filter(section => isVisibleSettingsView(', 'NON_CONFIG_SETTINGS.filter(entry => isVisibleSettingsView(entry.tab))'], why: 'hidden sections stay out of the palette' },
   { file: 'apps/desktop/src/app/settings/gateway-settings.tsx', needs: ['{OXEEGEN_HERMES_CLOUD && ('], why: 'Gateways: no Hermes Cloud (Nous) connection mode' },
   { file: 'apps/desktop/src/app/settings/connections-registry.tsx', needs: ["filter(kind => OXEEGEN_HERMES_CLOUD || kind !== 'cloud')"], why: 'Gateways: no Hermes Cloud connection kind' },
-  { file: 'apps/desktop/src/app/shell/model-catalog-menu.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model menu: no custom model / catalog editing' },
-  { file: 'apps/desktop/src/components/model-picker.tsx', needs: ['OXEEGEN_MODEL_MENU_EXTRAS && ('], why: 'model picker: no "add provider" / custom model' },
+  { file: 'apps/desktop/src/components/model-picker.tsx', needs: ['openOxeegenProviderSetup()'], why: 'model picker: "Add provider" opens Settings > Providers' },
+  { file: 'apps/desktop/src/app/settings/model-settings.tsx', needs: ['openOxeegenProviderSetup(slug)'], why: 'Model settings: provider setup opens Settings > Providers' },
   { file: 'apps/desktop/src/app/settings/constants.ts', needs: ["'stt.provider': ['openai']", "'tts.provider': ['openai']", "'voice.voice_chat_mode': ['chained']"], why: 'voice routed to Oxeegen only' },
   { file: 'apps/desktop/src/app/settings/helpers.ts', needs: ['if (!isVisibleSettingField(key)) {'], why: 'Voice: pinned STT / conversation rows hidden (page and search)' },
   { file: 'apps/desktop/src/app/settings/subpages.ts', needs: ['.filter(page => isVisibleConfigSubpage(section, page.id))'], why: 'Voice: no Voice conversation page' },
@@ -122,7 +122,7 @@ const HOOKS: Hook[] = [
   { file: 'scripts/bundles/native.py', needs: ['not n.startswith(OXEEGEN_EXCLUDED_PREFIXES)', 'Oxeegen: no uv cache in the payload'], why: 'bundle skips local-model engines and the uv cache' },
   { file: 'scripts/bundles/native_prepared.py', needs: ['Oxeegen: no shipped uv cache'], why: 'prepared payload does not require a uv cache' },
   { file: 'scripts/bundles/desktop.py', needs: ['oxeegen_icons(desktop, icons / "apps/desktop")'], why: 'commit/canary bundles keep the Oxeegen icons (no Nous art)' },
-  { file: 'pyproject.toml', needs: ['# Oxeegen: the bundle carries only what an Oxeegen-only agent uses'], why: 'unneeded extras stay out of the bundle venv' },
+  { file: 'pyproject.toml', needs: ['# Oxeegen: the bundle carries what the shown screens use'], why: 'unneeded extras stay out of the bundle venv' },
   { file: 'apps/desktop/electron/feature-flags.ts', needs: ["localModels: ({ argv }) => argv.includes('--local')"], why: 'Local models UI hidden (no engines shipped)' },
   { file: 'scripts/msix-shared.mjs', needs: ['process.env.OXEEGEN_MSIX_PUBLISHER ||'], why: 'MSIX published by Oxeegen' },
   // Provider allowlist
@@ -141,7 +141,7 @@ describe('Oxeegen hooks in upstream files', () => {
   test('the managed scope is the one generated from oxeegen.json', () => {
     const managed = fs.readFileSync(path.join(ROOT, 'oxeegen/managed/config.yaml'), 'utf8')
 
-    expect(managed).toContain('allowed_providers: [oxeegen]')
-    expect(managed).toContain('provider: oxeegen')
+    expect(managed).toContain('api_key: "${OXEEGEN_API_KEY}"')
+    expect(managed).toContain('base_url: "${OXEEGEN_BASE_URL}"')
   })
 })

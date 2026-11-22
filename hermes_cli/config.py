@@ -2146,7 +2146,7 @@ def _last_known_good_fallback(config_path: Path, path_key: str, cache_sig, exc: 
         from hermes_cli.moa_config import apply_user_moa_presets
         raw_good = load_newest_good_backup(config_path)
         if raw_good is not None:
-            merged_good = _deep_merge(copy.deepcopy(DEFAULT_CONFIG), raw_good)
+            merged_good = _deep_merge(managed_scope.with_managed_defaults(DEFAULT_CONFIG), raw_good)
             apply_user_moa_presets(merged_good, raw_good)
             normalized = _canonicalize_config(merged_good)
             expanded_good: dict[str, Any] = _expand_env_vars(normalized)  # type: ignore[assignment]
@@ -2245,7 +2245,7 @@ def _load_config_impl(*, want_deepcopy: bool) -> dict[str, Any]:
         if hit is not None:
             return copy.deepcopy(hit) if want_deepcopy else hit
 
-        config = copy.deepcopy(DEFAULT_CONFIG)
+        config = managed_scope.with_managed_defaults(DEFAULT_CONFIG)
 
         if user_sig is not None:
             try:

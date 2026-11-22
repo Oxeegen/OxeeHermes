@@ -1,10 +1,11 @@
-import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 /**
  * Oxee Hermes ships its policy as a managed scope (hermes_cli/managed_scope.py):
- * `oxeegen/managed/config.yaml` pins the provider, model, voice routing and the
- * provider allowlist, and the backend cannot change those keys. Point every
+ * `oxeegen/managed/config.yaml` pins the voice routing to Oxeegen and turns Nous
+ * telemetry off, and the backend cannot change those keys; `defaults.yaml` next
+ * to it only sets what a profile starts with (the Oxeegen model). Point every
  * process this app spawns at it through HERMES_MANAGED_DIR.
  *
  * Candidates in order: the bundled payload's repo (shipped builds), then the
@@ -145,6 +146,8 @@ export function oxeegenManagedScope(options: {
     `${readFileSync(path.join(shipped, 'config.yaml'), 'utf8').trimEnd()}\n\n` +
       `# Set by the administrator in ${machineFile}.\noxeegen:\n  managed_region: ${machine.region}\n`
   )
+  // defaults.yaml (the Oxeegen model a profile starts with) travels with the composed scope.
+  copyFileSync(path.join(shipped, 'defaults.yaml'), path.join(outDir, 'defaults.yaml'))
   const envFile = path.join(outDir, '.env')
   writeFileSync(
     envFile,

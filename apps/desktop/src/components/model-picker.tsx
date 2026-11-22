@@ -20,7 +20,7 @@ import { accountResetMs, formatReset, modelResetMs } from '@/lib/provider-limit'
 import { foldIncludes, normalize } from '@/lib/text'
 import { formatPercentUsed, formatResetsIn } from '@/lib/usage-percent'
 import { cn } from '@/lib/utils'
-import { OXEEGEN_MODEL_MENU_EXTRAS } from '@/oxeegen/settings-policy'
+import { openOxeegenProviderSetup } from '@/oxeegen/provider-setup'
 import { $customModels, addCustomModel, customModelCandidate, withCustomModels } from '@/store/custom-models'
 import { $localModelsEnabled } from '@/store/local-models-flag'
 import {
@@ -33,7 +33,6 @@ import {
 import type { LocalModelLoadProgress, LocalRuntimeJob } from '@/types/hermes'
 
 import type { HermesGateway } from '../hermes'
-import { startManualOnboarding } from '../store/onboarding'
 
 import { InlineNotice } from './notifications'
 import { ProviderStatusChip } from './provider-status-chip'
@@ -168,17 +167,9 @@ export function ModelPickerDialog({
     selectModel(provider, model)
   }
 
-  // Open the full onboarding provider selector to add/switch a provider.
-  // Reuses the entire onboarding flow (OAuth rows, API-key form, device-code,
-  // model-confirm) instead of duplicating provider UI here. Closes the picker
-  // so the onboarding overlay isn't rendered underneath it.
+  // Oxee Hermes: providers are added in Settings > Providers, not the onboarding overlay.
   const addProvider = () => {
-    const ownerProfile = setupProfile ?? profile
-
-    startManualOnboarding(
-      undefined,
-      ownerConnectionId !== undefined ? { connectionId: ownerConnectionId, profile: ownerProfile } : ownerProfile
-    )
+    openOxeegenProviderSetup()
     onOpenChange(false)
   }
 
@@ -229,16 +220,12 @@ export function ModelPickerDialog({
         </Command>
 
         <DialogFooter className="flex-row items-center justify-end gap-2 bg-card p-3">
-          {OXEEGEN_MODEL_MENU_EXTRAS && (
-            <>
-              <Button className="mr-auto" onClick={enterSlug} variant="ghost">
-                {copy.addCustomModelAction}
-              </Button>
-              <Button onClick={addProvider} variant="ghost">
-                {copy.addProvider}
-              </Button>
-            </>
-          )}
+          <Button className="mr-auto" onClick={enterSlug} variant="ghost">
+            {copy.addCustomModelAction}
+          </Button>
+          <Button onClick={addProvider} variant="ghost">
+            {copy.addProvider}
+          </Button>
           <Button onClick={() => onOpenChange(false)} variant="outline">
             {t.common.cancel}
           </Button>
