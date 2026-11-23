@@ -2,7 +2,8 @@
 
 Guide pour les administrateurs : installation silencieuse dans Program Files, pour tous les
 utilisateurs de l'ordinateur, par GPO, Intune, SCCM ou à la main. La région et la clé API Oxeegen
-peuvent être fournies à l'installation : les utilisateurs n'ont alors rien à saisir.
+peuvent être fournies à l'installation : les utilisateurs n'ont alors rien à saisir. Les clés de
+recherche web Brave et Firecrawl peuvent l'être aussi, en option.
 
 Validé le 17/11/2026 avec `OxeeHermesBundled-0.8.6-x64.msi` (Windows 11, Windows Sandbox).
 
@@ -10,6 +11,12 @@ Validé le 17/11/2026 avec `OxeeHermesBundled-0.8.6-x64.msi` (Windows 11, Window
 
 ```powershell
 msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY=sk-...
+```
+
+Avec, en option, les clés de recherche web :
+
+```powershell
+msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY=sk-... BRAVE_SEARCH_API_KEY=... FIRECRAWL_API_KEY=fc-...
 ```
 
 - Installation silencieuse, sans redémarrage, en 5 à 10 minutes environ. Le fichier contient environ
@@ -34,10 +41,17 @@ msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY
 |---|---|---|---|
 | `OXEEGEN_REGION` | `eu` ou `us` | `eu` | Serveur Oxeegen utilisé : Europe ou États-Unis |
 | `OXEEGEN_API_KEY` | La clé Oxeegen de cette région | aucune | Clé API pour tous les utilisateurs de l'ordinateur |
+| `BRAVE_SEARCH_API_KEY` | Une clé Brave Search | aucune | Optionnel : recherche web par Brave pour tous les utilisateurs |
+| `FIRECRAWL_API_KEY` | Une clé Firecrawl | aucune | Optionnel : recherche et lecture de pages web par Firecrawl pour tous les utilisateurs |
 
-- **Sans `OXEEGEN_API_KEY`**, l'installeur n'écrit pas de configuration machine. Chaque utilisateur
+- **Sans aucune de ces clés**, l'installeur n'écrit pas de configuration machine. Chaque utilisateur
   saisit alors sa région et sa clé au premier lancement.
-- **Une région autre que `eu` ou `us`** fait échouer l'installation (code 1603) : rien n'est installé.
+- **Les clés de recherche web sont indépendantes** de la clé Oxeegen : on peut fournir l'une sans
+  l'autre. Elles sont masquées dans les journaux comme la clé Oxeegen.
+- **Choix du service de recherche** : sans réglage de l'utilisateur, l'application prend Firecrawl
+  si sa clé est présente (recherche et lecture de pages), sinon Brave (recherche seule).
+- **Avec une clé Oxeegen, une région autre que `eu` ou `us`** fait échouer l'installation
+  (code 1603) : rien n'est installé.
 - Les noms de propriétés s'écrivent en majuscules.
 
 ## 3. Installer
@@ -84,9 +98,15 @@ région et la clé, deux options :
    .\new-oxeegen-mst.ps1 -Msi .\OxeeHermesBundled-0.8.6-x64.msi -Region eu -Out .\client-a.mst
    ```
 
-   - **La clé est demandée masquée**, pour rester hors de l'historique. Collez-la par clic droit :
+   Ajoutez `-Brave` et/ou `-Firecrawl` pour y mettre aussi les clés de recherche web :
+
+   ```powershell
+   .\new-oxeegen-mst.ps1 -Msi .\OxeeHermesBundled-0.8.6-x64.msi -Region eu -Out .\client-a.mst -Brave -Firecrawl
+   ```
+
+   - **Chaque clé est demandée masquée**, pour rester hors de l'historique. Collez-la par clic droit :
      Ctrl+V peut l'altérer dans une saisie masquée.
-   - **Le script affiche la région et le début de la clé** lus à travers la transformation, pour
+   - **Le script affiche la région et le début de chaque clé** lus à travers la transformation, pour
      vérifier.
    - **Le `.mst` ne vérifie ni le produit ni la version** : le même fichier sert pour les versions
      suivantes du `.msi`.
@@ -109,13 +129,16 @@ le comportement d'installation **Installer pour le système**.
 
 ## 4. Le fichier de configuration machine
 
-`C:\ProgramData\Oxee Hermes\oxeegen.env` est écrit par l'installeur quand `OXEEGEN_API_KEY` est
-fourni. Vous pouvez aussi l'écrire ou le modifier à la main :
+`C:\ProgramData\Oxee Hermes\oxeegen.env` est écrit par l'installeur quand une des clés du § 2 est
+fournie. Vous pouvez aussi l'écrire ou le modifier à la main :
 
 ```ini
 # Oxee Hermes : région et clé Oxeegen pour tous les utilisateurs de cet ordinateur
 OXEEGEN_REGION=eu
 OXEEGEN_API_KEY=sk-...
+# Optionnel : recherche web
+BRAVE_SEARCH_API_KEY=...
+FIRECRAWL_API_KEY=fc-...
 ```
 
 - `OXEEGEN_REGION` : `eu` ou `us`, obligatoire.
@@ -125,8 +148,9 @@ OXEEGEN_API_KEY=sk-...
   encodage UTF-8 avec ou sans BOM sont acceptés.
 - **Le fichier est relu à chaque démarrage de l'application** : une modification s'applique au
   prochain lancement, sans réinstaller.
-- **Un fichier invalide est ignoré** : région inconnue, ou clé absente. L'utilisateur retrouve alors
-  le formulaire de connexion habituel.
+- **Une connexion Oxeegen invalide est ignorée** : région inconnue, ou clé absente. L'utilisateur
+  retrouve alors le formulaire de connexion habituel. Les clés de recherche web du fichier
+  s'appliquent quand même.
 
 Droits posés par l'installeur sur le dossier `C:\ProgramData\Oxee Hermes` (et hérités par le fichier) :
 
@@ -141,6 +165,8 @@ Droits posés par l'installeur sur le dossier `C:\ProgramData\Oxee Hermes` (et h
 - Au premier lancement, **pas de formulaire de connexion** : Oxee Hermes est prêt.
 - Dans **Réglages › Oxeegen**, la région s'affiche avec la mention « Définie par votre
   administrateur ». La clé n'est jamais affichée, et l'utilisateur ne peut ni la voir ni la changer.
+- Les clés de recherche web fournies par l'administrateur s'appliquent sans réglage : l'utilisateur
+  ne peut pas les remplacer par les siennes.
 - Les données de chaque utilisateur (conversations, réglages, journaux) restent dans son profil :
   `%LOCALAPPDATA%\hermes-oxeegen`.
 - **Pas de mise à jour dans l'application** : c'est l'administrateur qui déploie les nouvelles
@@ -151,6 +177,7 @@ Droits posés par l'installeur sur le dossier `C:\ProgramData\Oxee Hermes` (et h
 
 ## 6. Sécurité de la clé
 
+- Ce qui suit vaut aussi pour les clés Brave et Firecrawl.
 - **Journaux d'installation** : la clé est masquée (`OXEEGEN_API_KEY = **********`), même dans un
   journal détaillé `/l*v`. C'est vérifié sur les journaux d'installation, de mise à jour, de
   redéploiement et de désinstallation.
@@ -170,6 +197,7 @@ Droits posés par l'installeur sur le dossier `C:\ProgramData\Oxee Hermes` (et h
 | Nouvelle version, même clé | `msiexec /i OxeeHermesBundled-<nouvelle>-x64.msi /qn` | Conservée telle quelle, y compris vos modifications à la main |
 | Nouvelle version et nouvelle clé ou région | `msiexec /i OxeeHermesBundled-<nouvelle>-x64.msi /qn OXEEGEN_REGION=us OXEEGEN_API_KEY=sk-...` | Région et clé remplacées, vos autres lignes conservées |
 | Même version, nouvelle clé ou région | `msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn REINSTALL=ALL REINSTALLMODE=vomus OXEEGEN_REGION=us OXEEGEN_API_KEY=sk-...` | Région et clé remplacées |
+| Ajouter ou changer une clé de recherche web | Une des deux commandes ci-dessus, avec seulement `BRAVE_SEARCH_API_KEY=...` ou `FIRECRAWL_API_KEY=...` | Cette clé remplacée ; région, clé Oxeegen et autres lignes conservées |
 | Changer la clé sans réinstaller | Modifier `C:\ProgramData\Oxee Hermes\oxeegen.env` en administrateur | Appliqué au prochain lancement |
 
 - Une nouvelle version remplace l'ancienne : une seule entrée reste dans « Applications installées ».

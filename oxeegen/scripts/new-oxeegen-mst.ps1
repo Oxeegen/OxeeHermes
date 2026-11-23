@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
-  Oxee Hermes: builds the .mst transform that gives the .msi a client's Oxeegen region and key.
+  Oxee Hermes: builds the .mst transform that gives the .msi a client's Oxeegen region and key,
+  and optionally its web search keys (Brave, Firecrawl).
 
 .DESCRIPTION
   GPO software installation passes no msiexec properties: the region and key reach the .msi
@@ -8,9 +9,12 @@
   OXEEGEN_REGION and OXEEGEN_API_KEY in the Property table, one file per client:
 
     .\new-oxeegen-mst.ps1 -Msi .\OxeeHermesBundled-0.8.6-x64.msi -Region eu -Out .\client-a.mst
+    .\new-oxeegen-mst.ps1 -Msi .\OxeeHermesBundled-0.8.6-x64.msi -Region eu -Out .\client-a.mst -Brave -Firecrawl
 
-  The key is asked for, masked (right-click to paste: Ctrl+V can corrupt a masked prompt), so it
-  stays out of the shell history. -ApiKey takes it on the command line for scripted runs.
+  Each key is asked for, masked (right-click to paste: Ctrl+V can corrupt a masked prompt), so it
+  stays out of the shell history. -Brave and -Firecrawl add the BRAVE_SEARCH_API_KEY and
+  FIRECRAWL_API_KEY properties. -ApiKey, -BraveKey and -FirecrawlKey take them on the command
+  line for scripted runs.
 
   The transform carries no product or version check: the same .mst applies to the next .msi
   versions. The key is in clear inside the .mst: restrict the share to the client's computers.
@@ -20,17 +24,28 @@ param(
   [Parameter(Mandatory)] [string] $Msi,
   [Parameter(Mandatory)] [ValidateSet('eu', 'us')] [string] $Region,
   [Parameter(Mandatory)] [string] $Out,
-  [string] $ApiKey
+  [string] $ApiKey,
+  [switch] $Brave,
+  [string] $BraveKey,
+  [switch] $Firecrawl,
+  [string] $FirecrawlKey
 )
 $ErrorActionPreference = 'Stop'
 
-if (-not $ApiKey) {
-  $secure = Read-Host 'Oxeegen API key for this client (right-click to paste)' -AsSecureString
-  $ApiKey = [Net.NetworkCredential]::new('', $secure).Password
+function Read-Key([string] $value, [string] $label) {
+  if (-not $value) {
+    $secure = Read-Host "$label for this client (right-click to paste)" -AsSecureString
+    $value = [Net.NetworkCredential]::new('', $secure).Password
+  }
+  $value = $value.Trim()
+  # The custom action passes the key between double quotes on a command line.
+  if (-not $value -or $value -match '[\s"]') { throw "The $label is empty or holds a space or a double quote." }
+  $value
 }
-$ApiKey = $ApiKey.Trim()
-# The custom action passes the key between double quotes on a command line.
-if (-not $ApiKey -or $ApiKey -match '[\s"]') { throw 'The key is empty or holds a space or a double quote.' }
+$keys = [ordered]@{ OXEEGEN_API_KEY = Read-Key $ApiKey 'Oxeegen API key' }
+if ($Brave -or $BraveKey) { $keys.BRAVE_SEARCH_API_KEY = Read-Key $BraveKey 'Brave Search API key' }
+if ($Firecrawl -or $FirecrawlKey) { $keys.FIRECRAWL_API_KEY = Read-Key $FirecrawlKey 'Firecrawl API key' }
+$ApiKey = $null; $BraveKey = $null; $FirecrawlKey = $null
 
 $Msi = (Resolve-Path $Msi).Path
 $Out = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Out)
@@ -47,7 +62,10 @@ Copy-Item $Msi $copy
 try {
 $reference = & $open $Msi 0
 $edited = & $open $copy 1
-foreach ($row in @(@('OXEEGEN_REGION', $Region), @('OXEEGEN_API_KEY', $ApiKey))) {
+$rows = New-Object System.Collections.Generic.List[string[]]
+$rows.Add([string[]]@('OXEEGEN_REGION', $Region))
+foreach ($name in $keys.Keys) { $rows.Add([string[]]@($name, $keys[$name])) }
+foreach ($row in $rows) {
   $view = & $call $edited 'OpenView' @("SELECT ``Property``, ``Value`` FROM ``Property`` WHERE ``Property`` = '$($row[0])'")
   & $call $view 'Execute' @() | Out-Null
   $existing = & $call $view 'Fetch' @()
@@ -67,20 +85,20 @@ if (Test-Path $Out) { Remove-Item $Out }
 # version or upgrade-code check, so the .mst follows the next versions.
 & $call $edited 'CreateTransformSummaryInfo' @($reference, $Out, 0x3F, 0) | Out-Null
 } finally {
-  $ApiKey = $null
+  $keys = $null; $rows = $null
   $view = $null; $record = $null; $edited = $null; $reference = $null; [GC]::Collect(); [GC]::WaitForPendingFinalizers()
   Remove-Item $copy -ErrorAction SilentlyContinue
 }
 
-# Check: the .msi seen through the transform carries the region and a key (shown masked).
+# Check: the .msi seen through the transform carries the region and the keys (shown masked).
 $check = & $open $Msi 0
 & $call $check 'ApplyTransform' @($Out, 0x3F) | Out-Null
-$view = & $call $check 'OpenView' @("SELECT ``Property``, ``Value`` FROM ``Property`` WHERE ``Property`` = 'OXEEGEN_REGION' OR ``Property`` = 'OXEEGEN_API_KEY'")
+$view = & $call $check 'OpenView' @("SELECT ``Property``, ``Value`` FROM ``Property`` WHERE ``Property`` = 'OXEEGEN_REGION' OR ``Property`` = 'OXEEGEN_API_KEY' OR ``Property`` = 'BRAVE_SEARCH_API_KEY' OR ``Property`` = 'FIRECRAWL_API_KEY'")
 & $call $view 'Execute' @() | Out-Null
 while ($r = & $call $view 'Fetch' @()) {
   $name = $r.GetType().InvokeMember('StringData', 'GetProperty', $null, $r, @(1))
   $value = $r.GetType().InvokeMember('StringData', 'GetProperty', $null, $r, @(2))
-  if ($name -eq 'OXEEGEN_API_KEY') { $value = '{0}... ({1} characters)' -f $value.Substring(0, [Math]::Min(4, $value.Length)), $value.Length }
+  if ($name -ne 'OXEEGEN_REGION') { $value = '{0}... ({1} characters)' -f $value.Substring(0, [Math]::Min(4, $value.Length)), $value.Length }
   "$name = $value"
 }
 "Transform written: $Out"

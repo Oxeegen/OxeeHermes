@@ -217,6 +217,24 @@ describe('machine configuration (administrator region and key)', () => {
     assert.equal(fs.readFileSync(path.join(outDir, 'defaults.yaml'), 'utf8'), fs.readFileSync(path.join(ROOT, 'oxeegen/managed/defaults.yaml'), 'utf8'))
   })
 
+  test('web search keys join the managed .env, with or without the Oxeegen connection', () => {
+    const both = run('OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-x\nBRAVE_SEARCH_API_KEY=brave-1\nFIRECRAWL_API_KEY=fc-1\nOTHER_API_KEY=no\n')
+    const env = fs.readFileSync(path.join(both.outDir, '.env'), 'utf8')
+
+    assert.match(env, /^OXEEGEN_API_KEY=sk-x$/m)
+    assert.match(env, /^BRAVE_SEARCH_API_KEY=brave-1$/m)
+    assert.match(env, /^FIRECRAWL_API_KEY=fc-1$/m)
+    assert.doesNotMatch(env, /OTHER_API_KEY/)
+    assert.ok(!both.logs.join('\n').includes('brave-1'))
+
+    const toolsOnly = run('FIRECRAWL_API_KEY=fc-2\nBRAVE_SEARCH_API_KEY=\n')
+
+    assert.equal(toolsOnly.managed, toolsOnly.outDir)
+    assert.equal(fs.readFileSync(path.join(toolsOnly.outDir, '.env'), 'utf8'), 'FIRECRAWL_API_KEY=fc-2\n')
+    assert.doesNotMatch(fs.readFileSync(path.join(toolsOnly.outDir, 'config.yaml'), 'utf8'), /managed_region/)
+    assert.ok(fs.existsSync(path.join(toolsOnly.outDir, 'defaults.yaml')))
+  })
+
   test("a region's own key wins over the generic one", () => {
     const { outDir } = run('OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-generic\nOXEEGEN_EU_API_KEY=sk-eu\n')
 
@@ -261,6 +279,9 @@ describe('.msi machine configuration', () => {
     const wxs = withMachineConfig(template)
 
     assert.match(wxs, /<Property Id="OXEEGEN_API_KEY" Secure="yes" Hidden="yes"\/>/)
+    assert.match(wxs, /<Property Id="BRAVE_SEARCH_API_KEY" Secure="yes" Hidden="yes"\/>/)
+    assert.match(wxs, /<Property Id="FIRECRAWL_API_KEY" Secure="yes" Hidden="yes"\/>/)
+    assert.match(wxs, /\(OXEEGEN_API_KEY OR BRAVE_SEARCH_API_KEY OR FIRECRAWL_API_KEY\) AND NOT \(REMOVE~="ALL"\)/)
     assert.match(wxs, /<Property Id="OxeegenWriteMachineConfig" Hidden="yes"\/>/)
     assert.match(wxs, /DllEntry="WixQuietExec64" Execute="deferred" Impersonate="no" Return="check" HideTarget="yes"/)
     assert.match(wxs, /resources\\oxeegen-machine-config\.ps1/)

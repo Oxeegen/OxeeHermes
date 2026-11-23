@@ -36,8 +36,15 @@ export function oxeegenManagedDir(roots: ReadonlyArray<null | string | undefined
  *
  *   OXEEGEN_REGION=eu
  *   OXEEGEN_EU_API_KEY=sk-...      (or OXEEGEN_API_KEY=sk-..., the key of that region)
+ *   BRAVE_SEARCH_API_KEY=...       (optional: web search keys for every user)
+ *   FIRECRAWL_API_KEY=fc-...
  */
 export const MACHINE_CONFIG_FILE = 'oxeegen.env'
+
+/** Tool keys an administrator may set for every user, next to the Oxeegen connection. Each is
+ *  read by its web provider (plugins/web/brave_free, plugins/web/firecrawl); the managed `.env`
+ *  pins it, and web search autodetects its backend from the keys present. */
+export const MACHINE_TOOL_KEYS = ['BRAVE_SEARCH_API_KEY', 'FIRECRAWL_API_KEY'] as const
 
 export function machineConfigDir(platform: NodeJS.Platform, env: NodeJS.ProcessEnv): string {
   if (platform === 'win32') {
@@ -103,9 +110,18 @@ export function parseMachineConfig(text: string, spec: OxeegenSpec): MachineConn
   return { apiKey, region }
 }
 
+/** The tool keys the file sets (MACHINE_TOOL_KEYS), as `.env` lines; blank values are skipped. */
+export function parseMachineToolKeys(text: string): string[] {
+  const values = parseEnv(text)
+
+  return MACHINE_TOOL_KEYS.flatMap(name => (values.get(name) ? [`${name}=${values.get(name)}`] : []))
+}
+
 /**
  * The managed scope to run with: the shipped one, plus the machine's region
- * and key when an administrator set them. That combination is written to
+ * and key and its tool keys (MACHINE_TOOL_KEYS) when an administrator set
+ * them; the tool keys apply even without the Oxeegen connection. That
+ * combination is written to
  * `outDir` (the shipped scope is read-only in Program Files), with the key in
  * the managed `.env` (which beats the user's `.env` and refuses writes to it)
  * and `oxeegen.managed_region` in config.yaml, which tells Settings the
@@ -127,24 +143,26 @@ export function oxeegenManagedScope(options: {
 
   const shipped = path.join(root, 'oxeegen', 'managed')
   const machine = existsSync(machineFile) ? readMachineConfig(machineFile, root) : null
+  const connection = machine && !('error' in machine.connection) ? machine.connection : null
+  const toolKeys = machine?.toolKeys ?? []
 
-  if (machine && 'error' in machine) {
-    log(`[oxeegen] ${machineFile} is not applied: ${machine.error}`)
+  if (machine && 'error' in machine.connection) {
+    log(`[oxeegen] the Oxeegen connection in ${machineFile} is not applied: ${machine.connection.error}`)
   }
 
-  if (!machine || 'error' in machine) {
+  if (!connection && !toolKeys.length) {
     rmSync(outDir, { force: true, recursive: true })
 
     return shipped
   }
 
-  const spec = readSpec(root)
-  const region = spec.regions[machine.region]
   mkdirSync(outDir, { recursive: true })
+  const shippedConfig = readFileSync(path.join(shipped, 'config.yaml'), 'utf8').trimEnd()
   writeFileSync(
     path.join(outDir, 'config.yaml'),
-    `${readFileSync(path.join(shipped, 'config.yaml'), 'utf8').trimEnd()}\n\n` +
-      `# Set by the administrator in ${machineFile}.\noxeegen:\n  managed_region: ${machine.region}\n`
+    connection
+      ? `${shippedConfig}\n\n# Set by the administrator in ${machineFile}.\noxeegen:\n  managed_region: ${connection.region}\n`
+      : `${shippedConfig}\n`
   )
   // defaults.yaml (the Oxeegen model a profile starts with) travels with the composed scope. Its
   // content only: a copy keeps Program Files' read-only bit and could not be replaced next launch.
@@ -152,19 +170,33 @@ export function oxeegenManagedScope(options: {
   rmSync(defaults, { force: true })
   writeFileSync(defaults, readFileSync(path.join(shipped, 'defaults.yaml')))
   const envFile = path.join(outDir, '.env')
+  const spec = connection ? readSpec(root) : null
+  const region = spec && connection ? spec.regions[connection.region] : null
   writeFileSync(
     envFile,
     [
-      `${spec.region_env}=${machine.region}`,
-      `${region.api_key_env}=${machine.apiKey}`,
-      `${spec.api_key_env}=${machine.apiKey}`,
-      `${spec.base_url_env}=${region.base_url}`,
+      ...(spec && connection && region
+        ? [
+            `${spec.region_env}=${connection.region}`,
+            `${region.api_key_env}=${connection.apiKey}`,
+            `${spec.api_key_env}=${connection.apiKey}`,
+            `${spec.base_url_env}=${region.base_url}`
+          ]
+        : []),
+      ...toolKeys,
       ''
     ].join('\n'),
     { mode: 0o600 }
   )
   chmodSync(envFile, 0o600)
-  log(`[oxeegen] Oxeegen region and key set by the administrator (${machineFile})`)
+
+  if (connection) {
+    log(`[oxeegen] Oxeegen region and key set by the administrator (${machineFile})`)
+  }
+
+  if (toolKeys.length) {
+    log(`[oxeegen] tool keys set by the administrator: ${toolKeys.map(line => line.split('=')[0]).join(', ')}`)
+  }
 
   return outDir
 }
@@ -175,12 +207,29 @@ function readSpec(root: string): OxeegenSpec {
   ) as OxeegenSpec
 }
 
-function readMachineConfig(file: string, root: string): MachineConnection | { error: string } {
+interface MachineConfig {
+  connection: MachineConnection | { error: string }
+  toolKeys: string[]
+}
+
+function readMachineConfig(file: string, root: string): MachineConfig {
+  let text: string
+
   try {
-    return parseMachineConfig(readFileSync(file, 'utf8'), readSpec(root))
+    text = readFileSync(file, 'utf8')
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { connection: { error: error instanceof Error ? error.message : String(error) }, toolKeys: [] }
   }
+
+  let connection: MachineConfig['connection']
+
+  try {
+    connection = parseMachineConfig(text, readSpec(root))
+  } catch (error) {
+    connection = { error: error instanceof Error ? error.message : String(error) }
+  }
+
+  return { connection, toolKeys: parseMachineToolKeys(text) }
 }
 
 /** Points every process the app spawns at the managed scope. Dev runs read the

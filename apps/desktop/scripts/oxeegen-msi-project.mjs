@@ -7,6 +7,9 @@
  * configuration the app reads at every start (electron/oxeegen-managed.ts):
  *
  *   msiexec /i OxeeHermes-X.Y.Z-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY=sk-...
+ *     [BRAVE_SEARCH_API_KEY=...] [FIRECRAWL_API_KEY=fc-...]
+ *
+ * The web search keys are optional and hidden like the Oxeegen key; each one given replaces its line.
  *
  * A deferred custom action (WixQuietExec64, as SYSTEM) runs resources\oxeegen-machine-config.ps1,
  * which writes C:\ProgramData\Oxee Hermes\oxeegen.env. Not the IniFile table: Windows Installer
@@ -18,14 +21,16 @@
 import fs from 'node:fs'
 
 const WRITE = 'OxeegenWriteMachineConfig'
-const WHEN = '<![CDATA[OXEEGEN_API_KEY AND NOT (REMOVE~="ALL")]]>'
+const WHEN = '<![CDATA[(OXEEGEN_API_KEY OR BRAVE_SEARCH_API_KEY OR FIRECRAWL_API_KEY) AND NOT (REMOVE~="ALL")]]>'
 
 export const MACHINE_CONFIG_WIX = `
     <Property Id="OXEEGEN_REGION" Secure="yes" Value="eu"/>
     <Property Id="OXEEGEN_API_KEY" Secure="yes" Hidden="yes"/>
+    <Property Id="BRAVE_SEARCH_API_KEY" Secure="yes" Hidden="yes"/>
+    <Property Id="FIRECRAWL_API_KEY" Secure="yes" Hidden="yes"/>
     <Property Id="${WRITE}" Hidden="yes"/>
     <CustomAction Id="OxeegenSetMachineConfig" Property="${WRITE}" Execute="immediate" HideTarget="yes"
-      Value="&quot;[System64Folder]WindowsPowerShell\\v1.0\\powershell.exe&quot; -NoProfile -NonInteractive -ExecutionPolicy Bypass -File &quot;[APPLICATIONFOLDER]resources\\oxeegen-machine-config.ps1&quot; -Region &quot;[OXEEGEN_REGION]&quot; -ApiKey &quot;[OXEEGEN_API_KEY]&quot;"/>
+      Value="&quot;[System64Folder]WindowsPowerShell\\v1.0\\powershell.exe&quot; -NoProfile -NonInteractive -ExecutionPolicy Bypass -File &quot;[APPLICATIONFOLDER]resources\\oxeegen-machine-config.ps1&quot; -Region &quot;[OXEEGEN_REGION]&quot; -ApiKey &quot;[OXEEGEN_API_KEY]&quot; -BraveKey &quot;[BRAVE_SEARCH_API_KEY]&quot; -FirecrawlKey &quot;[FIRECRAWL_API_KEY]&quot;"/>
     <CustomAction Id="${WRITE}" BinaryKey="WixCA" DllEntry="WixQuietExec64" Execute="deferred" Impersonate="no" Return="check" HideTarget="yes"/>
     <InstallExecuteSequence>
       <Custom Action="OxeegenSetMachineConfig" Before="${WRITE}">${WHEN}</Custom>
