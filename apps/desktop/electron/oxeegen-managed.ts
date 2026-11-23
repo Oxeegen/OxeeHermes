@@ -110,6 +110,17 @@ export function parseMachineConfig(text: string, spec: OxeegenSpec): MachineConn
   return { apiKey, region }
 }
 
+/** With both web keys, search goes to Brave and page reading to Firecrawl (whose credits it saves);
+ *  autodetect alone would send both to Firecrawl. A default, not a pin: Settings > Advanced > Tools
+ *  writes the user's own web.search_backend / web.extract_backend over it. */
+export function webSplit(toolKeys: string[]): string {
+  const names = new Set(toolKeys.map(line => line.split('=')[0]))
+
+  return names.has('BRAVE_SEARCH_API_KEY') && names.has('FIRECRAWL_API_KEY')
+    ? '\n# Set by the administrator: both web keys.\nweb:\n  search_backend: brave-free\n  extract_backend: firecrawl\n'
+    : ''
+}
+
 /** The tool keys the file sets (MACHINE_TOOL_KEYS), as `.env` lines; blank values are skipped. */
 export function parseMachineToolKeys(text: string): string[] {
   const values = parseEnv(text)
@@ -168,7 +179,7 @@ export function oxeegenManagedScope(options: {
   // content only: a copy keeps Program Files' read-only bit and could not be replaced next launch.
   const defaults = path.join(outDir, 'defaults.yaml')
   rmSync(defaults, { force: true })
-  writeFileSync(defaults, readFileSync(path.join(shipped, 'defaults.yaml')))
+  writeFileSync(defaults, `${readFileSync(path.join(shipped, 'defaults.yaml'), 'utf8').trimEnd()}\n${webSplit(toolKeys)}`)
   const envFile = path.join(outDir, '.env')
   const spec = connection ? readSpec(root) : null
   const region = spec && connection ? spec.regions[connection.region] : null

@@ -226,13 +226,14 @@ describe('machine configuration (administrator region and key)', () => {
     assert.match(env, /^FIRECRAWL_API_KEY=fc-1$/m)
     assert.doesNotMatch(env, /OTHER_API_KEY/)
     assert.ok(!both.logs.join('\n').includes('brave-1'))
+    assert.match(fs.readFileSync(path.join(both.outDir, 'defaults.yaml'), 'utf8'), /\nweb:\n {2}search_backend: brave-free\n {2}extract_backend: firecrawl\n$/)
 
     const toolsOnly = run('FIRECRAWL_API_KEY=fc-2\nBRAVE_SEARCH_API_KEY=\n')
 
     assert.equal(toolsOnly.managed, toolsOnly.outDir)
     assert.equal(fs.readFileSync(path.join(toolsOnly.outDir, '.env'), 'utf8'), 'FIRECRAWL_API_KEY=fc-2\n')
     assert.doesNotMatch(fs.readFileSync(path.join(toolsOnly.outDir, 'config.yaml'), 'utf8'), /managed_region/)
-    assert.ok(fs.existsSync(path.join(toolsOnly.outDir, 'defaults.yaml')))
+    assert.doesNotMatch(fs.readFileSync(path.join(toolsOnly.outDir, 'defaults.yaml'), 'utf8'), /web:/)
   })
 
   test("a region's own key wins over the generic one", () => {

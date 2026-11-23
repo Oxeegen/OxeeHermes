@@ -48,8 +48,10 @@ msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY
   saisit alors sa région et sa clé au premier lancement.
 - **Les clés de recherche web sont indépendantes** de la clé Oxeegen : on peut fournir l'une sans
   l'autre. Elles sont masquées dans les journaux comme la clé Oxeegen.
-- **Choix du service de recherche** : sans réglage de l'utilisateur, l'application prend Firecrawl
-  si sa clé est présente (recherche et lecture de pages), sinon Brave (recherche seule).
+- **Choix du service** : avec les deux clés, la recherche passe par Brave et la lecture de pages par
+  Firecrawl, ce qui économise les crédits Firecrawl. Avec une seule clé, Firecrawl fait la recherche
+  et la lecture, ou Brave la recherche seule. L'utilisateur peut changer ce choix dans
+  Réglages › Avancé › Outils › Recherche web.
 - **Avec une clé Oxeegen, une région autre que `eu` ou `us`** fait échouer l'installation
   (code 1603) : rien n'est installé.
 - Les noms de propriétés s'écrivent en majuscules.
