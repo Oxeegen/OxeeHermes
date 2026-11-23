@@ -343,6 +343,7 @@ async def get_toolset_config(name: str, profile: Optional[str] = None):
         TOOL_CATEGORIES, _is_provider_active, _visible_providers, provider_readiness_status,
         web_provider_capabilities)
     from hermes_cli.config import get_env_value
+    from hermes_cli.managed_scope import is_env_managed
     from hermes_cli.nous_subscription import get_nous_subscription_features
 
     def _read():
@@ -360,7 +361,9 @@ async def get_toolset_config(name: str, profile: Optional[str] = None):
                         {
                             "key": e["key"], "prompt": e.get("prompt", e["key"]),
                             "url": e.get("url"), "default": e.get("default"),
-                            "is_set": bool(get_env_value(e["key"]))}
+                            "is_set": bool(get_env_value(e["key"])),
+                            # Set by the administrator (managed .env): Settings shows it read-only.
+                            "admin_managed": is_env_managed(e["key"])}
                         for e in prov.get("env_vars", [])]
                     # Same active-provider determination as the CLI picker, so the
                     # GUI highlights the provider actually written to config.

@@ -269,13 +269,18 @@ async def get_env_vars(profile: Optional[str] = None):
 
 
 def _get_env_vars_sync(profile: Optional[str] = None):
+    from hermes_cli.managed_scope import load_managed_env
+
     with _profile_scope(profile):
         env_on_disk = load_env()
+    # The administrator's managed .env wins at load (env_loader._apply_managed_env), so its keys are
+    # the ones the tools use: listed as set, and flagged so Settings shows them read-only.
+    admin_env = {k: v for k, v in load_managed_env().items() if str(v).strip()}
     channel_keys = _channel_managed_env_keys()
     catalog_meta = _catalog_provider_env_metadata()
 
     def _row(var_name: str, info: dict, *, custom: bool = False) -> dict:
-        value = env_on_disk.get(var_name)
+        value = admin_env.get(var_name) or env_on_disk.get(var_name)
         cat_meta = catalog_meta.get(var_name) or {}
         # Hand OPTIONAL_ENV_VARS prose wins where present; the catalog fills any
         # gaps (description/url) and always supplies provider grouping hints.
@@ -307,6 +312,7 @@ def _get_env_vars_sync(profile: Optional[str] = None):
             # True for a .env key in no catalog at all — an arbitrary/custom var
             # the user added directly, listed so the Keys page can manage it.
             "custom": custom,
+            "admin_managed": var_name in admin_env,
         }
 
     result = {}

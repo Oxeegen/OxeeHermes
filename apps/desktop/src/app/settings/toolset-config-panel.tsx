@@ -21,6 +21,7 @@ import {
 import { useI18n } from '@/i18n'
 import { Check, Loader2, Save, Terminal } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { useOxeegenStrings } from '@/oxeegen/strings'
 import { upsertDesktopActionTask } from '@/store/activity'
 import { confirm } from '@/store/confirm'
 import { notify, notifyError } from '@/store/notifications'
@@ -191,6 +192,10 @@ function EnvVarField({ envVar, isSet, onSaved, onCleared, profile }: EnvVarField
     }
   }
 
+  if (envVar.admin_managed) {
+    return <AdminManagedEnvVar envVar={envVar} />
+  }
+
   const actionProps = {
     clearDisabled: busy,
     docsUrl: envVar.url,
@@ -253,6 +258,26 @@ function EnvVarField({ envVar, isSet, onSaved, onCleared, profile }: EnvVarField
         )}
       </div>
     </EnvVarContextMenu>
+  )
+}
+
+// A key the administrator set for every user: no edit, reveal or remove (the backend refuses them).
+function AdminManagedEnvVar({ envVar }: { envVar: ToolEnvVar }) {
+  const oxeegen = useOxeegenStrings()
+
+  return (
+    <div className="grid gap-2 rounded-lg bg-background/55 p-2.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-mono text-xs font-medium">{envVar.key}</span>
+        <Pill tone="primary">
+          <Check className="size-3" />
+          {oxeegen.apiKeyManaged}
+        </Pill>
+      </div>
+      {envVar.prompt && envVar.prompt !== envVar.key && (
+        <p className="mt-0.5 text-[0.7rem] text-muted-foreground">{envVar.prompt}</p>
+      )}
+    </div>
   )
 }
 

@@ -213,6 +213,8 @@ export interface MemoryProviderOAuthStatus {
 }
 
 export interface EnvVarInfo {
+  /** Set by the administrator (managed .env): shown read-only. */
+  admin_managed?: boolean
   advanced: boolean
   category: string
   // True when this var is a messaging-platform credential owned by a card on
@@ -1326,6 +1328,8 @@ export interface ToolEnvVar {
   url: string | null
   default: string | null
   is_set: boolean
+  /** Set by the administrator (managed .env): shown read-only. */
+  admin_managed?: boolean
 }
 
 /** Server-computed readiness for a provider picker row. Absent on older

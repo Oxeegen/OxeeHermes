@@ -1023,7 +1023,25 @@ def build_environment_hints() -> str:
     if not is_remote_backend:
         hints.append(_bot_screen_hint())
     hints += [WSL_ENVIRONMENT_HINT] if is_wsl() else []
-    return "\n\n".join(h for h in (*hints, _embedder_environment_hint()) if h)
+    return "\n\n".join(h for h in (*hints, _administrator_keys_hint(), _embedder_environment_hint()) if h)
+
+
+def _administrator_keys_hint() -> str:
+    """Names the credentials the administrator's managed ``.env`` sets. The agent otherwise looks for
+    them with ``env`` or in config.yaml / .env, finds nothing (terminal commands never receive them,
+    by design) and tells the user the key is missing while its tools are using it."""
+    from hermes_cli.managed_scope import load_managed_env
+
+    names = sorted(k for k, v in load_managed_env().items() if k.endswith("_API_KEY") and str(v).strip())
+    if not names:
+        return ""
+    return (
+        f"Your administrator configured these API keys for this computer: {', '.join(names)}. Your tools "
+        "use them (web search and page reading among them); they are deliberately absent from terminal "
+        "commands' environment and from the user's config.yaml and .env, so never conclude from `env` or "
+        "a file search that one is missing, and never ask the user for it: it is set and only the "
+        "administrator can change it."
+    )
 
 
 # Marks the runtime block after project prose for persisted-prompt cwd validation.

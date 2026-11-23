@@ -256,6 +256,40 @@ describe('ToolsetConfigPanel', () => {
     expect(forwarded).toEqual(scope)
   })
 
+  it('shows a key the administrator set as read-only, without edit or remove actions', async () => {
+    getToolsetConfig.mockResolvedValue(
+      config({
+        active_provider: 'OpenAI TTS',
+        providers: [
+          {
+            name: 'OpenAI TTS',
+            badge: 'paid',
+            tag: 'High quality voices',
+            env_vars: [
+              {
+                key: 'VOICE_TOOLS_OPENAI_KEY',
+                prompt: 'OpenAI API key',
+                url: 'https://x',
+                default: null,
+                is_set: true,
+                admin_managed: true
+              }
+            ],
+            post_setup: null,
+            requires_nous_auth: false,
+            is_active: true
+          }
+        ]
+      })
+    )
+
+    render(<ToolsetConfigPanel onConfiguredChange={vi.fn()} toolset="tts" />)
+
+    expect(await screen.findByText('Set by your administrator')).toBeTruthy()
+    expect(screen.getByText('VOICE_TOOLS_OPENAI_KEY')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /actions/i })).toBeNull()
+  })
+
   it('expands a provider on row click and activates it via the explicit button', async () => {
     render(<ToolsetConfigPanel onConfiguredChange={vi.fn()} toolset="tts" />)
 

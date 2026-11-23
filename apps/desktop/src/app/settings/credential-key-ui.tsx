@@ -6,6 +6,7 @@ import { translateNow, useI18n } from '@/i18n'
 import { ChevronDown, ExternalLink, Loader2, Save, Trash2 } from '@/lib/icons'
 import { isSubmitEnter } from '@/lib/ime'
 import { cn } from '@/lib/utils'
+import { useOxeegenStrings } from '@/oxeegen/strings'
 import type { EnvVarInfo } from '@/types/hermes'
 
 import { CONTROL_TEXT } from './constants'
@@ -60,6 +61,7 @@ export function KeyField({
   varKey: string
 }) {
   const { t } = useI18n()
+  const oxeegen = useOxeegenStrings()
   const { edits, onClear, onSave, saving, setEdits } = rowProps
   const editing = edits[editKey] !== undefined
   // Bare (plain subtext) only while the group is collapsed and idle. Expanding
@@ -84,6 +86,18 @@ export function KeyField({
   }
 
   const editType = info.is_password ? 'password' : 'text'
+
+  // The administrator's key wins over any user value and the backend refuses writes to it.
+  if (info.admin_managed) {
+    return (
+      <Input
+        className={cn(CREDENTIAL_CONTROL_CLASS, bare && CRED_BARE, 'text-muted-foreground')}
+        readOnly
+        title={masked}
+        value={oxeegen.apiKeyManaged}
+      />
+    )
+  }
 
   if (info.is_set && !editing) {
     return (
