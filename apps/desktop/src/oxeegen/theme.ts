@@ -4,11 +4,10 @@ import type { DesktopTheme, DesktopThemeColors, DesktopThemeTypography } from '@
  * Oxeegen — the default desktop theme of Oxee Hermes (Fred's theme).
  *
  * Mono re-seeded to the Oxeegen blurple #5E4AF5, exactly as the app's own
- * accent picker computes it (`accentedTheme(mono, '#5e4af5')`), plus:
- * - light: Claude-Desktop-matched surfaces (warm near-white panes, pure black
- *   text, subtle grey borders), sampled by Fred;
- * - dark: ring / midground / composer ring carry the accent seed (a retint
- *   only moves the hue of Mono's zero-chroma greys, which left them grey), and
+ * accent picker computes it (`accentedTheme(mono, '#5e4af5')`), with the
+ * Oxeegen Style Kit's neutrals and accents over it, plus:
+ * - dark: ring / midground / composer ring carry the accent (a retint only
+ *   moves the hue of Mono's zero-chroma greys, which left them grey), and
  *   the working-session arc paints in the accent instead of the stylesheet's
  *   dark-mode foreground (white) — that rule is in oxeegen.css, not in
  *   `customCSS`, which would displace a user skin's own CSS.
@@ -82,28 +81,55 @@ export const OXEEGEN_RETINT_DARK: DesktopThemeColors = {
   userBubbleBorder: '#363636'
 }
 
+// The Oxeegen Style Kit palette (skills/creative/oxeegen-style-kit/references/oxeegen-style-guide.md
+// § 1): warm neutral page / surface / ink, grid lines, brand blurple (its AA-safe tint in dark) and
+// the kit's red. The accent tints (secondary, accent, user bubble) stay the retint's.
 const light: DesktopThemeColors = {
   ...OXEEGEN_RETINT_LIGHT,
-  foreground: '#000000',
-  cardForeground: '#000000',
-  popoverForeground: '#000000',
-  background: '#fcfcfb',
+  background: '#f9f9f7',
+  foreground: '#0b0b0b',
   card: '#fcfcfb',
-  popover: '#ffffff',
-  muted: '#f2f1ef',
-  mutedForeground: '#646464',
-  border: '#e3e3e2',
+  cardForeground: '#0b0b0b',
+  popover: '#fcfcfb',
+  popoverForeground: '#0b0b0b',
+  muted: '#f3f2ee',
+  // ink-2: the kit's muted #7a7873 is under AA (4.2:1) for the app's secondary text.
+  mutedForeground: '#52514e',
+  secondaryForeground: '#52514e',
+  accentForeground: '#52514e',
+  border: '#e1e0d9',
   input: '#fcfcfb',
-  sidebarBackground: '#fbfbf9',
-  sidebarBorder: '#e3e3e2',
-  userBubbleBorder: '#e3e3e2'
+  destructive: '#c0392b',
+  sidebarBackground: '#f3f2ee',
+  sidebarBorder: '#e1e0d9',
+  userBubbleBorder: '#e1e0d9'
 }
 
 const dark: DesktopThemeColors = {
   ...OXEEGEN_RETINT_DARK,
-  ring: OXEEGEN_RETINT_DARK.primary,
-  midground: OXEEGEN_RETINT_DARK.primary,
-  composerRing: OXEEGEN_RETINT_DARK.primary
+  background: '#0d0d0d',
+  foreground: '#f0efec',
+  card: '#1a1a19',
+  cardForeground: '#f0efec',
+  popover: '#1a1a19',
+  popoverForeground: '#f0efec',
+  muted: '#232321',
+  mutedForeground: '#9a988f',
+  secondaryForeground: '#c3c2b7',
+  accentForeground: '#c3c2b7',
+  primary: '#8a7cf7',
+  primaryForeground: '#0d0d0d',
+  border: '#2c2c2a',
+  input: '#383835',
+  ring: '#8a7cf7',
+  midground: '#8a7cf7',
+  midgroundForeground: '#0d0d0d',
+  composerRing: '#8a7cf7',
+  destructive: '#f87171',
+  destructiveForeground: '#0d0d0d',
+  sidebarBackground: '#1a1a19',
+  sidebarBorder: '#2c2c2a',
+  userBubbleBorder: '#383835'
 }
 
 export function createOxeegenTheme(mono: DesktopTheme, typography: DesktopThemeTypography): DesktopTheme {
@@ -111,7 +137,7 @@ export function createOxeegenTheme(mono: DesktopTheme, typography: DesktopThemeT
     ...mono,
     name: OXEEGEN_THEME_NAME,
     label: 'Oxeegen',
-    description: 'Mono with the Oxeegen blurple accent',
+    description: 'The Oxeegen Style Kit palette',
     colors: light,
     darkColors: dark,
     typography: {

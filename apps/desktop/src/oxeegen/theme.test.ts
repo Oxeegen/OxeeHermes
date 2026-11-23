@@ -1,6 +1,6 @@
 /**
- * Fred's Oxeegen theme: Mono re-seeded to the Oxeegen accent by the app's own
- * engine, with his light surfaces and the accent carried into dark mode.
+ * The Oxeegen theme: Mono re-seeded to the Oxeegen accent by the app's own
+ * engine, with the Oxeegen Style Kit palette and the accent carried into dark mode.
  */
 import { describe, expect, it } from 'vitest'
 
@@ -27,9 +27,11 @@ describe('Oxeegen theme', () => {
     expect([dark.ring, dark.midground, dark.composerRing]).toEqual([dark.primary, dark.primary, dark.primary])
   })
 
-  it('uses pure black text on warm surfaces in light mode', () => {
-    expect(oxeegen.colors.foreground).toBe('#000000')
-    expect(oxeegen.colors.background).toBe('#fcfcfb')
-    expect(oxeegen.colors.primary).toBe(OXEEGEN_ACCENT)
+  it('wears the Oxeegen Style Kit palette in both modes', () => {
+    const dark = oxeegen.darkColors!
+
+    expect([oxeegen.colors.background, oxeegen.colors.card, oxeegen.colors.foreground]).toEqual(['#f9f9f7', '#fcfcfb', '#0b0b0b'])
+    expect([dark.background, dark.card, dark.foreground]).toEqual(['#0d0d0d', '#1a1a19', '#f0efec'])
+    expect([oxeegen.colors.primary, dark.primary]).toEqual([OXEEGEN_ACCENT, '#8a7cf7'])
   })
 })
