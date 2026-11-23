@@ -1,4 +1,4 @@
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 /**
@@ -146,8 +146,11 @@ export function oxeegenManagedScope(options: {
     `${readFileSync(path.join(shipped, 'config.yaml'), 'utf8').trimEnd()}\n\n` +
       `# Set by the administrator in ${machineFile}.\noxeegen:\n  managed_region: ${machine.region}\n`
   )
-  // defaults.yaml (the Oxeegen model a profile starts with) travels with the composed scope.
-  copyFileSync(path.join(shipped, 'defaults.yaml'), path.join(outDir, 'defaults.yaml'))
+  // defaults.yaml (the Oxeegen model a profile starts with) travels with the composed scope. Its
+  // content only: a copy keeps Program Files' read-only bit and could not be replaced next launch.
+  const defaults = path.join(outDir, 'defaults.yaml')
+  rmSync(defaults, { force: true })
+  writeFileSync(defaults, readFileSync(path.join(shipped, 'defaults.yaml')))
   const envFile = path.join(outDir, '.env')
   writeFileSync(
     envFile,

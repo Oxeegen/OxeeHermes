@@ -199,6 +199,24 @@ describe('machine configuration (administrator region and key)', () => {
     assert.ok(!logs.join('\n').includes('sk-admin'))
   })
 
+  test('a read-only install (Program Files) composes again at the next launch', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'oxeegen-readonly-'))
+    for (const file of ['oxeegen/managed/config.yaml', 'oxeegen/managed/defaults.yaml', 'plugins/model-providers/oxeegen/oxeegen.json']) {
+      fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true })
+      fs.copyFileSync(path.join(ROOT, file), path.join(root, file))
+      fs.chmodSync(path.join(root, file), 0o444)
+    }
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'oxeegen-machine-'))
+    const machineFile = path.join(dir, 'oxeegen.env')
+    const outDir = path.join(dir, 'oxeegen-managed')
+    fs.writeFileSync(machineFile, 'OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-x\n')
+    const compose = () => oxeegenManagedScope({ log: () => {}, machineFile, outDir, roots: [root] })
+
+    assert.equal(compose(), outDir)
+    assert.equal(compose(), outDir)
+    assert.equal(fs.readFileSync(path.join(outDir, 'defaults.yaml'), 'utf8'), fs.readFileSync(path.join(ROOT, 'oxeegen/managed/defaults.yaml'), 'utf8'))
+  })
+
   test("a region's own key wins over the generic one", () => {
     const { outDir } = run('OXEEGEN_REGION=eu\nOXEEGEN_API_KEY=sk-generic\nOXEEGEN_EU_API_KEY=sk-eu\n')
 
