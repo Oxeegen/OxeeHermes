@@ -11,6 +11,12 @@
 # The setup.exe is installed, updated from the latest published release and uninstalled on a clean
 # runner (oxeegen/scripts/packaged/windows-install-test.ps1) before any draft is created.
 #
+# The per-machine .msi for administrators (GPO, Intune: oxeegen/docs/installation-msi.md) is built
+# alongside, installed, redeployed and uninstalled on another clean runner
+# (oxeegen/scripts/packaged/windows-msi-test.ps1), and joins the draft with the .mst script
+# (oxeegen/scripts/new-oxeegen-mst.ps1). Like macOS, a failed .msi does not hold back the release:
+# the draft then carries the setup.exe without it, and says so.
+#
 # Unsigned for now: Windows SmartScreen warns, and the macOS app is not notarized (Gatekeeper
 # warns, and macOS refuses to install its updates in place until it is signed).
 name: Oxee Hermes release
@@ -126,6 +132,64 @@ jobs:
             -DeltaPlan $plan.FullName -DeltaPack ($plan.FullName -replace '\.json$', '.tar.gz')
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
+  windows-msi:
+    name: Windows .msi
+    runs-on: windows-latest
+    timeout-minutes: 240
+    steps:
+      - name: Keep Defender out of the build directories
+        shell: powershell
+        run: |
+          foreach ($p in @($env:GITHUB_WORKSPACE, $env:RUNNER_TEMP)) {
+            try { Add-MpPreference -ExclusionPath $p } catch { Write-Host "no Defender exclusion for $p" }
+          }
+
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      # electron-builder fetches the WiX toolset it builds the .msi with.
+      - name: Build the release .msi
+        shell: powershell
+        run: |
+          $version = $env:VERSION -replace '^v', ''
+          & scripts\build-bundle.ps1 -Msi -Version $version
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-msi
+          if-no-files-found: error
+          path: |
+            apps/desktop/release/OxeeHermesBundled-*-x64.msi
+            oxeegen/scripts/new-oxeegen-mst.ps1
+
+  windows-msi-test:
+    name: Windows .msi install, redeploy and uninstall
+    needs: [windows-msi]
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows-msi
+          path: dist/windows-msi
+
+      - name: Install, redeploy and uninstall
+        shell: powershell
+        run: |
+          $version = $env:VERSION -replace '^v', ''
+          $msi = (Get-ChildItem dist\windows-msi -Recurse -Filter 'OxeeHermesBundled-*-x64.msi' | Select-Object -First 1).FullName
+          if (-not $msi) { throw 'no .msi in the windows-msi artifact' }
+          & oxeegen\scripts\packaged\windows-msi-test.ps1 -Msi $msi -Version $version
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
   macos:
     name: macOS app
     runs-on: macos-15
@@ -170,8 +234,8 @@ jobs:
 
   release:
     name: Draft GitHub release
-    needs: [windows, windows-install-test, macos]
-    # A macOS failure must not hold back Windows: the draft says which platforms it carries.
+    needs: [windows, windows-install-test, windows-msi, windows-msi-test, macos]
+    # A macOS or .msi failure must not hold back the setup.exe: the draft says what it carries.
     if: ${{ !cancelled() && needs.windows.result == 'success' && needs.windows-install-test.result == 'success' && startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     permissions:
@@ -191,11 +255,19 @@ jobs:
           name: macos
           path: dist/macos
 
+      # Only a .msi that passed its install test joins the release.
+      - if: needs.windows-msi-test.result == 'success'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows-msi
+          path: dist/windows-msi
+
       - name: Create the draft release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           MACOS_RESULT: ${{ needs.macos.result }}
+          MSI_RESULT: ${{ needs.windows-msi-test.result }}
         run: |
           version="${VERSION#v}"
           notes="oxeegen/release-notes/$version.md"
@@ -208,5 +280,10 @@ jobs:
           if [ "$MACOS_RESULT" != success ]; then
             echo "::warning::the macOS build did not succeed: this release carries Windows only"
           fi
+          if [ "$MSI_RESULT" != success ]; then
+            echo "::warning::the .msi build or its install test did not succeed: this release carries no .msi"
+          fi
+          # The artifact keeps the uploaded paths below their common root: flatten them.
+          msi_files=$(find dist/windows-msi -type f 2>/dev/null)
           gh release create "v$version" --draft --verify-tag --title "Oxee Hermes $version" \
-            --notes-file "$RUNNER_TEMP/body.md" dist/windows/* $(ls dist/macos/* 2>/dev/null)
+            --notes-file "$RUNNER_TEMP/body.md" dist/windows/* $(ls dist/macos/* 2>/dev/null) $msi_files

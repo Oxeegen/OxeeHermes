@@ -33,7 +33,7 @@ msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY
 | Système | Windows 10 ou 11, 64 bits (x64) |
 | Droits | Administrateur (installation par machine) |
 | Disque | Environ 3 Go libres sur le disque système |
-| Fichier | `OxeeHermesBundled-X.Y.Z-x64.msi`, environ 830 Mo. Il contient tout : l'installation ne télécharge rien. |
+| Fichier | `OxeeHermesBundled-X.Y.Z-x64.msi`, environ 850 Mo, joint à chaque release GitHub d'Oxee Hermes avec le script `new-oxeegen-mst.ps1`. Il contient tout : l'installation ne télécharge rien. |
 
 ## 2. Propriétés de l'installation
 
@@ -255,6 +255,6 @@ si un utilisateur a déjà installé le `setup.exe`, désinstallez-le avant de d
 ## Limites connues
 
 - **Commande `oxee-hermes` en terminal** : la version `.msi` ne l'ajoute pas au PATH.
-- **Signature** : un `.msi` produit hors du circuit de release n'est pas signé. SmartScreen et
-  certains antivirus peuvent l'avertir ou le bloquer. Déployez en production un `.msi` signé, issu
-  d'une release.
+- **Signature** : le `.msi` n'est pas encore signé, même celui des releases. SmartScreen et
+  certains antivirus peuvent l'avertir ou le bloquer lors d'une installation manuelle ; un
+  déploiement par GPO ou Intune n'affiche pas SmartScreen.
