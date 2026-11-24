@@ -1,5 +1,6 @@
 import { credentialPreview } from '@/app/settings/helpers'
 import { getEnvVars, getHermesConfig, type ProfileScope, revealEnvVar, setEnvVar } from '@/hermes'
+import { $setupReadyTick } from '@/store/live-sync'
 
 import { OXEEGEN, OXEEGEN_REGIONS, oxeegenRegion, type OxeegenRegionId, parseRegion } from './config'
 
@@ -66,4 +67,7 @@ export async function saveOxeegenConnection(
   await setEnvVar(OXEEGEN.baseUrlEnv, target.baseUrl, profile)
   await setEnvVar(OXEEGEN.apiKeyEnv, activeKey, profile)
   await requestGateway('reload.env').catch(() => undefined)
+  // The status chip re-checks inference readiness only at seams (boot, window focus, OAuth): without
+  // this it keeps the "no credentials" verdict from before the key until the window loses focus.
+  $setupReadyTick.set($setupReadyTick.get() + 1)
 }

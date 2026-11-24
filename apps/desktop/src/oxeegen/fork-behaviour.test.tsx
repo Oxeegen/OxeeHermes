@@ -188,6 +188,15 @@ describe('region and keys', () => {
     expect(requestGateway).toHaveBeenCalledWith('reload.env')
   })
 
+  it('asks for a fresh readiness check once the key is in, so the status chip drops the pre-key error', async () => {
+    const { $setupReadyTick } = await import('@/store/live-sync')
+    const before = $setupReadyTick.get()
+
+    await saveOxeegenConnection({ apiKey: 'sk-us', region: us.id }, requestGateway)
+
+    expect($setupReadyTick.get()).toBe(before + 1)
+  })
+
   it('switching region activates that region own saved key, never the other one', async () => {
     hermesApi.env = { [eu.apiKeyEnv]: 'sk-eu', [us.apiKeyEnv]: 'sk-us' }
 
