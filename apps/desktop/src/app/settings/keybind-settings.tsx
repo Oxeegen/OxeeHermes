@@ -20,6 +20,7 @@ import {
 } from '@/lib/keybinds/actions'
 import { formatCombo } from '@/lib/keybinds/combo'
 import { arraysEqual } from '@/lib/storage'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import {
   $bindings,
   $capture,
@@ -239,7 +240,7 @@ function KeybindRow({ action }: { action: KeybindActionMeta }) {
   // the default instead of the user's rebinding for a plugin/contrib action.
   const combos = bindingsFor(action.id, bindings)
   const capturing = capture === action.id
-  const label = k.actions[action.id] ?? action.label ?? action.id
+  const label = k.actions[action.id] ?? (action.label ? oxeeTextNow(action.label) : action.id)
   const isDefault = arraysEqual(combos, [...action.defaults])
 
   const conflict = combos

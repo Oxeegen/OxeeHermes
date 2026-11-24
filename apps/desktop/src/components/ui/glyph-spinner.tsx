@@ -5,6 +5,7 @@ import spinners, { type BrailleSpinnerName as SpinnerName } from 'unicode-animat
 
 import { usePaneVisible } from '@/components/pane-shell/pane-visibility'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 export type { SpinnerName }
 
@@ -70,7 +71,7 @@ interface GlyphSpinnerProps {
  * to centre the single glyph.
  */
 export function GlyphSpinner({
-  ariaLabel = 'Loading',
+  ariaLabel = oxeeTextNow('Loading'),
   className,
   paused = false,
   spinner = 'braille'

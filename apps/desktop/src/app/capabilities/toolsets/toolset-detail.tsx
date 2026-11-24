@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { type ProfileScope, profileScopeKey } from '@/hermes'
 import { useI18n } from '@/i18n'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import type { ToolsetInfo } from '@/types/hermes'
 
 import { ToolChip } from '../../master-detail'
@@ -36,7 +37,7 @@ export function ToolsetDetail({
     <>
       {/* "Configured" as a resting state is noise — only the warn state earns a pill. */}
       <DetailHeader
-        description={asText(toolset.description) || t.skills.noDescription}
+        description={oxeeTextNow(asText(toolset.description)) || t.skills.noDescription}
         pills={!toolset.configured && <PanelPill tone="warn">{t.skills.needsKeys}</PanelPill>}
         title={label}
       />

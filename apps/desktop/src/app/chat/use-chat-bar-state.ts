@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import type { HermesGateway } from '@/hermes'
 import { quickModelOptions } from '@/lib/chat-runtime'
 import { currentModelCapabilities, modelOptionsQueryKey, requestModelOptions } from '@/lib/model-options'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 import type { ChatBarState } from './composer/types'
 
@@ -77,7 +78,7 @@ export function useChatBarState({
       },
       tools: {
         enabled: true,
-        label: 'Add context',
+        label: oxeeTextNow('Add context'),
         suggestions: contextSuggestions
       },
       voice: {

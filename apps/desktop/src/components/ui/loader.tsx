@@ -1,6 +1,7 @@
 import { type ComponentProps, useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 export const LOADER_TYPES = [
   'original-thinking',
@@ -317,7 +318,7 @@ const LOADER_CURVES: Record<LoaderType, LoaderCurve> = {
 
 export function Loader({
   className,
-  label = 'Loading',
+  label = oxeeTextNow('Loading'),
   pathSteps = 240,
   role = 'status',
   strokeScale = 1,

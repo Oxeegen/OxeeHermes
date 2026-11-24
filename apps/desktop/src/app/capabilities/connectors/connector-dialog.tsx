@@ -10,6 +10,7 @@ import { useI18n } from '@/i18n'
 import { connectorIconUrl } from '@/lib/connector-tools'
 import { X } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 import { CatalogMark } from './catalog-mark'
 import { connectorKindWord, showsCatalogMark } from './connector-kind'
@@ -152,7 +153,7 @@ function Header({ card, titleRef, ...rest }: PartProps & { titleRef: RefObject<H
         </div>
 
         <DialogDescription className="truncate text-[0.72rem] text-(--ui-text-secondary)">
-          {card.description ?? localTarget(card) ?? copy.state[card.stateWord]}
+          {(card.description && oxeeTextNow(card.description)) ?? localTarget(card) ?? copy.state[card.stateWord]}
         </DialogDescription>
       </div>
 

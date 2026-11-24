@@ -6,6 +6,7 @@ import { useI18n } from '@/i18n'
 import type { Translations } from '@/i18n/types'
 import { connectorIconUrl } from '@/lib/connector-tools'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 import { CatalogMark } from './catalog-mark'
 import { connectorKindWord, showsCatalogMark } from './connector-kind'
@@ -213,6 +214,6 @@ function SecondLine({ card, reason }: { card: ConnectorCardModel; reason?: strin
   }
 
   return card.description ? (
-    <p className="line-clamp-2 text-[0.72rem] leading-snug text-(--ui-text-secondary)">{card.description}</p>
+    <p className="line-clamp-2 text-[0.72rem] leading-snug text-(--ui-text-secondary)">{oxeeTextNow(card.description ?? '')}</p>
   ) : null
 }

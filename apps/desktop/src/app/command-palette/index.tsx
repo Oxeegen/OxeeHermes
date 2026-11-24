@@ -64,6 +64,7 @@ import { normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
 import { NEW_BROWSER_TAB_ACTION, newBrowserTab } from '@/oxeegen/browser'
 import { isVisibleSettingsView } from '@/oxeegen/settings-policy'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import { $repoWorktrees } from '@/store/coding-status'
 import {
   $commandPaletteOpen,
@@ -908,7 +909,8 @@ function CommandPaletteBody({ onExited }: { onExited: () => void }) {
                 id: item.key,
                 keepOpen: item.keepOpen,
                 keywords: item.keywords,
-                label: item.label,
+                // Oxee Hermes: the app's own commands in the UI language (oxeegen/ui-text.ts).
+                label: oxeeTextNow(item.label),
                 run: item.run
               }))
             }

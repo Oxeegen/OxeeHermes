@@ -1,6 +1,7 @@
 import { foldPersonalityName } from '@/lib/personalities'
 import { asText, normalize } from '@/lib/text'
 import { isVisibleSettingField } from '@/oxeegen/settings-policy'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import { localShowReasoning } from '@/store/reasoning-disclosure'
 import type { ConfigFieldSchema, HermesConfig, HermesConfigRecord, ToolsetInfo } from '@/types/hermes'
 
@@ -15,7 +16,8 @@ export const stripToolsetLabel = (label: string): string =>
   label.replace(/^[\p{Emoji}\p{Extended_Pictographic}\s]+/u, '').trim() || label
 
 export const toolsetDisplayLabel = (toolset: Pick<ToolsetInfo, 'label' | 'name'>): string =>
-  stripToolsetLabel(asText(toolset.label || toolset.name))
+  // Oxee Hermes: the backend's English name in the UI language (oxeegen/ui-text.ts).
+  oxeeTextNow(stripToolsetLabel(asText(toolset.label || toolset.name)))
 
 export const toolNames = (t: ToolsetInfo) => (Array.isArray(t.tools) ? t.tools.map(asText).filter(Boolean) : [])
 

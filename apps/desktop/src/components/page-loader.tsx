@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react'
 
 import { Loader } from '@/components/ui/loader'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 interface PageLoaderProps extends Omit<ComponentProps<'div'>, 'children'> {
   label?: string
@@ -10,7 +11,7 @@ interface PageLoaderProps extends Omit<ComponentProps<'div'>, 'children'> {
 export function PageLoader({
   'aria-label': ariaLabel,
   className,
-  label = 'Loading',
+  label = oxeeTextNow('Loading'),
   role = 'status',
   ...props
 }: PageLoaderProps) {

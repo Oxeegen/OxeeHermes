@@ -48,6 +48,7 @@ import { type Translations, useI18n } from '@/i18n'
 import { AlertTriangle } from '@/lib/icons'
 import { requestModelOptions } from '@/lib/model-options'
 import { asText } from '@/lib/text'
+import { useTranslatedBlueprints } from '@/oxeegen/ui-text'
 import { $cronFocusJobId, $cronJobs, invalidateCronJobsRequests, setCronFocusJobId } from '@/store/cron'
 import { $changeEventsAvailable, $cronChangeTick } from '@/store/live-sync'
 import { notify, notifyError } from '@/store/notifications'
@@ -102,6 +103,8 @@ const MODEL_DEFAULT_VALUE = '__default__'
 // "Start from" default: the manual editor (blank cron). Any other value is a
 // blueprint key. Blueprint keys never collide with this sentinel.
 const CUSTOM_TEMPLATE = 'custom'
+
+const NO_BLUEPRINTS: AutomationBlueprint[] = []
 
 function cronProfileForScope(scope: string): string {
   return scope === ALL_PROFILES ? 'all' : scope
@@ -432,12 +435,13 @@ export function CronView({ onClose, onOpenSession, setStatusbarItemGroup: _setSt
     queryFn: async () => (await getAutomationBlueprints(blueprintProfile)).blueprints
   })
 
-  const visibleBlueprints = useMemo(() => {
-    const list = blueprintsQuery.data ?? []
-    const needle = query.trim().toLowerCase()
+  // Oxee Hermes: the templates in the UI language (oxeegen/ui-text.ts), searched as shown.
+  const blueprints = useTranslatedBlueprints(blueprintsQuery.data ?? NO_BLUEPRINTS)
+  const needle = query.trim().toLowerCase()
 
-    return needle ? list.filter(item => `${item.title} ${item.description}`.toLowerCase().includes(needle)) : list
-  }, [blueprintsQuery.data, query])
+  const visibleBlueprints = needle
+    ? blueprints.filter(item => `${item.title} ${item.description}`.toLowerCase().includes(needle))
+    : blueprints
 
   // Detail always reflects a concrete job: the explicitly selected one, else the
   // first visible row, so the right pane is never empty while jobs exist.
@@ -1300,7 +1304,7 @@ function CronEditorDialog({
     enabled: open && !isEdit
   })
 
-  const blueprintList = blueprintsQuery.data ?? []
+  const blueprintList = useTranslatedBlueprints(blueprintsQuery.data ?? NO_BLUEPRINTS)
 
   const blueprint =
     templateChoice === CUSTOM_TEMPLATE ? null : (blueprintList.find(item => item.key === templateChoice) ?? null)

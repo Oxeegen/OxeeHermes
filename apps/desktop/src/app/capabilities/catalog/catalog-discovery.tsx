@@ -8,6 +8,7 @@ import { Codicon } from '@/components/ui/codicon'
 import { useI18n } from '@/i18n'
 import { isLibraryEntry } from '@/oxeegen/library'
 import { OxeegenLibrarySection } from '@/oxeegen/library-section'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 import { BENTO_COLUMNS, packBento } from './catalog-bento'
 import type { CatalogCardVariant } from './catalog-card'
@@ -133,7 +134,7 @@ export function CatalogDiscovery({ entries: allEntries, kind, card, onCategory, 
           <header className="catalog-section-heading">
             <div>
               <h2><Button className="text-[length:inherit] font-[inherit] text-(--ui-text-primary) hover:text-(--ui-text-primary)" onClick={() => onCategory(category)} size="inline" variant="text">{catalogLabel(label)}</Button></h2>
-              <p>{kind === 'plugins' ? PLUGIN_CATEGORIES[category]?.blurb : t.catalog.skillsFor(catalogLabel(label))}</p>
+              <p>{kind === 'plugins' ? oxeeTextNow(PLUGIN_CATEGORIES[category]?.blurb ?? '') : t.catalog.skillsFor(catalogLabel(label))}</p>
             </div>
             {items.length > packBento(items).length && <Button onClick={() => onCategory(category)} size="inline" variant="text">{t.catalog.seeAll}<Codicon name="arrow-right" /></Button>}
           </header>

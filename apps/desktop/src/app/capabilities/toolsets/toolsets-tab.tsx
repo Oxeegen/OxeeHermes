@@ -7,6 +7,7 @@ import { useI18n } from '@/i18n'
 import { isDesktopToolsetVisible } from '@/lib/desktop-toolsets'
 import { queryClient } from '@/lib/query-client'
 import { invalidateSlashCompletions } from '@/lib/slash-completion-cache'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import { notify, notifyError } from '@/store/notifications'
 import type { ToolsetInfo } from '@/types/hermes'
 
@@ -155,7 +156,7 @@ export function ToolsetsTab({ hints, onQueryChange, profile, query, toolsets }: 
     return {
       id: toolset.name,
       name: label,
-      description: asText(toolset.description),
+      description: oxeeTextNow(asText(toolset.description)),
       eyebrow: count ? tools : undefined,
       badge: calls > 0 ? ts.callCount(compactNumber(calls), calls) : layout === 'list' && count ? tools : undefined,
       action: (

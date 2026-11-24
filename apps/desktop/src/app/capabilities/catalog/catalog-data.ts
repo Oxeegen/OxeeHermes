@@ -3,6 +3,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query'
 
 import { CATALOG_ORIGIN } from '@/lib/plugin-catalog'
 import { queryClient } from '@/lib/query-client'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 
 import { curatedFeaturedRank, curationOwnsArtwork, officialCatalogArtwork } from './catalog-curation'
 
@@ -79,8 +80,9 @@ function webUrl(value: unknown): string | null {
 
 /** Display form of a source or category id: domains stay verbatim (`browse.sh`),
  *  slugs read as words (`software-development` → `Software Development`). */
+// Oxee Hermes: categories, sources and platforms in the UI language (oxeegen/ui-text.ts).
 export const catalogLabel = (value: string) =>
-  value.includes('.') ? value : value.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  oxeeTextNow(value.includes('.') ? value : value.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
 
 const isoDate = (value: unknown) => (Number.isFinite(Date.parse(text(value))) ? text(value) : undefined)
 

@@ -31,6 +31,7 @@ import { AlertTriangle, ExternalLink, RefreshCw, Save, Trash2 } from '@/lib/icon
 import { platformStatusTone } from '@/lib/platform-status'
 import { normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import { $activeConnectionId } from '@/store/connections'
 import { $changeEventsAvailable, $pairingChangeTick, $platformsChangeTick } from '@/store/live-sync'
 import { notify, notifyError } from '@/store/notifications'
@@ -141,9 +142,10 @@ function fieldCopy(field: MessagingEnvVarInfo, m: Translations['messaging']) {
   const localized = m.fieldCopy[field.key] || {}
 
   return {
-    label: localized.label || field.prompt || field.key,
-    help: localized.help || field.description,
-    placeholder: localized.placeholder || field.prompt,
+    // Oxee Hermes: the backend's English copy in the UI language (oxeegen/ui-text.ts).
+    label: localized.label || oxeeTextNow(field.prompt) || field.key,
+    help: localized.help || oxeeTextNow(field.description),
+    placeholder: localized.placeholder || oxeeTextNow(field.prompt),
     advanced: Boolean(copy.advanced || field.advanced)
   }
 }
@@ -769,7 +771,7 @@ function PlatformDetail({
             )}
           </div>
           <p className="mt-1 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
-            {platform.description}
+            {oxeeTextNow(platform.description)}
           </p>
           <PlatformHint platform={platform} />
         </div>
@@ -1094,7 +1096,7 @@ const PLATFORM_INTRO: Record<string, string> = {
 }
 
 const introCopy = (platform: MessagingPlatformInfo, m: Translations['messaging']) =>
-  m.platformIntro[platform.id] || PLATFORM_INTRO[platform.id] || platform.description
+  m.platformIntro[platform.id] || oxeeTextNow(PLATFORM_INTRO[platform.id] || platform.description)
 
 function MessagingField({
   edits,
