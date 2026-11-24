@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useI18n } from '@/i18n'
 import { prettyName } from '@/lib/text'
 import { cn } from '@/lib/utils'
+import { oxeeTextNow } from '@/oxeegen/ui-text'
 import type { ConfigFieldSchema } from '@/types/hermes'
 
 import { ComboboxInput } from './combobox-input'
@@ -64,8 +65,8 @@ export function ConfigField({
   const rawDescription = (
     fieldCopyForSchemaKey(t.settings.fieldDescriptions, schemaKey) ??
     fieldCopyForSchemaKey(FIELD_DESCRIPTIONS, schemaKey) ??
-    schema.description ??
-    ''
+    // Oxee Hermes: the backend's English in the UI language (oxeegen/ui-text.ts).
+    oxeeTextNow(schema.description ?? '')
   ).trim()
 
   const normalizedDesc = normalize(rawDescription)

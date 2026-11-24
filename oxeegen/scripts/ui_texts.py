@@ -113,6 +113,14 @@ def cron_texts() -> list[str]:
     return _shown(list(blueprint_catalog.CATALOG)) + _shown(list(suggestion_catalog.CATALOG))
 
 
+def config_texts() -> list[str]:
+    """Settings field descriptions the backend's config schema gives (config-field.tsx falls back to
+    them where the app has no copy of its own)."""
+    from hermes_cli.web_server_config import CONFIG_SCHEMA
+
+    return [str(field.get("description") or "") for field in CONFIG_SCHEMA.values() if isinstance(field, dict)]
+
+
 def _strip_leading_symbols(label: str) -> str:
     """settings/helpers.ts stripToolsetLabel: a leading emoji run goes."""
     stripped = re.sub(r"^[^\w(]+", "", label).strip()
@@ -162,7 +170,7 @@ def command_texts() -> list[str]:
 
 
 def sources(catalogs: Path | None) -> set[str]:
-    texts = (connector_texts() + messaging_texts() + env_var_texts() + cron_texts() + toolset_texts()
+    texts = (connector_texts() + messaging_texts() + env_var_texts() + cron_texts() + toolset_texts() + config_texts()
              + catalog_texts(catalogs) + command_texts() + IN_PLACE)
     return {normalize(text) for text in texts if normalize(text)}
 

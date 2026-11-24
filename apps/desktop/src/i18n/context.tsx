@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { getHermesConfigRecord, type HermesConfigRecord, retainConfigReadOrigin, saveHermesConfig } from '@/hermes'
+import { lastLocale, rememberLocale } from '@/oxeegen/last-locale'
 
 import { TRANSLATIONS } from './catalog'
 import {
@@ -101,7 +102,8 @@ export function I18nProvider({
   initialLocale,
   scopeKey
 }: I18nProviderProps) {
-  const [locale, setLocaleState] = useState<Locale>(() => normalizeLocale(initialLocale))
+  // Oxee Hermes: without an explicit locale, start in the one last shown (oxeegen/last-locale.ts).
+  const [locale, setLocaleState] = useState<Locale>(() => normalizeLocale(initialLocale ?? lastLocale()))
   const [isLoadingConfig, setIsLoadingConfig] = useState(false)
   const [isSavingLocale, setIsSavingLocale] = useState(false)
   const [configLoadError, setConfigLoadError] = useState<Error | null>(null)
@@ -122,6 +124,7 @@ export function I18nProvider({
   useEffect(() => {
     localeRef.current = locale
     setRuntimeI18nLocale(locale)
+    rememberLocale(locale)
     applyDocumentLocale(locale, isRtlLocale(locale))
   }, [locale, registryVersion])
 
