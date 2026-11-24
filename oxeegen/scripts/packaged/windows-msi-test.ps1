@@ -25,8 +25,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $failures = New-Object System.Collections.Generic.List[string]
 $Msi = (Resolve-Path $Msi).Path
-$logs = Join-Path $env:RUNNER_TEMP 'msi-test'
-if (-not $env:RUNNER_TEMP) { $logs = Join-Path $env:TEMP 'msi-test' }
+# RUNNER_TEMP on a GitHub runner, TEMP elsewhere.
+$logs = Join-Path $(if ($env:RUNNER_TEMP) { $env:RUNNER_TEMP } else { $env:TEMP }) 'msi-test'
 New-Item -ItemType Directory -Force $logs | Out-Null
 $app = Join-Path $env:ProgramFiles 'Oxee Hermes'
 $cfg = Join-Path $env:ProgramData 'Oxee Hermes\oxeegen.env'
