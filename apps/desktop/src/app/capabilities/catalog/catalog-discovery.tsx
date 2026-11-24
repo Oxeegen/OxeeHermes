@@ -68,11 +68,29 @@ export function CatalogDiscovery({ entries: allEntries, kind, card, onCategory, 
   const remaining = kind === 'plugins' && !byCategory ? others.filter(entry => pluginTier(entry) === 'community') : others
 
   // Plugins with an unlisted category land in `general`, as in every other plugin grouping.
-  const sections: [string, string, CatalogEntry[]][] = (
+  // Skills are grouped in one pass: a filter per category rescanned the whole catalog for each of
+  // its categories, which froze the Skills tab for seconds on a large hub catalog.
+  const byCategoryKey = new Map<string, CatalogEntry[]>()
+
+  if (kind !== 'plugins') {
+    for (const entry of remaining) {
+      const bucket = byCategoryKey.get(entry.category)
+
+      if (bucket) {
+        bucket.push(entry)
+      } else {
+        byCategoryKey.set(entry.category, [entry])
+      }
+    }
+  }
+
+  const sections: [string, string, CatalogEntry[], number][] = (
     kind === 'plugins'
       ? groupCatalogPlugins(remaining).map(([key, items]) => [key, PLUGIN_CATEGORIES[key].label, items] as [string, string, CatalogEntry[]])
-      : catalogCategories(remaining).map(([key, meta]) => [key, meta.label, remaining.filter(entry => entry.category === key)] as [string, string, CatalogEntry[]])
-  ).sort((a, b) => topStars(b[2]) - topStars(a[2]))
+      : catalogCategories(remaining).map(([key, meta]) => [key, meta.label, byCategoryKey.get(key) ?? []] as [string, string, CatalogEntry[]])
+  )
+    .map(([key, label, items]) => [key, label, items, topStars(items)] as [string, string, CatalogEntry[], number])
+    .sort((a, b) => b[3] - a[3])
 
   // A category too small to fill a row reads as a stray full-width strip; those
   // fold into one mixed shelf at the end instead.
