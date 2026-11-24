@@ -14,7 +14,7 @@ def test_keys_match_the_desktop_lookup():
     assert descriptions.description_key("Plan your day.") == "xfyem5zllw"
     assert descriptions.description_key("  Multi\n line\tdescription  ") == "m5d2bql848"
     assert descriptions.description_key("Café — naïve 🚀 emoji") == "275lot0za54"
-    assert [descriptions.shard_of(k) for k in ("xfyem5zllw", "m5d2bql848", "275lot0za54")] == ["0", "8", "4"]
+    assert [descriptions.shard_of(k) for k in ("xfyem5zllw", "m5d2bql848", "275lot0za54")] == ["14", "18", "18"]
 
 
 def test_every_bundled_skill_and_plugin_reads_in_french():

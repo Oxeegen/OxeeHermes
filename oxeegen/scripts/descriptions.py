@@ -44,7 +44,7 @@ COMMUNITY_SKILL_SOURCES = {"ClawHub", "skills.sh"}
 MAX_DESCRIPTION_LENGTH = 1024
 MASK = 0xFFFFFFFF
 # The table is split by key so each file stays small (the repo caps a file at 500 KiB) and loads alone.
-SHARDS = 16
+SHARDS = 32
 
 
 def normalize(text: str) -> str:
@@ -133,8 +133,9 @@ def sources(catalogs: Path | None) -> dict[str, str]:
 
 
 def shard_of(key: str) -> str:
-    """The file holding `key` (descriptions.tsx shardOf computes the same)."""
-    return format(int(key[-1], 36) % SHARDS, "x")
+    """The file holding `key` (descriptions.tsx shardOf computes the same): its last two base-36
+    digits spread the keys evenly enough to keep every file under the repo's 500 KiB cap."""
+    return format(int(key[-2:], 36) % SHARDS, "x")
 
 
 def _table_dir(lang: str) -> Path:

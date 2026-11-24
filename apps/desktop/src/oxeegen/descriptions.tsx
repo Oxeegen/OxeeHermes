@@ -17,7 +17,7 @@ type Table = Record<string, string>
 /** ./descriptions/<lang>/<shard>.json, each loaded on its own when first needed. */
 const LOADERS = import.meta.glob<{ default: Table }>('./descriptions/*/*.json')
 /** descriptions.py SHARDS. */
-const SHARDS = 16
+const SHARDS = 32
 
 const $tables = map<Record<string, Table>>({})
 const requested = new Set<string>()
@@ -47,7 +47,7 @@ export function descriptionKey(text: string): string {
 const baseLanguage = (locale: string): string => locale.toLowerCase().split(/[-_]/)[0]
 
 /** The file holding `key` (descriptions.py shard_of computes the same). */
-export const shardOf = (key: string): string => (parseInt(key.slice(-1), 36) % SHARDS).toString(16)
+export const shardOf = (key: string): string => (parseInt(key.slice(-2), 36) % SHARDS).toString(16)
 
 function requestShard(id: string): void {
   const load = LOADERS[`./descriptions/${id}.json`]

@@ -25,7 +25,7 @@ describe('skill and plugin descriptions in the UI language', () => {
     expect(descriptionKey('Plan your day.')).toBe('xfyem5zllw')
     expect(descriptionKey('  Multi\n line\tdescription  ')).toBe('m5d2bql848')
     expect(descriptionKey('Café — naïve 🚀 emoji')).toBe('275lot0za54')
-    expect(['xfyem5zllw', 'm5d2bql848', '275lot0za54'].map(shardOf)).toEqual(['0', '8', '4'])
+    expect(['xfyem5zllw', 'm5d2bql848', '275lot0za54'].map(shardOf)).toEqual(['14', '18', '18'])
   })
 
   it('a description rewritten since its translation, or never translated, stays in English', () => {
