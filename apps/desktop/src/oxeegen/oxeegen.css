@@ -55,8 +55,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 3.6cqh;
-  /* The copy spans the left two thirds; the footer's install button sits at its right edge. */
-  width: calc(200% / 3);
+  /* The copy spans the left half; the footer's install button sits at its right edge. */
+  width: 50%;
   height: 100%;
   padding: 9cqh 0 3.5cqh 10.6cqh;
 }
@@ -108,11 +108,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 4cqh;
-  width: 100%;
+  /* From the copy's left edge to the slide's right edge, less the copy's left inset mirrored. */
+  width: calc(100cqw - 2 * 10.6cqh);
   margin-top: auto;
   padding-top: 4.4cqh;
   border-top: 1px solid transparent;
-  border-image: linear-gradient(90deg, #8e80ff, rgb(142 128 255 / 0)) 1;
+  border-image: linear-gradient(90deg, #8e80ff, rgb(142 128 255 / 0) 40%) 1;
 }
 .oxee-library-hero-brand {
   display: flex;
@@ -126,7 +127,14 @@
 }
 .oxee-library-hero-brand > img { height: max(0.9rem, 3.4cqh); width: auto; padding-right: 2.4cqh; border-right: 1px solid rgb(255 255 255 / 0.25); }
 .oxee-library-hero-copy > * { flex-shrink: 0; }
-.oxee-library-hero-action { position: relative; z-index: 1; flex-shrink: 0; display: flex; align-items: center; gap: 2.4cqh; }
+.oxee-library-hero-action {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 2.4cqh;
+}
 .oxee-library-hero-installed {
   display: none;
   align-items: center;

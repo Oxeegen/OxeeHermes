@@ -76,6 +76,7 @@ export function OxeegenLibraryHero({
             <img alt="Oxeegen" draggable={false} src={`${import.meta.env.BASE_URL}oxeegen-logo-dark.png`} />
             <span>{s.libraryShelf(kind)}</span>
           </span>
+          {/* The row runs to the slide's right edge: the action sits bottom right, over the visual. */}
           <span className="oxee-library-hero-action">
             {/* Shown only beside the enable switch (oxeegen.css): an installed item's action. */}
             <span className="oxee-library-hero-installed">
