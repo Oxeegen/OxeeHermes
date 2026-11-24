@@ -51,7 +51,8 @@ msiexec /i OxeeHermesBundled-0.8.6-x64.msi /qn OXEEGEN_REGION=eu OXEEGEN_API_KEY
 - **Choix du service** : avec les deux clés, la recherche passe par Brave et la lecture de pages par
   Firecrawl, ce qui économise les crédits Firecrawl. Avec une seule clé, Firecrawl fait la recherche
   et la lecture, ou Brave la recherche seule. L'utilisateur peut changer ce choix dans
-  Réglages › Avancé › Outils › Recherche web.
+  Réglages › Avancé › Outils › Recherche web. Le même partage s'applique quand un utilisateur saisit
+  lui-même les deux clés (installation classique), tant qu'il n'a pas choisi de service.
 - **Avec une clé Oxeegen, une région autre que `eu` ou `us`** fait échouer l'installation
   (code 1603) : rien n'est installé.
 - Les noms de propriétés s'écrivent en majuscules.

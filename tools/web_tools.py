@@ -181,7 +181,18 @@ def _get_search_backend() -> str:
     pin = _configured_backend("search_backend")
     if pin and pin != NOUS_MANAGED_PROVIDER:
         return pin
-    return "perplexity" if _managed_web_search() else _get_backend()
+    if _managed_web_search():
+        return "perplexity"
+    backend = _get_backend()
+    # Oxee Hermes: on a never-configured install holding both keys, search goes to Brave and page
+    # reading stays on Firecrawl (whose credits it saves); autodetect alone sends both to Firecrawl.
+    if backend == "firecrawl" and read_selection("web") is None and _brave_and_firecrawl_keys():
+        return "brave-free"
+    return backend
+
+
+def _brave_and_firecrawl_keys() -> bool:
+    return _has_env("BRAVE_SEARCH_API_KEY") and _has_env("FIRECRAWL_API_KEY")
 
 
 def _get_extract_backend() -> str:
