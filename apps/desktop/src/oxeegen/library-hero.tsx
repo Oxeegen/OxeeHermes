@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { CatalogEntry } from '@/app/capabilities/catalog/catalog-data'
 import { RowButton } from '@/components/ui/row-button'
 import { useI18n } from '@/i18n'
+import { Check } from '@/lib/icons'
 
 import { $libraryCatalog } from './library'
 import { useOxeegenStrings } from './strings'
@@ -75,7 +76,14 @@ export function OxeegenLibraryHero({
             <img alt="Oxeegen" draggable={false} src={`${import.meta.env.BASE_URL}oxeegen-logo-dark.png`} />
             <span>{s.libraryShelf(kind)}</span>
           </span>
-          <span className="oxee-library-hero-action">{action}</span>
+          <span className="oxee-library-hero-action">
+            {/* Shown only beside the enable switch (oxeegen.css): an installed item's action. */}
+            <span className="oxee-library-hero-installed">
+              <Check aria-hidden />
+              {s.libraryInstalled(kind)}
+            </span>
+            {action}
+          </span>
         </div>
       </div>
     </article>

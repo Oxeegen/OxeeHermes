@@ -55,7 +55,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 3.6cqh;
-  width: min(100cqh, 60%);
+  /* The copy spans the left two thirds; the footer's install button sits at its right edge. */
+  width: calc(200% / 3);
   height: 100%;
   padding: 9cqh 0 3.5cqh 10.6cqh;
 }
@@ -80,7 +81,6 @@
 }
 .oxee-library-hero-description {
   margin: 0;
-  max-width: 80cqh;
   font-size: max(0.8rem, 3.2cqh);
   line-height: 1.55;
   color: rgb(255 255 255 / 0.82);
@@ -126,9 +126,24 @@
 }
 .oxee-library-hero-brand > img { height: max(0.9rem, 3.4cqh); width: auto; padding-right: 2.4cqh; border-right: 1px solid rgb(255 255 255 / 0.25); }
 .oxee-library-hero-copy > * { flex-shrink: 0; }
-.oxee-library-hero-action { position: relative; z-index: 1; flex-shrink: 0; }
+.oxee-library-hero-action { position: relative; z-index: 1; flex-shrink: 0; display: flex; align-items: center; gap: 2.4cqh; }
+.oxee-library-hero-installed {
+  display: none;
+  align-items: center;
+  gap: 0.8cqh;
+  padding: max(0.3rem, 1.2cqh) max(0.7rem, 2.8cqh);
+  border: 1px solid rgb(142 128 255 / 0.5);
+  border-radius: 999px;
+  background: rgb(94 74 245 / 0.22);
+  font-size: max(0.75rem, 2.4cqh);
+  font-weight: 600;
+  color: #e4e1ff;
+  white-space: nowrap;
+}
+.oxee-library-hero-installed > svg { width: 1.1em; height: 1.1em; }
+.oxee-library-hero-action:has(.catalog-switch) .oxee-library-hero-installed { display: inline-flex; }
 /* The install control, white on the dark slide whatever the app theme. */
-.oxee-library-hero-action :is(button, a) {
+.oxee-library-hero-action :is(button, a):not([role='switch']) {
   height: auto;
   padding: max(0.35rem, 1.6cqh) max(0.8rem, 3.6cqh);
   border-radius: 999px;
@@ -138,7 +153,14 @@
   font-weight: 600;
   opacity: 1;
 }
-.oxee-library-hero-action :is(button, a):hover { background: #e4e1ff; }
+.oxee-library-hero-action :is(button, a):not([role='switch']):hover { background: #e4e1ff; }
+/* Installed: the enable switch keeps its own look, with its On / Off label readable on the dark slide. */
+.oxee-library-hero-action .catalog-switch {
+  gap: 1.6cqh;
+  font-size: max(0.75rem, 2.4cqh);
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.85);
+}
 
 /* The library's showcase (library-section.tsx): the slide, and the rail of every item beside it.
    A narrow window puts the rail under the slide, as a row. */

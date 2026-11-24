@@ -48,6 +48,7 @@ const EN = {
   title: 'Connect to Oxeegen',
   libraryTitle: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Oxeegen plugins' : 'Oxeegen skills'),
   libraryBlurb: 'Published and reviewed by Oxeegen.',
+  libraryInstalled: (_kind: 'plugins' | 'skills'): string => 'Installed',
   libraryShelf: (kind: 'plugins' | 'skills'): string => (kind === 'plugins' ? 'Plugin library' : 'Skill library'),
   libraryUpdateTitle: 'Oxeegen skill update',
   libraryUpdateMessage: (name: string, available: string, installed: string): string =>
@@ -102,6 +103,7 @@ const FR: OxeegenStrings = {
   title: 'Connexion à Oxeegen',
   libraryTitle: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Plugins Oxeegen' : 'Skills Oxeegen'),
   libraryBlurb: 'Publiés et vérifiés par Oxeegen.',
+  libraryInstalled: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Installé' : 'Installée'),
   libraryShelf: (kind: 'plugins' | 'skills') => (kind === 'plugins' ? 'Bibliothèque de plugins' : 'Bibliothèque de skills'),
   libraryUpdateTitle: 'Mise à jour d’une skill Oxeegen',
   libraryUpdateMessage: (name: string, available: string, installed: string) =>
