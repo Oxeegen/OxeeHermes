@@ -1,4 +1,6 @@
 // health: allow FILE_LINES -- locale data: translated copy for the usage-window plan UI (allowance gauges, Large/Free tags, the limit card), one key per string
+import { mergeTranslations } from '@hermes/shared/i18n'
+
 import { defineFieldCopy } from '@/app/settings/field-copy'
 
 import { defineLocale, type TranslationOverrides } from './define-locale'
@@ -11,6 +13,7 @@ import { frCronControl } from './fr_cron_control'
 import { frErrorCodes } from './fr_error_codes'
 import { frErrorLayers } from './fr_error_layers'
 import { frFirstRun } from './fr_first_run'
+import { frGaps } from './fr_gaps'
 import { frGatewayHost } from './fr_gateway_host'
 import { frLocalModels } from './fr_local_models'
 import { frMemoryLayers } from './fr_memory_layers'
@@ -30,7 +33,7 @@ import { frUninstallSection } from './fr_uninstall_section'
 import { frUpdateChannel } from './fr_update_channel'
 import { introFr } from './intro-fr'
 
-export const frOverrides = {
+const frBase = {
   // Oxee Hermes: the Capabilities catalog in French (fr_catalog.ts).
   catalog: frCatalog,
   gatewayGroupOpen: {
@@ -5590,5 +5593,8 @@ export const frOverrides = {
     }
   }
 } satisfies TranslationOverrides
+
+// Oxee Hermes: French for what upstream left English-only (fr_gaps.ts), merged deep.
+export const frOverrides = mergeTranslations<TranslationOverrides>(frBase, frGaps) as typeof frBase & typeof frGaps
 
 export const fr = defineLocale(frOverrides)
